@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:learning_mgt/screens/CourseDetailPage.dart';
 import 'package:learning_mgt/screens/HomePage.dart';
 import 'package:learning_mgt/screens/CoursePage.dart';
+
 import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/screens/TrainingScreen.dart';
 import 'package:learning_mgt/screens/VerificationScreen.dart';
@@ -51,6 +52,7 @@ class Routers {
         return MaterialPageRoute(
           builder: (_) => TrainingScreen(),
         );
+        
       default:
         return MaterialPageRoute(builder: (_) => SplashScreen());
     }
