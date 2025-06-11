@@ -8,6 +8,7 @@ import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/screens/VerificationScreen.dart';
+import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart'; // For SizeConfig
 
@@ -31,9 +32,18 @@ class _SettingsState extends State<Settings> {
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
       return WillPopScope(
         onWillPop: () async {
-          return false;
+          return true;
         },
         child: Scaffold(
+          // appBar: PreferredSize(
+          //   preferredSize: const Size.fromHeight(kToolbarHeight),
+          //   child: CustomAppBar(
+          //     isSearchClickVisible: () {
+          //       // provider.toggleSearchIconCategory();
+          //     },
+          //     isSearchValueVisible: provider.isSearchIconVisible,
+          //   ),
+          // ),
           body: Container(
             width: SizeConfig.blockSizeHorizontal * 100,
             height: SizeConfig.blockSizeVertical * 100,
@@ -50,9 +60,7 @@ class _SettingsState extends State<Settings> {
                     child: ListView(
                       shrinkWrap: true,
                       physics: ScrollPhysics(),
-                      children: [
-                        
-                        simpleTransplantPlanWidget()],
+                      children: [simpleTransplantPlanWidget()],
                     ),
                   ),
                 ),
@@ -77,50 +85,64 @@ class _SettingsState extends State<Settings> {
             children: [
               // Title
               Padding(
-                padding: const EdgeInsets.only(left: 8, bottom: 8),
-                child: Text(
-                  textAlign: TextAlign.center,
-                  "General",
-                  style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 16),
+                padding: const EdgeInsets.only(left: 0, bottom: 0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.arrow_back_ios), 
+                      onPressed: () {
+                        Navigator.pop(context); 
+                      },
+                      padding: EdgeInsets.zero, 
+                      constraints: BoxConstraints(),
+                    ),
+                    Text(
+                      "General",
+                      style:
+                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 20),
+                    ),
+                  ],
                 ),
               ),
- Center(
-   child: Stack(
-     children: [
-       CircleAvatar(
-         radius: 50,
-         backgroundColor: Colors.grey.shade800,
-         backgroundImage:
-             // _profileImage != null ? FileImage(_profileImage!) :provider.profileImageUrl!=""?  NetworkImage(provider.profileImageUrl)
-             AssetImage(LMSImagePath.whiteCamera),
-         // child: imageProvider == null
-         //     ? Icon(
-         //         Icons.person,
-         //         size: 50,
-         //         color: Colors.white70,
-         //       )
-         //     : Image.network(provider.profileImageUrl),
-       ),
-       Positioned(
-         bottom: 0,
-         right: 0,
-         child: Container(
-           padding: EdgeInsets.all(4),
-           decoration: BoxDecoration(
-             color: Colors.blue,
-             shape: BoxShape.circle,
-           ),
-           child: Icon(
-             Icons.edit,
-             size: 18,
-             color: Colors.white,
-           ),
-         ),
-       ),
-     ],
-   ),
- ),
- SizedBox(height: SizeConfig.blockSizeVertical*2,),
+              Center(
+                child: Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 50,
+                      backgroundColor: Colors.grey.shade800,
+                      backgroundImage:
+                          // _profileImage != null ? FileImage(_profileImage!) :provider.profileImageUrl!=""?  NetworkImage(provider.profileImageUrl)
+                          AssetImage(LMSImagePath.whiteCamera),
+                      // child: imageProvider == null
+                      //     ? Icon(
+                      //         Icons.person,
+                      //         size: 50,
+                      //         color: Colors.white70,
+                      //       )
+                      //     : Image.network(provider.profileImageUrl),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.edit,
+                          size: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: SizeConfig.blockSizeVertical * 2,
+              ),
               // Wrap the CustomScrollView inside Expanded to avoid unbounded height error
               Card(
                 elevation: 1.0,
@@ -443,7 +465,7 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
               ),
-              
+
               SizedBox(
                 height: SizeConfig.blockSizeVertical * 1,
               ),

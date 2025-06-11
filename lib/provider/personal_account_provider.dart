@@ -15,6 +15,17 @@ class PersonalAccountProvider with ChangeNotifier {
     TextEditingController dobController = TextEditingController();
   TextEditingController  languageController= TextEditingController();
     TextEditingController  timeZoneController= TextEditingController();
+
+    TextEditingController seafarersNoController = TextEditingController();
+    TextEditingController passportNoController = TextEditingController();
+    TextEditingController departmentController = TextEditingController();
+    TextEditingController rankController = TextEditingController();
+    TextEditingController pinCodeController = TextEditingController();
+    TextEditingController countryController = TextEditingController();
+    TextEditingController cityController = TextEditingController();
+    TextEditingController stateController = TextEditingController();
+    TextEditingController COCController = TextEditingController();
+
   bool _isPasswordObscured = true;
 bool _isPasswordfieldObscured = true;
 

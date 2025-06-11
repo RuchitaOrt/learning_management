@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/screens/settings.dart';
+import 'package:learning_mgt/screens/settingshome.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -103,7 +104,7 @@ class CustomDrawer extends StatelessWidget {
               Navigator.of(
                 routeGlobalKey.currentContext!,
               ).pushNamed(
-                Settings.route,
+                SettingsHome.route,
                 arguments: {
                   'selectedPos': -1,
                   'isSignUp': false,
