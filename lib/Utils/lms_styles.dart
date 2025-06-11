@@ -61,8 +61,8 @@ class LMSStyles {
   );
   static const TextStyle tsHeadingbold = TextStyle(
     color: LearningColors.black,
-    fontWeight: FontWeight.w800,
-    fontSize: 12.0,
+    fontWeight: FontWeight.w400,
+    fontSize: 14.0,
   );
   static const TextStyle tsSubHeadingBold = TextStyle(
     color: LearningColors.black18,
@@ -82,7 +82,12 @@ class LMSStyles {
   static const TextStyle tsblackTileBold = TextStyle(
     color: LearningColors.black,
     fontWeight: FontWeight.w800,
-    fontSize: 20.0,
+    fontSize: 18.0,
+  );
+  static const TextStyle tsblackTileBold2 = TextStyle(
+    color: LearningColors.black,
+    fontWeight: FontWeight.w800,
+    fontSize: 16,
   );
   static const TextStyle tsWhiteNeutral300W500 = TextStyle(
     color: LearningColors.black,

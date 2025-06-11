@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:learning_mgt/Utils/regex_helper.dart';
+import 'package:learning_mgt/dto/DocumentField.dart';
 
 class SignUpProvider with ChangeNotifier {
   TextEditingController firstNameController = TextEditingController();
@@ -298,16 +299,64 @@ class SignUpProvider with ChangeNotifier {
 
     return null; // Return null if the password passes all checks
   }
+ List<DocumentField> documentFields = [];
+  Map<String, TextEditingController> controllers = {};
+  Map<String, String?> selectedFilePaths = {};
 
-  // Method to validate form
-  // bool validateForm() {
-  //   return _formKey.currentState?.validate() ?? false;
-  // }
+  Future<void> loadDocumentsFromAPI() async {
+    // Replace with real API
+    documentFields = [
+      DocumentField(name: "Birth Certificate", hint: "Upload Birth Certificate"),
+      DocumentField(name: "Passport Certificate", hint: "Upload Passport Certificate"),
+       DocumentField(name: "CDC Certificate", hint: "Upload CDC Certificate"),
+        DocumentField(name: "Course Completion Certificate", hint: "Upload Course Completion Certificate"),
+         DocumentField(name: "COC Certificate", hint: "Upload COC Certificate"),
 
-  //   bool validateDetailForm() {
-  //   return _formKey1.currentState?.validate() ?? false;
+    ];
+
+    for (var doc in documentFields) {
+      controllers[doc.name] = TextEditingController();
+      selectedFilePaths[doc.name] = null;
+    }
+
+    notifyListeners();
+  }
+
+  // void pickFile(String docName) {
+  //   // implement your file picker here
+  //   selectedFilePaths[docName] = "/mock/path/to/$docName.jpg";
+  //   notifyListeners();
   // }
-  //   bool validateUploadForm() {
-  //   return _formKey2.currentState?.validate() ?? false;
-  // }
+Future<void> pickFile(String docName) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'], // customize this
+  );
+
+  if (result != null && result.files.single.path != null) {
+    selectedFilePaths[docName] = result.files.single.path!;
+    final fileName = result.files.single.name;
+      controllers[docName]?.text = fileName;
+  } else {
+    // user canceled or error
+    selectedFilePaths[docName] = null;
+  }
+
+  notifyListeners();
+}
+
+  void removeFile(String docName) {
+    selectedFilePaths[docName] = null;
+    notifyListeners();
+  }
+
+  String? validateFile(String? val) {
+    return val == null || val.isEmpty ? "Required" : null;
+  }
+
+  void disposeAll() {
+    for (var controller in controllers.values) {
+      controller.dispose();
+    }
+  }
 }

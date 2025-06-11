@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:learning_mgt/screens/Ceritification.dart';
 import 'package:learning_mgt/screens/CourseDetailPage.dart';
 import 'package:learning_mgt/screens/HomePage.dart';
 import 'package:learning_mgt/screens/CoursePage.dart';
+import 'package:learning_mgt/screens/Recommendation.dart';
+import 'package:learning_mgt/screens/ResultScreen.dart';
+
 import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/screens/TrainingScreen.dart';
 import 'package:learning_mgt/screens/VerificationScreen.dart';
@@ -40,7 +44,7 @@ class Routers {
         return MaterialPageRoute(
           builder: (_) => CoursePage(),
         );
-         case CourseDetailPage.route:
+      case CourseDetailPage.route:
         return MaterialPageRoute(
           builder: (_) => CourseDetailPage(),
         );
@@ -48,9 +52,21 @@ class Routers {
         return MaterialPageRoute(
           builder: (_) => TabScreen(),
         );
-         case TrainingScreen.route:
+      case TrainingScreen.route:
         return MaterialPageRoute(
           builder: (_) => TrainingScreen(),
+        );
+      case Recommendation.route:
+        return MaterialPageRoute(
+          builder: (_) => Recommendation(),
+        );
+      case Ceritification.route:
+        return MaterialPageRoute(
+          builder: (_) => Ceritification(),
+        );
+      case ResultScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => ResultScreen(),
         );
       default:
         return MaterialPageRoute(builder: (_) => SplashScreen());

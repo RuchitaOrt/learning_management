@@ -27,8 +27,21 @@ final BorderSide enableBorder = BorderSide(
   width: 1.0,
 );
 
-class VerificationScreen extends StatelessWidget {
+class VerificationScreen extends StatefulWidget {
   static const String route = "/verificationScreens";
+
+  @override
+  State<VerificationScreen> createState() => _VerificationScreenState();
+}
+
+class _VerificationScreenState extends State<VerificationScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => Provider.of<SignUpProvider>(context, listen: false)
+        .loadDocumentsFromAPI());
+  }
+
   final List<String> steps = ['Basic', 'Detail', 'Upload'];
 
   final List<Widget> forms = [
@@ -36,6 +49,7 @@ class VerificationScreen extends StatelessWidget {
     DetailFormWidget(),
     UploadFormWidget(),
   ];
+
   Widget stepIndicator(
       BuildContext context, int currentStep, bool isSubmitted) {
     final steps = ['Basic', 'Detail', 'Upload'];
@@ -147,22 +161,23 @@ class VerificationScreen extends StatelessWidget {
                         ? forms[current]
                         : Center(
                             child: Text(
-                                'Your registration has been successfully submitted! '))),
+                                'Your registration has been successfully submitted! ',
+                                textAlign: TextAlign.center,))),
               ),
 
               if (isSubmitted)
                 Center(
                   child: ElevatedButton.icon(
                     onPressed: () {
-                     Navigator.of(
-                routeGlobalKey.currentContext!,
-              ).pushNamed(
-                TabScreen.route,
-                arguments: {
-                  'selectedPos': -1,
-                  'isSignUp': false,
-                },
-              );
+                      Navigator.of(
+                        routeGlobalKey.currentContext!,
+                      ).pushNamed(
+                        TabScreen.route,
+                        arguments: {
+                          'selectedPos': -1,
+                          'isSignUp': false,
+                        },
+                      );
                     },
                     label: Text(
                       'Go to Home',
@@ -624,125 +639,46 @@ class DetailFormWidget extends StatelessWidget {
 class UploadFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final signUpProvider = Provider.of<SignUpProvider>(context);
+    final provider = Provider.of<SignUpProvider>(context);
 
     return Form(
-      key: signUpProvider.formKeyUpload,
-      child: ListView(
-        padding: EdgeInsets.zero, // removes default padding
-        shrinkWrap: true,
-        physics: ClampingScrollPhysics(),
-        children: [
-          CustomTextFieldWidget(
-            title: LMSStrings.strBithCertificate,
-            hintText: LMSStrings.strBithCertificateHint,
-            onChange: (val) async {},
-            textEditingController: signUpProvider.birhtCertificateController,
-            autovalidateMode: AutovalidateMode.disabled,
-            validator: signUpProvider.validateBirthCertificate,
-            suffixIcon: GestureDetector(
-                onTap: () {
-                  //  signUpProvider.pickBirthCertificateFile();
-                  if (signUpProvider.selectedBirthCertificateFilePath == null) {
-                    signUpProvider.pickBirthCertificateFile("BirthCertificate");
-                  } else {
-                    showImageDialog(
-                        signUpProvider.selectedBirthCertificateFilePath,
-                        "BirthCertificate");
-                  }
-                },
-                child: Icon(
-                    signUpProvider.selectedBirthCertificateFilePath == null
-                        ? Icons.upload
-                        : Icons.remove_red_eye)),
-          ),
-          CustomTextFieldWidget(
-            title: LMSStrings.strPassportCertificate,
-            hintText: LMSStrings.strPassportCertificateHint,
-            onChange: (val) {},
-            textEditingController: signUpProvider.passportCerticateController,
-            autovalidateMode: AutovalidateMode.disabled,
-            validator: signUpProvider.validatePassportCertificate,
-            suffixIcon: GestureDetector(
-                onTap: () {
-                  if (signUpProvider.selectedPassport == null) {
-                    signUpProvider
-                        .pickBirthCertificateFile("PassportCertificate");
-                  } else {
-                    showImageDialog(
-                        signUpProvider.selectedPassport, "PassportCertificate");
-                  }
-                },
-                child: Icon(signUpProvider.selectedPassport == null
-                    ? Icons.upload
-                    : Icons.remove_red_eye)),
-          ),
-          CustomTextFieldWidget(
-            title: LMSStrings.strCDC,
-            hintText: LMSStrings.strCDCHint,
-            onChange: (val) {},
-            textEditingController: signUpProvider.CDCCertificateontroller,
-             suffixIcon: GestureDetector(
-                onTap: () {
-                 
-                  if (signUpProvider.selectedCDC == null) {
-                    signUpProvider.pickBirthCertificateFile("CDCCertificate");
-                  } else {
-                    showImageDialog(
-                        signUpProvider.selectedCDC,
-                        "CDCCertificate");
-                  }
-                },
-                child: Icon(
-                    signUpProvider.selectedCDC == null
-                        ? Icons.upload
-                        : Icons.remove_red_eye)),
-          ),
-          CustomTextFieldWidget(
-            title: LMSStrings.strCourseCompletionCertificate,
-            hintText: LMSStrings.strCourseCompletionCertificateHint,
-            onChange: (val) {},
-            textEditingController:
-                signUpProvider.CourseCompletionCertController,
-            suffixIcon: GestureDetector(
-                onTap: () {
-                 
-                  if (signUpProvider.selectedCompletionCertificate == null) {
-                    signUpProvider.pickBirthCertificateFile("CourseCompletionCertificate");
-                  } else {
-                    showImageDialog(
-                        signUpProvider.selectedCompletionCertificate,
-                        "CourseCompletionCertificate");
-                  }
-                },
-                child: Icon(
-                    signUpProvider.selectedCompletionCertificate == null
-                        ? Icons.upload
-                        : Icons.remove_red_eye)),
-          ),
-          CustomTextFieldWidget(
-            title: LMSStrings.strCOC,
-            hintText: LMSStrings.strCOCHint,
-            onChange: (val) {},
-            textEditingController: signUpProvider.COCCertificateController,
-             suffixIcon: GestureDetector(
-                onTap: () {
-                 
-                  if (signUpProvider.selectedCOC == null) {
-                    signUpProvider.pickBirthCertificateFile("COCCertificate");
-                  } else {
-                    showImageDialog(
-                        signUpProvider.selectedCOC,
-                        "COCCertificate");
-                  }
-                },
-                child: Icon(
-                    signUpProvider.selectedCOC == null
-                        ? Icons.upload
-                        : Icons.remove_red_eye)),
-          ),
-        ],
-      ),
+      key: provider.formKeyUpload,
+      child: provider.documentFields.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : ListView.builder(
+              itemCount: provider.documentFields.length,
+              itemBuilder: (context, index) {
+                final doc = provider.documentFields[index];
+                return CustomTextFieldWidget(
+                  title: doc.name,
+                  isFieldReadOnly: true,
+                  hintText: doc.hint,
+                  textEditingController: provider.controllers[doc.name]!,
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (_) => provider
+                      .validateFile(provider.selectedFilePaths[doc.name]),
+                  onChange: (val) {}, // optional
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      if (provider.selectedFilePaths[doc.name] == null) {
+                        provider.pickFile(doc.name);
+                      } else {
+                        showImageDialog(
+                          provider.selectedFilePaths[doc.name],
+                          doc.name,
+                        );
+                      }
+                    },
+                    child: Icon(
+                      provider.selectedFilePaths[doc.name] == null
+                          ? Icons.upload
+                          : Icons.remove_red_eye,
+                    ),
+                  ),
+                );
+              },
+            ),
+     
     );
   }
 

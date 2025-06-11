@@ -8,7 +8,6 @@ import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/screens/signIn_screen.dart';
 
-
 class SplashScreen extends StatefulWidget {
   static const String route = "/";
 
@@ -29,14 +28,11 @@ class _SplashScreenState extends State<SplashScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     // Utility().loadAPIConfig(context);
-     getAppVersion();
+    getAppVersion();
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
-
-
-   
 
     _startNavigationFallback();
   }
@@ -44,7 +40,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-  
+
     _controller.dispose();
     _navigationTimer?.cancel();
     super.dispose();
@@ -52,31 +48,27 @@ class _SplashScreenState extends State<SplashScreen>
 
   void _startNavigationFallback() {
     _navigationTimer = Timer(const Duration(seconds: 5), () async {
-      
-        _navigateToFallback();
-      
+      _navigateToFallback();
     });
   }
 
   void _navigateToFallback() async {
-   
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) =>  SignInScreen(),
+        builder: (_) => SignInScreen(),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-     SizeConfig().init(context);
+    SizeConfig().init(context);
     final height = MediaQuery.of(context).size.height;
 
     return Scaffold(
-     
       body: Container(
-        width: SizeConfig.blockSizeHorizontal *100,
+        width: SizeConfig.blockSizeHorizontal * 100,
         decoration: AppDecorations.gradientBackground,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -87,7 +79,6 @@ class _SplashScreenState extends State<SplashScreen>
               width: height / 6,
             ),
             const SizedBox(height: 10),
-           
           ],
         ),
       ),

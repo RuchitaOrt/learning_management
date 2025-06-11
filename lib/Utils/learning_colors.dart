@@ -23,6 +23,7 @@ class LearningColors {
   static const Color secondary100 = Color(0xffD2F7DF);
   static const Color secondary800 = Color(0xff003E00);
   static const Color lightOrange = Color(0xffFFD1B0);
+   static const Color darkOrange = Color.fromARGB(255, 237, 114, 27);
   static const Color darkBrown = Color(0xff8C3B00);
   static const Color yellow = Color(0xffFACC15);
    static const Color red = Color(0xffE53A3A);

@@ -6,20 +6,22 @@ import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/main.dart';
-import 'package:learning_mgt/provider/CourseProvider.dart';
+
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
+import 'package:learning_mgt/provider/RecommendedCourseProvider.dart';
 import 'package:learning_mgt/screens/CourseDetailPage.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
+import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
-class CoursePage extends StatefulWidget {
-  static const String route = "/CoursePage";
+class Recommendation extends StatefulWidget {
+  static const String route = "/Recommendation";
   @override
-  _CoursePageState createState() => _CoursePageState();
+  _RecommendationState createState() => _RecommendationState();
 }
 
-class _CoursePageState extends State<CoursePage> {
+class _RecommendationState extends State<Recommendation> {
   String? selectedCategory;
 
   @override
@@ -27,9 +29,9 @@ class _CoursePageState extends State<CoursePage> {
     super.initState();
 
     // Delay the initialization to avoid calling Provider before build
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
       final courseProvider =
-          Provider.of<CourseProvider>(context, listen: false);
+          Provider.of<RecommendedCourseProvider>(context, listen: false);
       if (courseProvider.coursesByCategory.isNotEmpty) {
         setState(() {
           selectedCategory = courseProvider.coursesByCategory.keys.first;
@@ -87,11 +89,12 @@ class _CoursePageState extends State<CoursePage> {
               title: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Filter', style: TextStyle(
-                    color: LearningColors.black18,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 20,
-                  )),
+                  Text('Filter',
+                      style: TextStyle(
+                        color: LearningColors.black18,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 20,
+                      )),
                   TextButton(
                     onPressed: () {
                       setState(() {
@@ -106,9 +109,7 @@ class _CoursePageState extends State<CoursePage> {
                     child: Text(
                       'Reset',
                       style: TextStyle(
-                        color: LearningColors.darkBlue,
-                        fontSize: 18
-                      ),
+                          color: LearningColors.darkBlue, fontSize: 18),
                     ),
                   ),
                 ],
@@ -184,7 +185,8 @@ class _CoursePageState extends State<CoursePage> {
                       spacing: 8.0,
                       runSpacing: 4.0,
                       children: vesselTypes.map((vesselType) {
-                        final isSelected = selectedVesselTypes.contains(vesselType);
+                        final isSelected =
+                            selectedVesselTypes.contains(vesselType);
                         return FilterChip(
                           label: Text(vesselType),
                           selected: isSelected,
@@ -305,7 +307,10 @@ class _CoursePageState extends State<CoursePage> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancel', style: TextStyle(color: LearningColors.darkBlue),),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: LearningColors.darkBlue),
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
@@ -323,7 +328,8 @@ class _CoursePageState extends State<CoursePage> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: LearningColors.darkBlue,
                   ),
-                  child: Text('Apply', style: TextStyle(color: LearningColors.white)),
+                  child: Text('Apply',
+                      style: TextStyle(color: LearningColors.white)),
                 ),
               ],
             );
@@ -335,105 +341,100 @@ class _CoursePageState extends State<CoursePage> {
 
   @override
   Widget build(BuildContext context) {
-    final courseProvider = Provider.of<CourseProvider>(context);
+    final courseProvider = Provider.of<RecommendedCourseProvider>(context);
     final categories = courseProvider.coursesByCategory.keys.toList();
 
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
       // Show loading spinner while fetching data
 
-      return WillPopScope(
-        onWillPop: () async {
-          ShowDialogs.exitDialog();
-          return false;
-        },
-        child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: CustomAppBar(
-              isSearchClickVisible: () {
-                // provider.toggleSearchIconCategory();
-              },
-              isSearchValueVisible: provider.isSearchIconVisible,
-            ),
+      return Scaffold(
+         drawer: CustomDrawer(),
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(kToolbarHeight),
+          child: CustomAppBar(
+            isSearchClickVisible: () {
+              // provider.toggleSearchIconCategory();
+            },
+            isSearchValueVisible: provider.isSearchIconVisible,
           ),
-          body: Container(
-            width: SizeConfig.blockSizeHorizontal * 100,
-            height: SizeConfig.blockSizeVertical * 100,
-            decoration: AppDecorations.gradientBackground,
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Text(
-                            "Courses",
-                            style:
-                                LMSStyles.tsHeadingbold.copyWith(fontSize: 20),
-                          ),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            _showFilterDialog(context);
-                          },
-                          child: SvgPicture.asset(
-                            LMSImagePath.filter,
-                            width: 40,
-                            height: 40,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: SizeConfig.blockSizeVertical * 1,
-                    ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
+        ),
+        body: Container(
+          width: SizeConfig.blockSizeHorizontal * 100,
+          height: SizeConfig.blockSizeVertical * 100,
+          decoration: AppDecorations.gradientBackground,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
                         padding: const EdgeInsets.only(left: 8),
-                        child: Row(
-                          children: categories.map((category) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 8.0), // spacing between chips
-                              child: ChoiceChip(
-                                label: Text(category),
-                                selected: selectedCategory == category,
-                                showCheckmark: false,
-                                onSelected: (selected) {
-                                  setState(() {
-                                    selectedCategory =
-                                        selected ? category : null;
-                                  });
-                                },
-                                selectedColor: LearningColors.primaryBlue550,
-                                backgroundColor: Colors.grey.shade200,
-                                labelStyle: TextStyle(
-                                  color: selectedCategory == category
-                                      ? LearningColors.neutral100
-                                      : Colors.black,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                        child: Text(
+                          "Recommendation",
+                          style:
+                              LMSStyles.tsHeadingbold.copyWith(fontSize: 20),
                         ),
                       ),
+                      GestureDetector(
+                        onTap: () {
+                          _showFilterDialog(context);
+                        },
+                        child: SvgPicture.asset(
+                          LMSImagePath.filter,
+                          width: 40,
+                          height: 40,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: SizeConfig.blockSizeVertical * 1,
+                  ),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Row(
+                        children: categories.map((category) {
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                                right: 8.0), // spacing between chips
+                            child: ChoiceChip(
+                              label: Text(category),
+                              selected: selectedCategory == category,
+                              showCheckmark: false,
+                              onSelected: (selected) {
+                                setState(() {
+                                  selectedCategory =
+                                      selected ? category : null;
+                                });
+                              },
+                              selectedColor: LearningColors.primaryBlue550,
+                              backgroundColor: Colors.grey.shade200,
+                              labelStyle: TextStyle(
+                                color: selectedCategory == category
+                                    ? LearningColors.neutral100
+                                    : Colors.black,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                    SizedBox(height: 8),
-                    if (selectedCategory != null &&
-                        courseProvider.coursesByCategory[selectedCategory!] !=
-                            null) ...[
-                      ...courseProvider.coursesByCategory[selectedCategory!]!
-                          .map((course) => _buildVerticalCard(course))
-                          .toList()
-                    ]
-                  ],
-                ),
+                  ),
+                  SizedBox(height: 8),
+                  if (selectedCategory != null &&
+                      courseProvider.coursesByCategory[selectedCategory!] !=
+                          null) ...[
+                    ...courseProvider.coursesByCategory[selectedCategory!]!
+                        .map((course) => _buildVerticalCard(course))
+                        .toList()
+                  ]
+                ],
               ),
             ),
           ),
@@ -442,13 +443,13 @@ class _CoursePageState extends State<CoursePage> {
     });
   }
 
-  Widget _buildVerticalCard(Course course) {
+  Widget _buildVerticalCard(RecommendedCourse course) {
+    final Color baseColor = getButtonColorByStatus(course.courseStatus);
     return GestureDetector(
-      onTap: ()
-      {
-          Navigator.of(routeGlobalKey.currentContext!)
-                        .pushNamed(CourseDetailPage.route)
-                        .then((value) {});
+      onTap: () {
+        Navigator.of(routeGlobalKey.currentContext!)
+            .pushNamed(CourseDetailPage.route)
+            .then((value) {});
       },
       child: Card(
         elevation: 0.5,
@@ -468,7 +469,7 @@ class _CoursePageState extends State<CoursePage> {
                       width: SizeConfig.blockSizeHorizontal * 1,
                     ),
                     Container(
-                      width: SizeConfig.blockSizeHorizontal * 70,
+                      width: SizeConfig.blockSizeHorizontal * 75,
                       child: Text(
                         course.institue,
                         style: LMSStyles.tsHeadingbold,
@@ -477,22 +478,9 @@ class _CoursePageState extends State<CoursePage> {
                       ),
                     ),
                   ]),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical * 1,
-              ),
-              Text(course.title, style: LMSStyles.tsSubHeadingBold),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical * 0.1,
-              ),
-              Text(
-                course.description,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: LMSStyles.tsSubHeadingBold
-                    .copyWith(fontWeight: FontWeight.w200, fontSize: 12),
-              ),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical * 2,
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(course.title, style: LMSStyles.tsSubHeadingBold),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -513,22 +501,7 @@ class _CoursePageState extends State<CoursePage> {
                     ),
                    
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(LMSImagePath.usermultiple),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 1,
-                          ),
-                          Text(course.noofpeoplevisited,
-                              style: LMSStyles.tsHeading),
-                        ],
-                      ),
-                    ),
-                   
-                  ),
+                 
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -546,54 +519,71 @@ class _CoursePageState extends State<CoursePage> {
                   ),
                 ],
               ),
-              Divider(),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '\$ ${course.discountedAmount}',
-                            overflow: TextOverflow.ellipsis,
-                            style: LMSStyles.tsHeading
-                                .copyWith(decoration: TextDecoration.lineThrough),
-                          ),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 2,
-                          ),
-                          Text('\$ ${course.amount}',
-                              overflow: TextOverflow.ellipsis,
-                              style: LMSStyles.tsSubHeadingBold),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 5,
-                          ),
-                          SvgPicture.asset(LMSImagePath.offer),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 1,
-                          ),
-                          Text("${course.offerPercentage} off",
-                              overflow: TextOverflow.ellipsis,
-                              style: LMSStyles.tsSubHeadingBold
-                                  .copyWith(color: Colors.green)),
-                        ],
+                child: Container(height: SizeConfig.blockSizeVertical*4.5,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: baseColor.withOpacity(0.1), 
+                      foregroundColor: baseColor, // 🔵 
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                        side: BorderSide(color: baseColor), 
+                      ),
+                      elevation: 0, 
+                    ),
+                    child: Text(
+                      getButtonTextByStatus(course.courseStatus),
+                      style: LMSStyles.tsWhiteNeutral50W60016.copyWith(color: baseColor), // 🔵 text
+                    ),
+                  ),
+                ),
+              ),
+              Divider(),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                         (course.status == LMSStrings.strRequested)
+                            ?LearningColors.primaryBlue550
+                            : (course.status == LMSStrings.strPending)
+                                ?LearningColors.neutral300
+                                : (course.status == LMSStrings.strReappy)
+                                    ? LearningColors.red
+                                    : LearningColors.darkBlue,
+                        
+                     
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 5,
+                      ),
+                      child: Text(
+                        (course.status == LMSStrings.strRequested)
+                            ? LMSStrings.strRequested
+                            : (course.status == LMSStrings.strPending)
+                                ? LMSStrings.strDecline
+                                : (course.status == LMSStrings.strReappy)
+                                    ? LMSStrings.strDeclined
+                                    : LMSStrings.strEnrollNow,
+                        style: LMSStyles.tsWhiteNeutral50W60016,
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigator.of(context)
-                        //     .pushNamed(Settings.route)
-                        //     .then((value) {});
-                        Navigator.of(context)
-                            .pushNamed(CoursePage.route)
-                            .then((value) {});
-                      },
+                  ),
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal * 3,
+                  ),
+                             (course.status == LMSStrings.strRequested)?Container():     Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size(SizeConfig.blockSizeHorizontal * 24,
-                            SizeConfig.blockSizeVertical * 4),
                         backgroundColor: LearningColors.darkBlue,
                         padding:
                             EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -603,17 +593,45 @@ class _CoursePageState extends State<CoursePage> {
                         elevation: 5,
                       ),
                       child: Text(
-                        LMSStrings.strEnrollNow,
+                    (course.status == LMSStrings.strRequested)
+                            ? LMSStrings.strRequested
+                            : (course.status == LMSStrings.strPending)
+                                ? LMSStrings.strAccept
+                                : (course.status == LMSStrings.strReappy)
+                                    ? LMSStrings.strReappy
+                                    : LMSStrings.strEnrollNow,   
                         style: LMSStyles.tsWhiteNeutral50W60016,
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  ),
+                ],
               ),
+               SizedBox(
+                    height: SizeConfig.blockSizeVertical * 1,
+                  ),
             ],
           ),
         ),
       ),
     );
+  }
+}
+Color getButtonColorByStatus(String status) {
+  if (status == LMSStrings.strRecommended) {
+    return LearningColors.purple;
+  } else if (status == LMSStrings.strMandatory) {
+    return LearningColors.darkOrange;
+  }  else {
+    return LearningColors.darkBlue;
+  }
+}
+
+String getButtonTextByStatus(String status) {
+  if (status == LMSStrings.strRecommended) {
+    return LMSStrings.strRecommended;
+  } else if (status == LMSStrings.strMandatory) {
+    return LMSStrings.strMandatory;
+  } else {
+    return LMSStrings.strEnrollNow;
   }
 }
