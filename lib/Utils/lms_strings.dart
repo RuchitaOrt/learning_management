@@ -78,8 +78,12 @@ class LMSStrings {
   static const String strMandatory = "Mandatory";
   static const String strRecommended = "Recommended";
   static const String strDecline = "Decline";
-   static const String strAccept = "Accept";
+  static const String strAccept = "Accept";
   static const String strDeclined = "Declined";
-   static const String strDownload = "Download";
-    static const String strView = "View";
+  static const String strDownload = "Download";
+  static const String strView = "View";
+
+  static const String strNoCompetent = "Not Yet Competent";
+  static const String strCompetent = "Competent";
+  static const String strInreview = "In Review";
 }

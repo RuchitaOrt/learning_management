@@ -5,6 +5,7 @@ import 'package:learning_mgt/provider/CertificateProvider.dart';
 import 'package:learning_mgt/provider/CourseProvider.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/RecommendedCourseProvider.dart';
+import 'package:learning_mgt/provider/ResultProvider.dart';
 import 'package:learning_mgt/provider/StepProvider.dart';
 
 import 'package:learning_mgt/provider/TrainingProvider.dart';
@@ -71,6 +72,9 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider<CertificateCourseprovider>(
           create: (context) => CertificateCourseprovider(),
+        ),
+          ChangeNotifierProvider<ResultProvider>(
+          create: (context) => ResultProvider(),
         ),
       ],
       child: MaterialApp(
