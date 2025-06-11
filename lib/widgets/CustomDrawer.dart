@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/screens/Ceritification.dart';
+import 'package:learning_mgt/screens/Recommendation.dart';
+import 'package:learning_mgt/screens/ResultScreen.dart';
 
 import 'package:learning_mgt/screens/settings.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
@@ -54,26 +57,38 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.home,
             label: 'Recommendation',
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to home
+              Navigator.of(
+                routeGlobalKey.currentContext!,
+              ).pushNamed(
+                Recommendation.route,
+                
+              );
             },
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.home,
-            label: 'Exam',
+            label: 'Result',
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to home
+             Navigator.of(
+                routeGlobalKey.currentContext!,
+              ).pushNamed(
+                ResultScreen.route,
+                
+              );
             },
           ),
           _buildDrawerItem(
             context: context,
             icon: Icons.person,
-            label: 'Certificates',
+            label: 'Certification',
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to profile
+             Navigator.of(
+                routeGlobalKey.currentContext!,
+              ).pushNamed(
+                Ceritification.route,
+                
+              );
             },
           ),
 

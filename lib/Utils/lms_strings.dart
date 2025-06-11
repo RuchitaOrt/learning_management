@@ -70,5 +70,20 @@ class LMSStrings {
   static const String strEnterChangeassword = "Change Password";
   static const String strSaveChanges = "Save Changes";
   static const String strEnrollNow = "Enroll Now";
-   static const String strReapplylNow = "Re-Apply";
+  static const String strReapplylNow = "Re-Apply";
+
+  static const String strRequested = "Requested";
+  static const String strReappy = "ReApply";
+  static const String strPending = "Pending";
+  static const String strMandatory = "Mandatory";
+  static const String strRecommended = "Recommended";
+  static const String strDecline = "Decline";
+  static const String strAccept = "Accept";
+  static const String strDeclined = "Declined";
+  static const String strDownload = "Download";
+  static const String strView = "View";
+
+  static const String strNoCompetent = "Not Yet Competent";
+  static const String strCompetent = "Competent";
+  static const String strInreview = "In Review";
 }

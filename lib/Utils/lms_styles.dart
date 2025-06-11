@@ -71,13 +71,13 @@ class LMSStyles {
   );
   static const TextStyle tsHeadingbold = TextStyle(
     color: LearningColors.black,
-    fontWeight: FontWeight.w800,
-    fontSize: 12.0,
+    fontWeight: FontWeight.w400,
+    fontSize: 14.0,
   );
   static const TextStyle tsSubHeadingBold = TextStyle(
     color: LearningColors.black18,
     fontWeight: FontWeight.w600,
-    fontSize: 16.0,
+    fontSize: 14.0,
   );
   static const TextStyle tsOrange50W60016 = TextStyle(
     color: Color.fromARGB(255, 221, 163, 87),
