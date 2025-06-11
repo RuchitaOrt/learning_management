@@ -9,6 +9,7 @@ import 'package:learning_mgt/provider/ResultProvider.dart';
 import 'package:learning_mgt/provider/StepProvider.dart';
 
 import 'package:learning_mgt/provider/TrainingProvider.dart';
+import 'package:learning_mgt/provider/instituteprovider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/provider/sign_In_provider.dart';
 import 'package:learning_mgt/provider/sign_up_provider.dart';
@@ -76,6 +77,15 @@ class _MyAppState extends State<MyApp> {
           ChangeNotifierProvider<ResultProvider>(
           create: (context) => ResultProvider(),
         ),
+        
+         ChangeNotifierProvider<InstituteProvider>(
+          create: (context) => InstituteProvider(),
+        ), 
+       ChangeNotifierProvider(
+      create: (_) => StepProvider(),
+      
+    ),
+    
       ],
       child: MaterialApp(
         title: 'LMS',

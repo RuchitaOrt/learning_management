@@ -9,6 +9,11 @@ class LMSStyles {
     fontWeight: FontWeight.w600,
     fontSize: 25.0,
   );
+   static const TextStyle tsblueW900 = TextStyle(
+    color: LearningColors.darkBlue,
+    fontWeight: FontWeight.w900,
+    fontSize: 16.0,
+  );
   static const TextStyle tssecondary550W700 = TextStyle(
     color: LearningColors.secondary550,
     fontWeight: FontWeight.w700,
