@@ -50,7 +50,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
     UploadFormWidget(),
   ];
 
-  Widget stepIndicator(
+/*  Widget stepIndicator(
       BuildContext context, int currentStep, bool isSubmitted) {
     final steps = ['Basic', 'Detail', 'Upload'];
 
@@ -88,6 +88,67 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 style: TextStyle(
                   fontSize: 12,
                   color: isCurrent ? Colors.black : Colors.grey.shade600,
+                ),
+              ),
+            ],
+          );
+        } else {
+          final lineIndex = (index - 1) ~/ 2;
+          final bool isLineActive = lineIndex < currentStep ||
+              (isSubmitted && lineIndex == currentStep - 1);
+          return Expanded(
+            child: Container(
+              height: 2,
+              color: isLineActive ? Colors.green : Colors.grey.shade300,
+            ),
+          );
+        }
+      }),
+    );
+  }*/
+
+  Widget stepIndicator(BuildContext context, int currentStep, bool isSubmitted) {
+    final steps = ['Basic', 'Detail', 'Upload'];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(steps.length * 2 - 1, (index) {
+        if (index.isEven) {
+          final stepIndex = index ~/ 2;
+          final bool isCompleted = stepIndex < currentStep ||
+              (isSubmitted && stepIndex == currentStep);
+          final bool isCurrent = stepIndex == currentStep && !isSubmitted;
+
+          Color bgColor;
+          Widget childContent;
+
+          if (isCompleted) {
+            bgColor = Colors.green; // Keep completed steps green
+            childContent = Icon(Icons.check, color: Colors.white, size: 20);
+          } else if (isCurrent) {
+            bgColor = LearningColors.darkBlue; // Current step uses darkBlue
+            childContent = Text('${stepIndex + 1}',
+                style: TextStyle(color: Colors.white));
+          } else {
+            bgColor = Colors.grey.shade400; // Inactive steps remain grey
+            childContent = Text('${stepIndex + 1}',
+                style: TextStyle(color: Colors.white));
+          }
+
+          return Column(
+            children: [
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: bgColor,
+                child: childContent,
+              ),
+              SizedBox(height: 6),
+              Text(
+                steps[stepIndex],
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isCurrent ? LearningColors.darkBlue : Colors.grey.shade600,
+                  fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
             ],
@@ -153,7 +214,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               ),
               SizedBox(height: SizeConfig.blockSizeHorizontal * 4),
               stepIndicator(context, current, isSubmitted),
-              // SizedBox(height: 30),
+              SizedBox(height: 10),
               Expanded(
                 child: current == -1
                     ? BasicFormWidget()
@@ -189,6 +250,72 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 )
               else
                 Row(
+                  children: [
+                    // Back Button (50% width)
+                    Expanded(
+                      flex: 1,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          /*backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          side: BorderSide(color: LearningColors.neutral300),
+                          padding: EdgeInsets.symmetric(vertical: 16),*/
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          padding: EdgeInsets.symmetric(vertical: 16), // internal padding
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 5,
+                        ),
+                        onPressed: current > 0 ? stepProvider.previousStep : null,
+                        child: Text('Back'),
+                      ),
+                    ),
+                    SizedBox(width: 8), // Add some spacing between buttons
+
+                    // Next/Submit Button (50% width)
+                    Expanded(
+                      flex: 1,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          /*backgroundColor: LearningColors.darkBlue,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 16),*/
+                          backgroundColor: LearningColors.darkBlue,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(vertical: 16), // internal padding
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 5,
+                        ),
+                        onPressed: () {
+                          final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+                          final formKey = current == 0
+                              ? signUpProvider.formKeyBasic
+                              : current == 1
+                              ? signUpProvider.formKeyDetail
+                              : signUpProvider.formKeyUpload;
+
+                          if (formKey.currentState?.validate() ?? false) {
+                            if (current == 2) {
+                              stepProvider.submit();
+                            } else {
+                              stepProvider.nextStep();
+                            }
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Please fix errors before proceeding'))
+                            );
+                          }
+                        },
+                        child: Text(current == 2 ? 'Submit' : 'Next'),
+                      ),
+                    ),
+                  ],
+                ),
+                /*Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
@@ -222,7 +349,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       child: Text(current == 2 ? 'Submit' : 'Next'),
                     ),
                   ],
-                ),
+                ),*/
 //
             ],
           ),
@@ -232,7 +359,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
   }
 }
 
-InputDecoration CommonInputDecoration(
+/*InputDecoration CommonInputDecoration(
     {required String hint,
     required bool isObscured,
     required VoidCallback toggle}) {
@@ -260,6 +387,95 @@ InputDecoration CommonInputDecoration(
     fillColor: LearningColors.white,
     hintStyle: LMSStyles.tsHintstyle,
   );
+}*/
+
+InputDecoration CommonInputDecoration({
+  required String hint,
+  required String label,
+  required bool isObscured,
+  required VoidCallback toggle,
+}) {
+  return InputDecoration(
+    labelText: label,
+    hintText: hint,
+    floatingLabelBehavior: FloatingLabelBehavior.auto,
+    errorStyle: LMSStyles.tsWhiteNeutral300W50012.copyWith(
+      fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2,
+    ),
+    /*border: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: enableBorder,
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: focusedBorder,
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: enableBorder,
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: enableBorder,
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: enableBorder,
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: focusedBorder,
+    ),*/
+    border: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+    ),
+    disabledBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+    ),
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+    ),
+    suffixIcon: IconButton(
+      color: LearningColors.neutral300,
+      onPressed: toggle,
+      icon: Icon(isObscured ? Icons.visibility_off : Icons.visibility),
+    ),
+    filled: true,
+    fillColor: Colors.grey.shade50,
+    hintStyle: LMSStyles.tsHintstyle.copyWith(
+      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
+    ),
+    /*labelStyle: LMSStyles.tsHintstyle.copyWith(
+      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
+      color: LearningColors.neutral300,
+    ),*/
+    /*labelStyle: LMSStyles.tsHeading.copyWith(fontSize: LMSStyles.tsHeading.fontSize! + 2,
+      color: LearningColors.neutral300,),*/
+    labelStyle: LMSStyles.tsHeading.copyWith(fontSize: LMSStyles.tsHeading.fontSize! + 2),
+    /*floatingLabelStyle: LMSStyles.tsHintstyle.copyWith(
+      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
+      color: LearningColors.darkBlue,
+    ),*/
+    contentPadding: EdgeInsets.symmetric(
+      vertical: 10, // Increased padding to accommodate larger text
+      horizontal: 16.0,
+    ),
+  );
 }
 
 // BasicFormWidget: Step 1
@@ -275,35 +491,28 @@ class BasicFormWidget extends StatelessWidget {
         shrinkWrap: true,
         physics: ClampingScrollPhysics(),
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // First Name
-              Expanded(
-                child: CustomTextFieldWidget(
-                  title: LMSStrings.strFirstName,
-                  hintText: LMSStrings.strEnterFirstName,
-                  onChange: (val) {},
-                  textEditingController: signUpProvider.firstNameController,
-                  autovalidateMode: AutovalidateMode.disabled,
-                  validator: signUpProvider.validateFirstName,
-                ),
-              ),
-              SizedBox(width: 10), // Space between fields
+          Expanded(
+            child: CustomTextFieldWidget(
+              title: LMSStrings.strFirstName,
+              hintText: LMSStrings.strEnterFirstName,
+              onChange: (val) {},
+              textEditingController: signUpProvider.firstNameController,
+              autovalidateMode: AutovalidateMode.disabled,
+              validator: signUpProvider.validateFirstName,
+            ),
+          ),
+          SizedBox(width: 10), // Space between fields
 
-              // Last Name
-              Expanded(
-                child: CustomTextFieldWidget(
-                  title: LMSStrings.strLastName,
-                  hintText: LMSStrings.strEnterLastName,
-                  onChange: (val) {},
-                  textEditingController: signUpProvider.lastNameController,
-                  autovalidateMode: AutovalidateMode.disabled,
-                  validator: signUpProvider.validateLastName,
-                ),
-              ),
-            ],
+          // Last Name
+          Expanded(
+            child: CustomTextFieldWidget(
+              title: LMSStrings.strLastName,
+              hintText: LMSStrings.strEnterLastName,
+              onChange: (val) {},
+              textEditingController: signUpProvider.lastNameController,
+              autovalidateMode: AutovalidateMode.disabled,
+              validator: signUpProvider.validateLastName,
+            ),
           ),
 
           // Email
@@ -322,7 +531,7 @@ class BasicFormWidget extends StatelessWidget {
               child: Text(
                 "Send OTP",
                 style: TextStyle(
-                    color: LearningColors.primaryBlue500,
+                    color: LearningColors.darkBlue,
                     fontWeight: FontWeight.bold,
                     fontSize: 12),
               ),
@@ -357,10 +566,10 @@ class BasicFormWidget extends StatelessWidget {
             // ),
           ),
 
-          SizedBox(height: 12),
-          Text(LMSStrings.strpassword,
-              style: LMSStyles.tsWhiteNeutral100W50014),
           SizedBox(height: 8),
+          /*Text(LMSStrings.strpassword,
+              style: LMSStyles.tsWhiteNeutral100W50014),
+          SizedBox(height: 8),*/
           TextFormField(
             style: LMSStyles.tsWhiteNeutral300W50012,
             obscureText: signUpProvider.isPasswordObscured,
@@ -368,14 +577,15 @@ class BasicFormWidget extends StatelessWidget {
             validator: signUpProvider.validatePassword,
             decoration: CommonInputDecoration(
               hint: LMSStrings.strEnterpassword,
+              label: LMSStrings.strpassword,
               isObscured: signUpProvider.isPasswordObscured,
               toggle: signUpProvider.togglePasswordVisibility,
             ),
           ),
-          SizedBox(height: 12),
-          Text(LMSStrings.strConfirmpassword,
+          SizedBox(height: 14),
+          /*Text(LMSStrings.strConfirmpassword,
               style: LMSStyles.tsWhiteNeutral100W50014),
-          SizedBox(height: 8),
+          SizedBox(height: 8),*/
           TextFormField(
             style: LMSStyles.tsWhiteNeutral300W50012,
             obscureText: signUpProvider.isconfirmPasswordObscured,
@@ -383,6 +593,7 @@ class BasicFormWidget extends StatelessWidget {
             validator: signUpProvider.validateConfirmPassword,
             decoration: CommonInputDecoration(
               hint: LMSStrings.strEnterConfirmpassword,
+              label: LMSStrings.strConfirmpassword,
               isObscured: signUpProvider.isconfirmPasswordObscured,
               toggle: signUpProvider.toggleConfirmPasswordVisibility,
             ),

@@ -29,6 +29,11 @@ class LMSStyles {
     fontWeight: FontWeight.w500,
     fontSize: 12.0,
   );
+   static const TextStyle tsWhiteNeutral300W500122 = TextStyle(
+    color: LearningColors.black18,
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
+  );
    static const TextStyle tsHintstyle= TextStyle(
     color: Colors.blueGrey,
     fontWeight: FontWeight.w500,
@@ -44,10 +49,20 @@ class LMSStyles {
     fontWeight: FontWeight.w300,
     fontSize: 14.0,
   );
+   static const TextStyle tsWhiteNeutral300W3002 = TextStyle(
+    color: LearningColors.neutral500,
+    fontWeight: FontWeight.w300,
+    fontSize: 16,
+  );
    static const TextStyle tsWhiteNeutral50W60016 = TextStyle(
     color: LearningColors.neutral50,
     fontWeight: FontWeight.w400,
     fontSize: 12.0,
+  );
+   static const TextStyle tsWhiteNeutral50W600162 = TextStyle(
+    color: LearningColors.neutral50,
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
   );
    static const TextStyle tsHeading = TextStyle(
     color: LearningColors.black18,
@@ -67,7 +82,7 @@ class LMSStyles {
   static const TextStyle tsOrange50W60016 = TextStyle(
     color: Color.fromARGB(255, 221, 163, 87),
     fontWeight: FontWeight.w400,
-    fontSize: 14.0,
+    fontSize: 16,
   );
    static const TextStyle tsPrimaryblue500300W500 = TextStyle(
     color: LearningColors.primaryBlue500,
@@ -88,6 +103,11 @@ class LMSStyles {
     color: LearningColors.black,
     fontWeight: FontWeight.w500,
     fontSize: 14.0,
+  );
+  static const TextStyle tsWhiteNeutral300W5002 = TextStyle(
+    color: LearningColors.black,
+    fontWeight: FontWeight.w500,
+    fontSize: 16,
   );
 }
 class AppDecorations {
