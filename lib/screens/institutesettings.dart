@@ -63,6 +63,7 @@ class _InstituteScreenState extends State<InstituteScreen> {
                     ...List.generate(
                       instituteProvider.institutesData.length,
                       (index) => InstituteExpansionTile(
+                        key: ValueKey(index), // Important for proper state management
                         instituteData: instituteProvider.institutesData[index],
                         isExpanded: expandedIndex == index,
                         onExpansionChanged: (bool expanded) {
@@ -83,7 +84,7 @@ class _InstituteScreenState extends State<InstituteScreen> {
   }
 }
 
-class InstituteExpansionTile extends StatelessWidget {
+class InstituteExpansionTile extends StatefulWidget {
   final Map<String, dynamic> instituteData;
   final bool isExpanded;
   final ValueChanged<bool> onExpansionChanged;
@@ -96,11 +97,49 @@ class InstituteExpansionTile extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  _InstituteExpansionTileState createState() => _InstituteExpansionTileState();
+}
+
+class _InstituteExpansionTileState extends State<InstituteExpansionTile> 
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _expandAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _expandAnimation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  void didUpdateWidget(InstituteExpansionTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isExpanded) {
+      _controller.forward();
+    } else {
+      _controller.reverse();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final String name = instituteData['name'] as String;
-    final String iconPath = instituteData['iconPath'] as String;
+    final String name = widget.instituteData['name'] as String;
+    final String iconPath = widget.instituteData['iconPath'] as String;
     final List<Map<String, dynamic>> courses =
-        instituteData['courses'] as List<Map<String, dynamic>>;
+        widget.instituteData['courses'] as List<Map<String, dynamic>>;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
@@ -118,96 +157,104 @@ class InstituteExpansionTile extends StatelessWidget {
             ),
           ],
         ),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            dividerColor: Colors.transparent,
-            listTileTheme: ListTileTheme.of(context).copyWith(
-              contentPadding: EdgeInsets.zero,
-            ),
-            splashFactory: NoSplash.splashFactory,
-            highlightColor: Colors.transparent,
-          ),
-          child: ExpansionTile(
-            initiallyExpanded: isExpanded,
-            onExpansionChanged: onExpansionChanged,
-            tilePadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            collapsedShape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
-            title: Row(
-              children: [
-                Image.asset(
-                  iconPath,
-                  width: 48,
-                  height: 48,
-                  fit: BoxFit.contain,
-                  alignment: Alignment.topCenter,
+        child: Column(
+          children: [
+            // Header tile that controls expansion
+            InkWell(
+              onTap: () {
+                widget.onExpansionChanged(!widget.isExpanded);
+              },
+              borderRadius: BorderRadius.circular(16.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      iconPath,
+                      width: 48,
+                      height: 48,
+                      fit: BoxFit.contain,
+                      alignment: Alignment.topCenter,
+                    ),
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        name,
+                        style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
+                      ),
+                    ),
+                    AnimatedRotation(
+                      turns: widget.isExpanded ? 0.5 : 0.0,
+                      duration: Duration(milliseconds: 300),
+                      child: Icon(Icons.expand_more),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 16),
-                Expanded(
-                  child: Text(
-                    name,
-                    style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
-                  ),
-                ),
-              ],
+              ),
             ),
-            children: courses.map((course) {
-              final String title = course['title'] as String;
-              final String description = course['description'] as String;
-              final String enrollmentNo = course['enrollmentNo'] as String;
-              final String date = course['date'] as String;
-              final String time = course['time'] as String;
-              final String duration = course['duration'] as String;
-              final String mode = course['mode'] as String;
-              final double price = course['price'] as double;
-      
-              return Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: LMSStyles.tsblackTileBold.copyWith(fontSize: 14),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          description,
-                          style: LMSStyles.tsblackNeutralbold
-                              .copyWith(fontSize: 12, color: Colors.grey.shade700),
-                        ),
-                        SizedBox(height: 12),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // Animated expansion content
+            SizeTransition(
+              sizeFactor: _expandAnimation,
+              child: Column(
+                children: courses.map((course) {
+                  final String title = course['title'] as String;
+                  final String description = course['description'] as String;
+                  final String enrollmentNo = course['enrollmentNo'] as String;
+                  final String date = course['date'] as String;
+                  final String time = course['time'] as String;
+                  final String duration = course['duration'] as String;
+                  final String mode = course['mode'] as String;
+                  final double price = course['price'] as double;
+
+                  return Padding(
+                    padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildEnrollmentDetails(
-                              enrollmentNo: enrollmentNo,
-                              date: date,
-                              time: time,
-                              duration: duration,
-                              mode: mode,
+                            Text(
+                              title,
+                              style: LMSStyles.tsblackTileBold.copyWith(fontSize: 14),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              description,
+                              style: LMSStyles.tsblackNeutralbold
+                                  .copyWith(fontSize: 12, color: Colors.grey.shade700),
+                            ),
+                            SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildEnrollmentDetails(
+                                  enrollmentNo: enrollmentNo,
+                                  date: date,
+                                  time: time,
+                                  duration: duration,
+                                  mode: mode,
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              '\$${price.toStringAsFixed(2)}',
+                              style: LMSStyles.tsblueW900.copyWith(fontSize: 16),
                             ),
                           ],
                         ),
-                        SizedBox(height: 12),
-                        Text(
-                          '\$${price.toStringAsFixed(2)}',
-                          style: LMSStyles.tsblueW900.copyWith(fontSize: 16),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ],
         ),
       ),
     );
