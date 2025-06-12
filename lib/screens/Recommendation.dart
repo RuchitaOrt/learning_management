@@ -29,7 +29,7 @@ class _RecommendationState extends State<Recommendation> {
     super.initState();
 
     // Delay the initialization to avoid calling Provider before build
-     WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       final courseProvider =
           Provider.of<RecommendedCourseProvider>(context, listen: false);
       if (courseProvider.coursesByCategory.isNotEmpty) {
@@ -348,7 +348,7 @@ class _RecommendationState extends State<Recommendation> {
       // Show loading spinner while fetching data
 
       return Scaffold(
-         drawer: CustomDrawer(),
+        drawer: CustomDrawer(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: CustomAppBar(
@@ -375,8 +375,7 @@ class _RecommendationState extends State<Recommendation> {
                         padding: const EdgeInsets.only(left: 8),
                         child: Text(
                           "Recommendation",
-                          style:
-                              LMSStyles.tsHeadingbold.copyWith(fontSize: 20),
+                          style: LMSStyles.tsHeadingbold.copyWith(fontSize: 18),
                         ),
                       ),
                       GestureDetector(
@@ -409,8 +408,7 @@ class _RecommendationState extends State<Recommendation> {
                               showCheckmark: false,
                               onSelected: (selected) {
                                 setState(() {
-                                  selectedCategory =
-                                      selected ? category : null;
+                                  selectedCategory = selected ? category : null;
                                 });
                               },
                               selectedColor: LearningColors.primaryBlue550,
@@ -499,9 +497,7 @@ class _RecommendationState extends State<Recommendation> {
                         ],
                       ),
                     ),
-                   
                   ),
-                 
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -511,32 +507,35 @@ class _RecommendationState extends State<Recommendation> {
                           SizedBox(
                             width: SizeConfig.blockSizeHorizontal * 1,
                           ),
-                          Text(course.courseDuration, style: LMSStyles.tsHeading),
+                          Text(course.courseDuration,
+                              style: LMSStyles.tsHeading),
                         ],
                       ),
                     ),
-                   
                   ),
                 ],
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Container(height: SizeConfig.blockSizeVertical*4.5,
+                child: Container(
+                  height: SizeConfig.blockSizeVertical * 4.5,
                   child: ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: baseColor.withOpacity(0.1), 
-                      foregroundColor: baseColor, // 🔵 
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                      backgroundColor: baseColor.withOpacity(0.1),
+                      foregroundColor: baseColor, // 🔵
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 2),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: baseColor), 
+                        side: BorderSide(color: baseColor),
                       ),
-                      elevation: 0, 
+                      elevation: 0,
                     ),
                     child: Text(
                       getButtonTextByStatus(course.courseStatus),
-                      style: LMSStyles.tsWhiteNeutral50W60016.copyWith(color: baseColor), // 🔵 text
+                      style: LMSStyles.tsWhiteNeutral50W60016
+                          .copyWith(color: baseColor), // 🔵 text
                     ),
                   ),
                 ),
@@ -549,15 +548,13 @@ class _RecommendationState extends State<Recommendation> {
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                         (course.status == LMSStrings.strRequested)
-                            ?LearningColors.primaryBlue550
-                            : (course.status == LMSStrings.strPending)
-                                ?LearningColors.neutral300
-                                : (course.status == LMSStrings.strReappy)
-                                    ? LearningColors.red
-                                    : LearningColors.darkBlue,
-                        
-                     
+                            (course.status == LMSStrings.strRequested)
+                                ? LearningColors.primaryBlue550
+                                : (course.status == LMSStrings.strPending)
+                                    ? LearningColors.neutral300
+                                    : (course.status == LMSStrings.strReappy)
+                                        ? LearningColors.red
+                                        : LearningColors.darkBlue,
                         padding:
                             EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         shape: RoundedRectangleBorder(
@@ -580,35 +577,37 @@ class _RecommendationState extends State<Recommendation> {
                   SizedBox(
                     width: SizeConfig.blockSizeHorizontal * 3,
                   ),
-                             (course.status == LMSStrings.strRequested)?Container():     Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: LearningColors.darkBlue,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  (course.status == LMSStrings.strRequested)
+                      ? Container()
+                      : Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: LearningColors.darkBlue,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 5),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 5,
+                            ),
+                            child: Text(
+                              (course.status == LMSStrings.strRequested)
+                                  ? LMSStrings.strRequested
+                                  : (course.status == LMSStrings.strPending)
+                                      ? LMSStrings.strAccept
+                                      : (course.status == LMSStrings.strReappy)
+                                          ? LMSStrings.strReappy
+                                          : LMSStrings.strEnrollNow,
+                              style: LMSStyles.tsWhiteNeutral50W60016,
+                            ),
+                          ),
                         ),
-                        elevation: 5,
-                      ),
-                      child: Text(
-                    (course.status == LMSStrings.strRequested)
-                            ? LMSStrings.strRequested
-                            : (course.status == LMSStrings.strPending)
-                                ? LMSStrings.strAccept
-                                : (course.status == LMSStrings.strReappy)
-                                    ? LMSStrings.strReappy
-                                    : LMSStrings.strEnrollNow,   
-                        style: LMSStyles.tsWhiteNeutral50W60016,
-                      ),
-                    ),
-                  ),
                 ],
               ),
-               SizedBox(
-                    height: SizeConfig.blockSizeVertical * 1,
-                  ),
+              SizedBox(
+                height: SizeConfig.blockSizeVertical * 1,
+              ),
             ],
           ),
         ),
@@ -616,12 +615,13 @@ class _RecommendationState extends State<Recommendation> {
     );
   }
 }
+
 Color getButtonColorByStatus(String status) {
   if (status == LMSStrings.strRecommended) {
     return LearningColors.purple;
   } else if (status == LMSStrings.strMandatory) {
     return LearningColors.darkOrange;
-  }  else {
+  } else {
     return LearningColors.darkBlue;
   }
 }

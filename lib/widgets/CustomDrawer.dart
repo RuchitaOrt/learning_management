@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/screens/Ceritification.dart';
+import 'package:learning_mgt/screens/CoursePage.dart';
+import 'package:learning_mgt/screens/HomePage.dart';
 import 'package:learning_mgt/screens/Recommendation.dart';
 import 'package:learning_mgt/screens/ResultScreen.dart';
-
-import 'package:learning_mgt/screens/settings.dart';
+import 'package:learning_mgt/screens/faq_screen.dart';
 import 'package:learning_mgt/screens/settingshome.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 
@@ -56,6 +57,18 @@ class CustomDrawer extends StatelessWidget {
           _buildDrawerItem(
             context: context,
             icon: Icons.home,
+            label: 'Home',
+            onTap: () {
+              Navigator.of(
+                routeGlobalKey.currentContext!,
+              ).pushNamed(
+                HomePage.route,
+              );
+            },
+          ),
+          _buildDrawerItem(
+            context: context,
+            icon: Icons.recommend,
             label: 'Recommendation',
             onTap: () {
               Navigator.of(
@@ -68,7 +81,7 @@ class CustomDrawer extends StatelessWidget {
           ),
           _buildDrawerItem(
             context: context,
-            icon: Icons.home,
+            icon: Icons.book,
             label: 'Result',
             onTap: () {
              Navigator.of(
@@ -107,6 +120,15 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.question_mark,
             label: 'FAQ',
             onTap: () {
+              Navigator.of(
+                routeGlobalKey.currentContext!,
+              ).pushNamed(
+                FAQScreen.route,
+                arguments: {
+                  'selectedPos': -1,
+                  'isSignUp': false,
+                },
+              );
             }
           ),
           _buildDrawerItem(

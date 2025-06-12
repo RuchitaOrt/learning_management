@@ -47,7 +47,7 @@ class _InstituteScreenState extends State<InstituteScreen> {
                           ),
                           Text(
                             "Institutes",
-                            style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 20),
+                            style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 18),
                           ),
                         ],
                       ),

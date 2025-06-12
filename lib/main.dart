@@ -9,6 +9,7 @@ import 'package:learning_mgt/provider/ResultProvider.dart';
 import 'package:learning_mgt/provider/StepProvider.dart';
 
 import 'package:learning_mgt/provider/TrainingProvider.dart';
+import 'package:learning_mgt/provider/faqprovider.dart';
 import 'package:learning_mgt/provider/instituteprovider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/provider/sign_In_provider.dart';
@@ -64,16 +65,16 @@ class _MyAppState extends State<MyApp> {
         ),
         ChangeNotifierProvider<CourseProvider>(
           create: (context) => CourseProvider(),
-        ), 
-         ChangeNotifierProvider<InstituteProvider>(
+        ),
+        ChangeNotifierProvider<InstituteProvider>(
           create: (context) => InstituteProvider(),
-        ), 
-       ChangeNotifierProvider(
-      create: (_) => StepProvider(),
-      
-    ),
-    
-        
+        ),
+        ChangeNotifierProvider<FAQProvider>(
+          create: (context) => FAQProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => StepProvider(),
+        ),
         ChangeNotifierProvider(
           create: (_) => StepProvider(),
         ),
@@ -83,7 +84,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<CertificateCourseprovider>(
           create: (context) => CertificateCourseprovider(),
         ),
-          ChangeNotifierProvider<ResultProvider>(
+        ChangeNotifierProvider<ResultProvider>(
           create: (context) => ResultProvider(),
         ),
       ],

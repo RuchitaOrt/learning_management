@@ -95,7 +95,7 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
                     Text(
                       "Seafarers",
                       style:
-                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 20),
+                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 18),
                     ),
                   ],
                 ),

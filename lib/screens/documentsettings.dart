@@ -221,7 +221,7 @@ class _DocumentSettingState extends State<DocumentSetting> {
                     Text(
                       "Documents",
                       style:
-                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 20),
+                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 18),
                     ),
                   ],
                 ),

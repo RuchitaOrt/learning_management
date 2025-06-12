@@ -99,7 +99,7 @@ class _SettingsState extends State<Settings> {
                     Text(
                       "General",
                       style:
-                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 20),
+                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 18),
                     ),
                   ],
                 ),
