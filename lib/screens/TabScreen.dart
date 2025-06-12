@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/dto/tab_dto.dart';
+import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/Tabprovider.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
@@ -44,7 +45,8 @@ class _TabScreenState extends State<TabScreen> {
               if (provider.selectedIndex == -1) {
                 final now = DateTime.now();
                 if (_lastBackPressed == null ||
-                    now.difference(_lastBackPressed!) > const Duration(seconds: 10)) {
+                    now.difference(_lastBackPressed!) >
+                        const Duration(seconds: 10)) {
                   _lastBackPressed = now;
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text("Press back again to exit")),
@@ -58,6 +60,7 @@ class _TabScreenState extends State<TabScreen> {
               }
             },
             child: Scaffold(
+              key: scaffoldKey,
               drawer: CustomDrawer(),
               body: provider.getCurrentPage(),
               floatingActionButton: FloatingActionButton(
@@ -74,18 +77,21 @@ class _TabScreenState extends State<TabScreen> {
                       : Colors.grey,
                 ),
               ),
-              floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerDocked,
               bottomNavigationBar: ClipRRect(
-                 borderRadius: const BorderRadius.only(
-    topLeft: Radius.circular(16),
-    topRight: Radius.circular(16),
-  ),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(16),
+                  topRight: Radius.circular(16),
+                ),
                 child: BottomAppBar(
                   shape: const CircularNotchedRectangle(),
                   notchMargin: 6,
                   color: LearningColors.darkBlue,
                   child: SizedBox(
-                    height:  Theme.of(context).platform == TargetPlatform.iOS ? 45 : 50,
+                    height: Theme.of(context).platform == TargetPlatform.iOS
+                        ? 45
+                        : 50,
                     child: Row(
                       children: [
                         // Left tab
@@ -116,7 +122,7 @@ class _TabScreenState extends State<TabScreen> {
             isSelected ? tab.imagePathSelected : tab.imagePathUnselected,
             height: 18,
             colorFilter: ColorFilter.mode(
-              isSelected ?LearningColors.white : Colors.grey,
+              isSelected ? LearningColors.white : Colors.grey,
               BlendMode.srcIn,
             ),
           ),

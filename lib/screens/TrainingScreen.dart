@@ -5,6 +5,7 @@ import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
+import 'package:learning_mgt/main.dart';
 
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/TrainingProvider.dart';
@@ -52,6 +53,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
           return false;
         },
         child: Scaffold(
+         
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: CustomAppBar(
@@ -59,6 +61,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                 // provider.toggleSearchIconCategory();
               },
               isSearchValueVisible: provider.isSearchIconVisible,
+               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
             ),
           ),
           body: Container(
