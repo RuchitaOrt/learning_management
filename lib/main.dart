@@ -17,7 +17,7 @@ import 'package:learning_mgt/provider/sign_up_provider.dart';
 import 'package:learning_mgt/routes/routers.dart';
 import 'package:learning_mgt/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
-
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 final GlobalKey<NavigatorState> routeGlobalKey = GlobalKey();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -87,6 +87,15 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<ResultProvider>(
           create: (context) => ResultProvider(),
         ),
+        
+         ChangeNotifierProvider<InstituteProvider>(
+          create: (context) => InstituteProvider(),
+        ), 
+       ChangeNotifierProvider(
+      create: (_) => StepProvider(),
+      
+    ),
+    
       ],
       child: MaterialApp(
         title: 'LMS',

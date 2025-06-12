@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/dto/tab_dto.dart';
+import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/Tabprovider.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
@@ -59,6 +60,7 @@ class _TabScreenState extends State<TabScreen> {
               }
             },
             child: Scaffold(
+              key: scaffoldKey,
               drawer: CustomDrawer(),
               body: provider.getCurrentPage(),
               floatingActionButton: FloatingActionButton(

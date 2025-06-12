@@ -274,6 +274,7 @@ class _SettingsState extends State<Settings> {
                             validator: personalprovider.validateConfirmPassword,
                             decoration: CommonInputDecoration(
                               hint: LMSStrings.strEnterChangeassword,
+                              label: LMSStrings.strEnterChangeassword,
                               isObscured: personalprovider.isPasswordObscured,
                               toggle: personalprovider.togglePasswordVisibility,
                             ),

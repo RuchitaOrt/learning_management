@@ -3,6 +3,7 @@ import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
+import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/ResultProvider.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
@@ -67,7 +68,8 @@ class _ResultScreenState extends State<ResultScreen> {
     return ChangeNotifierProvider(
       create: (_) => ResultProvider(),
       child: Scaffold(
-        drawer: CustomDrawer(),
+        key: scaffoldKey,
+       drawer: CustomDrawer(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: CustomAppBar(
@@ -75,6 +77,7 @@ class _ResultScreenState extends State<ResultScreen> {
               // provider.toggleSearchIconCategory();
             },
             isSearchValueVisible: false,
+             onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
           ),
         ),
         body: Consumer<ResultProvider>(

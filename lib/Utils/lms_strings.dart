@@ -18,7 +18,7 @@ class LMSStrings {
   static const String strSignIn = "Sign In";
   static const String strSignUp = "Sign Up";
   static const String strCreateAnAccount = "Create an account";
-  static const String strForgetPassword = "Forgot password ?";
+  static const String strForgetPassword = "Forgot password?";
   static const String strForgetYourPassword = "Forgot your password?";
   static const String strForgetPasswordDetail =
       "Enter the email address associated with your \naccount, and we'll send you a link to reset your \npassword.";

@@ -151,6 +151,124 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
       validator: widget.validator,
       showCursor: !widget.isFieldReadOnly && widget.onTapField == null,
       onTap: widget.onTap ??
+              () async {
+            if (widget.onTapField != null) {
+              String value = await widget.onTapField!();
+              updateTextValue(value);
+            }
+            _focusNode.requestFocus();
+          },
+      onChanged: (value) {
+        if (widget.onChange != null) {
+          widget.onChange!(value);
+        }
+        setState(() {});
+      },
+      /*decoration: InputDecoration(
+        labelText: widget.title,
+        labelStyle: LMSStyles.tsHeading.copyWith(fontSize: LMSStyles.tsHeading.fontSize! + 2),
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        hintText: widget.hintText,
+        hintStyle: LMSStyles.tsHintstyle.copyWith(fontSize: LMSStyles.tsHintstyle.fontSize! + 2),
+        errorStyle: LMSStyles.tsWhiteNeutral300W50012.copyWith(fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2),
+        counterText: "",
+        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+        border: OutlineInputBorder(borderRadius: borderRadius, borderSide: enableBorder),
+        focusedBorder: OutlineInputBorder(borderRadius: borderRadius, borderSide: focusedBorder),
+        enabledBorder: OutlineInputBorder(borderRadius: borderRadius, borderSide: enableBorder),
+        disabledBorder: OutlineInputBorder(borderRadius: borderRadius, borderSide: enableBorder),
+        errorBorder: OutlineInputBorder(borderRadius: borderRadius, borderSide: enableBorder),
+        focusedErrorBorder: OutlineInputBorder(borderRadius: borderRadius, borderSide: focusedBorder),
+        filled: true,
+        fillColor: LearningColors.white,
+        prefixIcon: widget.leadingIcon != null
+            ? Container(
+          margin: const EdgeInsets.only(right: 10, left: 10),
+          child: widget.leadingIcon,
+        )
+            : null,
+        prefixIconConstraints: const BoxConstraints(minHeight: 20, minWidth: 20, maxHeight: 40, maxWidth: 40),
+        suffixIcon: widget.suffixIcon != null
+            ? Container(
+          margin: const EdgeInsets.only(right: 10, left: 10),
+          child: widget.suffixIcon,
+        )
+            : null,
+        errorMaxLines: 3,
+      ),*/
+      decoration: InputDecoration(
+        labelText: widget.title,
+        labelStyle: LMSStyles.tsHeading.copyWith(fontSize: LMSStyles.tsHeading.fontSize! + 2),
+        floatingLabelBehavior: FloatingLabelBehavior.auto,
+        hintText: widget.hintText,
+        hintStyle: LMSStyles.tsHintstyle.copyWith(fontSize: LMSStyles.tsHintstyle.fontSize! + 2),
+        errorStyle: LMSStyles.tsWhiteNeutral300W50012.copyWith(fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2),
+        counterText: "",
+        contentPadding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+        border: OutlineInputBorder(
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: borderRadius,
+          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+        ),
+        filled: true,
+        fillColor: Colors.grey.shade50,
+        prefixIcon: widget.leadingIcon != null
+            ? Container(
+          margin: const EdgeInsets.only(right: 10, left: 10),
+          child: widget.leadingIcon,
+        )
+            : null,
+        prefixIconConstraints: const BoxConstraints(minHeight: 20, minWidth: 20, maxHeight: 40, maxWidth: 40),
+        suffixIcon: widget.suffixIcon != null
+            ? Container(
+          margin: const EdgeInsets.only(right: 10, left: 10),
+          child: widget.suffixIcon,
+        )
+            : null,
+        errorMaxLines: 3,
+      ),
+
+      style: LMSStyles.tsWhiteNeutral300W50012.copyWith(fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2),
+      minLines: widget.textFieldLines == 0 ? 1 : widget.textFieldLines,
+      maxLines: widget.textFieldLines == 0 ? 1 : widget.textFieldLines,
+      maxLength: widget.maxCharacterLength > 0 ? widget.maxCharacterLength : null,
+    );
+  }
+
+  /*Widget _textFieldWidget() {
+    return TextFormField(
+      textCapitalization: widget.textCapitalization,
+      autovalidateMode: widget.autovalidateMode,
+      controller: widget.textEditingController,
+      readOnly: widget.isFieldReadOnly || widget.onTapField != null,
+      focusNode: _focusNode,
+      enabled: !widget.isFieldDisabled,
+      keyboardType: widget.textInputType,
+      textInputAction: TextInputAction.done,
+      inputFormatters: widget.inputFormatters,
+      onEditingComplete: () => FocusScope.of(context).unfocus(),
+      validator: widget.validator,
+      showCursor: !widget.isFieldReadOnly && widget.onTapField == null,
+      onTap: widget.onTap ??
           () async {
             if (widget.onTapField != null) {
               String value = await widget.onTapField!();
@@ -210,7 +328,7 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
       maxLength:
           widget.maxCharacterLength > 0 ? widget.maxCharacterLength : null,
     );
-  }
+  }*/
 
   Widget _errorTextWidget() {
     return widget.errorText != null

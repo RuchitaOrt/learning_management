@@ -4,6 +4,7 @@ import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
+import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/screens/documentsettings.dart';
@@ -38,13 +39,15 @@ class _SettingsHomeState extends State<SettingsHome> {
           return true;
         },
         child: Scaffold(
-          drawer: CustomDrawer(),
+          key: scaffoldKey,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: CustomAppBar(
               isSearchClickVisible: () {
                 // provider.toggleSearchIconCategory();
+                
               },
+               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
               isSearchValueVisible: provider.isSearchIconVisible,
             ),
           ),

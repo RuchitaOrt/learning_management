@@ -347,6 +347,7 @@ class _CoursePageState extends State<CoursePage> {
           return false;
         },
         child: Scaffold(
+         
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: CustomAppBar(
@@ -354,6 +355,7 @@ class _CoursePageState extends State<CoursePage> {
                 // provider.toggleSearchIconCategory();
               },
               isSearchValueVisible: provider.isSearchIconVisible,
+               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
             ),
           ),
           body: Container(

@@ -45,6 +45,7 @@ class _CeritificationState extends State<Ceritification> {
       // Show loading spinner while fetching data
 
       return Scaffold(
+        key: scaffoldKey,
         drawer: CustomDrawer(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -53,6 +54,7 @@ class _CeritificationState extends State<Ceritification> {
               // provider.toggleSearchIconCategory();
             },
             isSearchValueVisible: provider.isSearchIconVisible,
+             onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
           ),
         ),
         body: Container(
