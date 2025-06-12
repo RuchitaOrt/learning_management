@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
@@ -13,16 +12,15 @@ import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
 class CustomAppBar extends StatefulWidget {
- 
   final VoidCallback isSearchClickVisible;
   final bool isSearchValueVisible;
-  
+  final VoidCallback? onMenuPressed;
 
   CustomAppBar({
     super.key,
-
     required this.isSearchClickVisible,
-   required  this.isSearchValueVisible,
+    required this.isSearchValueVisible,
+     this.onMenuPressed,
   });
 
   @override
@@ -33,10 +31,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
 
-   void _onSearch(String query) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel(); // Cancel previous timer
+  void _onSearch(String query) {
+    if (_debounce?.isActive ?? false)
+      _debounce!.cancel(); // Cancel previous timer
 
-    _debounce = Timer(const Duration(milliseconds: 500), () { // Debounce API call
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      // Debounce API call
       if (query.isNotEmpty) {
         // Provider.of<LandingScreenProvider>(routeGlobalKey.currentContext!, listen: false)
         //     .getSearchList(query);
@@ -46,7 +46,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
     setState(() {
       searchController.text = query; // Ensure text remains in field
       searchController.selection = TextSelection.fromPosition(
-        TextPosition(offset: searchController.text.length), // Keeps cursor at the end
+        TextPosition(
+            offset: searchController.text.length), // Keeps cursor at the end
       );
     });
   }
@@ -66,34 +67,48 @@ class _CustomAppBarState extends State<CustomAppBar> {
       backgroundColor: LearningColors.neutral100,
       elevation: 0,
       automaticallyImplyLeading: false,
-      flexibleSpace:
-   
-           Padding(
-              padding: EdgeInsets.only(top: Platform.isAndroid ? 45 : 60, left: 8),
-              child: Row(
-                children: [
-                  Padding(
-                    padding:  EdgeInsets.only(left: SizeConfig.blockSizeHorizontal *2.5,),
-                    child: SvgPicture.asset(
-                     LMSImagePath.splashLogo,
-                      height: 30,
-                    ),
-                  ),
-                  Spacer(),
-                  
-                  IconButton(
-                    icon: const Icon(Icons.search,size: 25,),
-                    onPressed: widget.isSearchClickVisible,
-                  ),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal * 0.2),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: SvgPicture.asset(LMSImagePath.notify),
-                  ),
-               
-                ],
+      flexibleSpace: Padding(
+        padding: EdgeInsets.only(top: Platform.isAndroid ? 45 : 60, left: 8),
+        child: Row(
+          children: [
+            Padding(
+              padding: EdgeInsets.only(
+                left: SizeConfig.blockSizeHorizontal * 1,
+              ),
+              child: SvgPicture.asset(
+                LMSImagePath.splashLogo,
+                height: 50,
               ),
             ),
+            Spacer(),
+
+            IconButton(
+              icon: const Icon(
+                Icons.search,
+                size: 25,
+              ),
+              onPressed: widget.isSearchClickVisible,
+            ),
+            SizedBox(width: SizeConfig.blockSizeHorizontal * 0.2),
+            Padding(
+              padding: const EdgeInsets.only(right: 15),
+              child: SvgPicture.asset(LMSImagePath.notify),
+            ),
+           SizedBox(width: SizeConfig.blockSizeHorizontal * 0.2),
+
+            // Menu icon to open drawer
+            
+             GestureDetector(
+              onTap:widget.onMenuPressed ,
+               child: Padding(
+                padding: const EdgeInsets.only(right: 15),
+                child: Image.asset(LMSImagePath.menu,width: 20,height: 20,
+                color: LearningColors.darkBlue,),
+                           ),
+             ),
+          ],
+        ),
+      ),
     );
   }
 

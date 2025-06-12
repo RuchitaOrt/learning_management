@@ -16,7 +16,7 @@ import 'package:learning_mgt/provider/sign_up_provider.dart';
 import 'package:learning_mgt/routes/routers.dart';
 import 'package:learning_mgt/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
-
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 final GlobalKey<NavigatorState> routeGlobalKey = GlobalKey();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

@@ -349,6 +349,7 @@ class _RecommendationState extends State<Recommendation> {
 
       return Scaffold(
          drawer: CustomDrawer(),
+         key: scaffoldKey,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: CustomAppBar(
@@ -356,6 +357,7 @@ class _RecommendationState extends State<Recommendation> {
               // provider.toggleSearchIconCategory();
             },
             isSearchValueVisible: provider.isSearchIconVisible,
+             onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
           ),
         ),
         body: Container(
