@@ -351,7 +351,8 @@ class _FAQDetailScreenState extends State<FAQDetailScreen> {
         body: Container(
           decoration: AppDecorations.gradientBackground,
           child: Padding(
-            padding: EdgeInsetsGeometry.fromLTRB(0.0, 32.0, 0.0, 0.0),
+            padding: EdgeInsets.fromLTRB(0, 32, 0, 32),
+            // EdgeInsetsGeometry.fromLTRB(0.0, 32.0, 0.0, 0.0),
             child: Column(
               children: [
                 // Custom Header
