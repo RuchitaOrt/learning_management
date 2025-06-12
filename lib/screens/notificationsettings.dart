@@ -99,7 +99,7 @@ class _NotificationSettingsState extends State<NotificationSettings> {
                     Text(
                       "Notifications",
                       style:
-                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 20),
+                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 18),
                     ),
                   ],
                 ),

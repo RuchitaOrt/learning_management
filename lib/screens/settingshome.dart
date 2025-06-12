@@ -13,6 +13,7 @@ import 'package:learning_mgt/screens/notificationsettings.dart';
 import 'package:learning_mgt/screens/seafarerssettings.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/screens/settings.dart';
+import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:provider/provider.dart'; // For SizeConfig
 
 class SettingsHome extends StatefulWidget {
@@ -119,21 +120,21 @@ class _SettingsHomeState extends State<SettingsHome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 0, bottom: 0),
+                padding: const EdgeInsets.only(left: 8.0),
                 child: Row(
                   children: [
-                    IconButton(
-                      icon: Icon(Icons.arrow_back_ios), 
-                      onPressed: () {
-                        Navigator.pop(context); 
-                      },
-                      padding: EdgeInsets.zero, 
-                      constraints: BoxConstraints(),
-                    ),
+                    // IconButton(
+                    //   icon: Icon(Icons.arrow_back_ios), 
+                    //   onPressed: () {
+                    //     Navigator.pop(context); 
+                    //   },
+                    //   padding: EdgeInsets.zero, 
+                    //   constraints: BoxConstraints(),
+                    // ),
                     Text(
                       "Settings",
                       style:
-                          LMSStyles.tsblackNeutralbold.copyWith(fontSize: 20),
+                          LMSStyles.tsHeadingbold.copyWith(fontSize: 18),
                     ),
                   ],
                 ),
