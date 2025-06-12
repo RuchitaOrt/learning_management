@@ -96,16 +96,29 @@ class SignInScreen extends StatelessWidget {
                                   autovalidateMode: AutovalidateMode.disabled,
                                   validator: signInProvider.validateEmailField,
                                 ),
-                                //SizedBox(height: SizeConfig.blockSizeVertical * 2),
+                                SizedBox(height: SizeConfig.blockSizeVertical * 2),
                                 // Password Field with Validation
-                                CustomTextFieldWidget(
+                                /*CustomTextFieldWidget(
                                   title: LMSStrings.strpassword,
                                   hintText: LMSStrings.strEnterpassword,
                                   onChange: (val) {},
                                   textEditingController: signInProvider.passwordController,
                                   autovalidateMode: AutovalidateMode.disabled,
                                   validator: signInProvider.validatePassword,
+                                ),*/
+                                TextFormField(
+                                  style: LMSStyles.tsWhiteNeutral300W50012,
+                                  obscureText: signInProvider.isPasswordObscured,
+                                  controller: signInProvider.passwordController,
+                                  validator: signInProvider.validatePassword,
+                                  decoration: CommonInputDecoration(
+                                    hint: LMSStrings.strEnterpassword,
+                                    label: LMSStrings.strpassword,
+                                    isObscured: signInProvider.isPasswordObscured,
+                                    toggle: signInProvider.togglePasswordVisibility,
+                                  ),
                                 ),
+                                SizedBox(height: SizeConfig.blockSizeVertical * 0.2),
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: GestureDetector(
@@ -193,6 +206,7 @@ class SignInScreen extends StatelessWidget {
                                     /// Checkbox + Terms
                                     Checkbox(
                                       value: signInProvider.isCheckedTerms,
+                                      activeColor: LearningColors.darkBlue,
                                       onChanged: (val) {
                                         signInProvider.toggleTermsCheckbox(val);
                                       },
@@ -202,7 +216,7 @@ class SignInScreen extends StatelessWidget {
                                     Expanded(
                                       child: RichText(
                                         text: TextSpan(
-                                          text: 'I accept the terms and privacy policy',
+                                          text: ' I accept the terms and privacy policy',
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 14,
@@ -315,7 +329,7 @@ class SignInScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: SizeConfig.blockSizeHorizontal * 4),
+                SizedBox(height: SizeConfig.blockSizeHorizontal * 12),
                 GestureDetector(
                   onTap: () {
                     Navigator.of(routeGlobalKey.currentContext!)
@@ -328,11 +342,11 @@ class SignInScreen extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: LMSStrings.strHaveAnAccount,
-                            style: LMSStyles.tsWhiteNeutral300W3002,
+                            style: LMSStyles.tsWhiteNeutral300W3002.copyWith(color: LearningColors.neutralBlue750),
                           ),
                           TextSpan(
                             text: LMSStrings.strCreateAnAccount,
-                            style: LMSStyles.tsOrange50W60016.copyWith(decoration: TextDecoration.underline),
+                            style: LMSStyles.tsOrange50W60016.copyWith(decoration: TextDecoration.underline, color: LearningColors.darkBrown),
                           ),
                         ],
                       ),

@@ -17,7 +17,7 @@ import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
 final BorderRadius borderRadius = const BorderRadius.all(
-  Radius.circular(8),
+  Radius.circular(12),
 );
 final BorderSide focusedBorder = const BorderSide(
   width: 1.0,
@@ -399,80 +399,53 @@ InputDecoration CommonInputDecoration({
     labelText: label,
     hintText: hint,
     floatingLabelBehavior: FloatingLabelBehavior.auto,
-    errorStyle: LMSStyles.tsWhiteNeutral300W50012.copyWith(
-      fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2,
-    ),
-    /*border: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: enableBorder,
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: focusedBorder,
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: enableBorder,
-    ),
-    disabledBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: enableBorder,
-    ),
-    errorBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: enableBorder,
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: focusedBorder,
+    /*hintStyle: LMSStyles.tsHintstyle.copyWith(
+      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
+      color: Colors.grey.shade400,
     ),*/
     border: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: LearningColors.darkBlue, width: 2.0),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
+      borderRadius: BorderRadius.circular(12),
       borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
     ),
     disabledBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.grey.shade200, width: 1.0),
     ),
     errorBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.red.shade400, width: 1.0),
     ),
     focusedErrorBorder: OutlineInputBorder(
-      borderRadius: borderRadius,
-      borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+      borderRadius: BorderRadius.circular(12),
+      borderSide: BorderSide(color: Colors.red.shade400, width: 1.0),
+    ),
+    filled: true,
+    fillColor: LearningColors.transparent,
+    errorStyle: LMSStyles.tsWhiteNeutral300W50012.copyWith(
+      fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2,
     ),
     suffixIcon: IconButton(
       color: LearningColors.neutral300,
       onPressed: toggle,
       icon: Icon(isObscured ? Icons.visibility_off : Icons.visibility),
     ),
-    filled: true,
-    fillColor: Colors.grey.shade50,
     hintStyle: LMSStyles.tsHintstyle.copyWith(
-      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
+      fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
     ),
-    /*labelStyle: LMSStyles.tsHintstyle.copyWith(
-      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
-      color: LearningColors.neutral300,
-    ),*/
-    /*labelStyle: LMSStyles.tsHeading.copyWith(fontSize: LMSStyles.tsHeading.fontSize! + 2,
-      color: LearningColors.neutral300,),*/
-    labelStyle: LMSStyles.tsHeading.copyWith(fontSize: LMSStyles.tsHeading.fontSize! + 2),
-    /*floatingLabelStyle: LMSStyles.tsHintstyle.copyWith(
-      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
-      color: LearningColors.darkBlue,
-    ),*/
+    // labelStyle: LMSStyles.tsHeading.copyWith(fontSize: LMSStyles.tsHeading.fontSize! + 2),
+    labelStyle: LMSStyles.tsHintstyle.copyWith(
+      fontSize: LMSStyles.tsHintstyle.fontSize! + 5,
+    ),
     contentPadding: EdgeInsets.symmetric(
-      vertical: 10, // Increased padding to accommodate larger text
+      vertical: 15, // Increased padding to accommodate larger text
       horizontal: 16.0,
     ),
   );

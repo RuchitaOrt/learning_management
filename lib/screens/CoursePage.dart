@@ -13,6 +13,8 @@ import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
+import '../widgets/CustomDrawer.dart';
+
 class CoursePage extends StatefulWidget {
   static const String route = "/CoursePage";
   @override
@@ -399,8 +401,7 @@ class _CoursePageState extends State<CoursePage> {
                         child: Row(
                           children: categories.map((category) {
                             return Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 8.0), // spacing between chips
+                              padding: const EdgeInsets.only(right: 8.0), // spacing between chips
                               child: ChoiceChip(
                                 label: Text(category),
                                 selected: selectedCategory == category,
@@ -411,7 +412,7 @@ class _CoursePageState extends State<CoursePage> {
                                         selected ? category : null;
                                   });
                                 },
-                                selectedColor: LearningColors.primaryBlue550,
+                                selectedColor: LearningColors.darkBlue,
                                 backgroundColor: Colors.grey.shade200,
                                 labelStyle: TextStyle(
                                   color: selectedCategory == category
@@ -444,6 +445,269 @@ class _CoursePageState extends State<CoursePage> {
 
   Widget _buildVerticalCard(Course course) {
     return GestureDetector(
+      onTap: () {
+        Navigator.of(routeGlobalKey.currentContext!)
+            .pushNamed(CourseDetailPage.route)
+            .then((value) {});
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            children: [
+              // Card background with gradient
+              Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Colors.white,
+                      Colors.grey[50]!,
+                    ],
+                  ),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Course image placeholder
+                      Container(
+                        height: 140,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: LearningColors.darkBlue.withOpacity(0.1),
+                          image: course.imageUrl != null
+                              ? DecorationImage(
+                            image: NetworkImage(course.imageUrl!),
+                            fit: BoxFit.cover,
+                          )
+                              : null,
+                        ),
+                        child: course.imageUrl == null
+                            ? Center(
+                          child: Icon(
+                            Icons.school,
+                            size: 40,
+                            color: LearningColors.darkBlue,
+                          ),
+                        )
+                            : null,
+                      ),
+                      SizedBox(height: 12),
+
+                      // Course title and institute
+                      Text(
+                        course.institue.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: LearningColors.darkBlue,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        course.title,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 8),
+
+                      // Course description
+                      Text(
+                        course.description,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                          height: 1.4,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(height: 16),
+
+                      // Course metadata (mode, duration)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              SvgPicture.asset(LMSImagePath.mode),
+                              SizedBox(
+                                width: SizeConfig.blockSizeHorizontal * 1,
+                              ),
+                              Text(course.mode, style: LMSStyles.tsHeading),
+                            ],
+                          ),
+                          SizedBox(width: 24),
+                          Row(
+                            children: [
+                              SvgPicture.asset(LMSImagePath.time),
+                              SizedBox(
+                                width: SizeConfig.blockSizeHorizontal * 1,
+                              ),
+                              Text(course.courseDuration, style: LMSStyles.tsHeading),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16),
+
+                      // Price and enroll button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Price information
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              /*if (course.discountedAmount != course.amount)
+                                Text(
+                                  '\$${course.discountedAmount}',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    decoration: TextDecoration.lineThrough,
+                                    color: Colors.grey[500],
+                                  ),
+                                ),*/
+                              Text(
+                                'INR ${course.amount}',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: LearningColors.darkBlue,
+                                ),
+                              ),
+                              /*if (course.discountedAmount != course.amount)
+                                Container(
+                                  margin: EdgeInsets.only(top: 4),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 6, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green[50],
+                                    borderRadius: BorderRadius.circular(4),
+                                  ),
+                                  child: Text(
+                                    '${course.offerPercentage}% OFF',
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.green[800],
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),*/
+                            ],
+                          ),
+
+                          // Enroll button
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.of(context)
+                                  .pushNamed(CoursePage.route)
+                                  .then((value) {});
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: LearningColors.darkBlue,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Text(
+                              LMSStrings.strEnrollNow,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Popular badge
+              //if (course.isPopular)
+                Positioned(
+                  top: 16,
+                  right: 16,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.amber[600],
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.star, size: 14, color: Colors.white),
+                        SizedBox(width: 4),
+                        Text(
+                          'Popular',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+// Helper widget for metadata items
+  Widget _buildMetaItem({required IconData icon, required String text}) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          size: 16,
+          color: LearningColors.darkBlue,
+        ),
+        SizedBox(width: 4),
+        Text(
+          text,
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.grey[700],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /*Widget _buildVerticalCard(Course course) {
+    return GestureDetector(
       onTap: ()
       {
           Navigator.of(routeGlobalKey.currentContext!)
@@ -459,7 +723,7 @@ class _CoursePageState extends State<CoursePage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
+              *//*Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -476,7 +740,7 @@ class _CoursePageState extends State<CoursePage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                  ]),
+                  ]),*//*
               SizedBox(
                 height: SizeConfig.blockSizeVertical * 1,
               ),
@@ -489,31 +753,28 @@ class _CoursePageState extends State<CoursePage> {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: LMSStyles.tsSubHeadingBold
-                    .copyWith(fontWeight: FontWeight.w200, fontSize: 12),
+                    .copyWith(fontWeight: FontWeight.w200, fontSize: 14),
               ),
               SizedBox(
                 height: SizeConfig.blockSizeVertical * 2,
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(LMSImagePath.mode),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 1,
-                          ),
-                          Text(course.mode, style: LMSStyles.tsHeading),
-                        ],
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(LMSImagePath.mode),
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal * 1,
+                        ),
+                        Text(course.mode, style: LMSStyles.tsHeading),
+                      ],
                     ),
-                   
                   ),
-                  Expanded(
+                  *//*Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
@@ -528,21 +789,18 @@ class _CoursePageState extends State<CoursePage> {
                       ),
                     ),
                    
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(LMSImagePath.time),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 1,
-                          ),
-                          Text(course.courseDuration, style: LMSStyles.tsHeading),
-                        ],
-                      ),
+                  ),*//*
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(LMSImagePath.time),
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal * 1,
+                        ),
+                        Text(course.courseDuration, style: LMSStyles.tsHeading),
+                      ],
                     ),
-                   
                   ),
                 ],
               ),
@@ -559,26 +817,25 @@ class _CoursePageState extends State<CoursePage> {
                           Text(
                             '\$ ${course.discountedAmount}',
                             overflow: TextOverflow.ellipsis,
-                            style: LMSStyles.tsHeading
-                                .copyWith(decoration: TextDecoration.lineThrough),
+                            style: LMSStyles.tsHeading.copyWith(decoration: TextDecoration.lineThrough, fontSize: LMSStyles.tsHeading.fontSize! + 2),
                           ),
                           SizedBox(
                             width: SizeConfig.blockSizeHorizontal * 2,
                           ),
                           Text('\$ ${course.amount}',
                               overflow: TextOverflow.ellipsis,
-                              style: LMSStyles.tsSubHeadingBold),
+                              style: LMSStyles.tsSubHeadingBold.copyWith(fontSize: LMSStyles.tsSubHeadingBold.fontSize! + 2)),
                           SizedBox(
                             width: SizeConfig.blockSizeHorizontal * 5,
                           ),
-                          SvgPicture.asset(LMSImagePath.offer),
+                          *//*SvgPicture.asset(LMSImagePath.offer),
                           SizedBox(
                             width: SizeConfig.blockSizeHorizontal * 1,
                           ),
                           Text("${course.offerPercentage} off",
                               overflow: TextOverflow.ellipsis,
                               style: LMSStyles.tsSubHeadingBold
-                                  .copyWith(color: Colors.green)),
+                                  .copyWith(color: Colors.green)),*//*
                         ],
                       ),
                     ),
@@ -592,7 +849,7 @@ class _CoursePageState extends State<CoursePage> {
                             .then((value) {});
                       },
                       style: ElevatedButton.styleFrom(
-                        minimumSize: Size(SizeConfig.blockSizeHorizontal * 24,
+                        minimumSize: Size(SizeConfig.blockSizeHorizontal * 40,
                             SizeConfig.blockSizeVertical * 4),
                         backgroundColor: LearningColors.darkBlue,
                         padding:
@@ -615,5 +872,5 @@ class _CoursePageState extends State<CoursePage> {
         ),
       ),
     );
-  }
+  }*/
 }

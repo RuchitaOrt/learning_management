@@ -63,12 +63,49 @@ class _CustomAppBarState extends State<CustomAppBar> {
     final provider = Provider.of<LandingScreenProvider>(context);
 
     return AppBar(
+      surfaceTintColor: LearningColors.white,
       backgroundColor: LearningColors.neutral100,
       elevation: 0,
       automaticallyImplyLeading: false,
       flexibleSpace:
-   
-           Padding(
+
+      Padding(
+        padding: EdgeInsets.only(top: Platform.isAndroid ? 45 : 60),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: EdgeInsets.only(left: 16, right: 35), // Slight left margin for balance
+              child: InkWell(
+                onTap: () {
+                  Scaffold.of(context).openDrawer(); // This will open the Drawer
+                },
+                child: Icon(Icons.menu, size: 28),
+              ),
+            ),
+            SvgPicture.asset(
+              LMSImagePath.splashLogo,
+              height: 40,
+            ),
+            Padding(
+              padding: EdgeInsets.only(right: 16), // Same right margin for symmetry
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.search, size: 25),
+                    onPressed: widget.isSearchClickVisible,
+                  ),
+                  SizedBox(width: 8), // Slight gap between search & notification
+                  SvgPicture.asset(LMSImagePath.notify),
+                ],
+              ),
+            ),
+          ],
+        ),
+      )
+
+
+      /*Padding(
               padding: EdgeInsets.only(top: Platform.isAndroid ? 45 : 60, left: 8),
               child: Row(
                 children: [
@@ -76,7 +113,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                     padding:  EdgeInsets.only(left: SizeConfig.blockSizeHorizontal *2.5,),
                     child: SvgPicture.asset(
                      LMSImagePath.splashLogo,
-                      height: 30,
+                      height: 40,
                     ),
                   ),
                   Spacer(),
@@ -93,7 +130,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                
                 ],
               ),
-            ),
+            ),*/
     );
   }
 

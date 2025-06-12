@@ -57,7 +57,7 @@ class LMSStyles {
    static const TextStyle tsWhiteNeutral50W60016 = TextStyle(
     color: LearningColors.neutral50,
     fontWeight: FontWeight.w400,
-    fontSize: 12.0,
+    fontSize: 14,
   );
    static const TextStyle tsWhiteNeutral50W600162 = TextStyle(
     color: LearningColors.neutral50,
@@ -77,7 +77,7 @@ class LMSStyles {
   static const TextStyle tsSubHeadingBold = TextStyle(
     color: LearningColors.black18,
     fontWeight: FontWeight.w600,
-    fontSize: 14.0,
+    fontSize: 16,
   );
   static const TextStyle tsOrange50W60016 = TextStyle(
     color: Color.fromARGB(255, 221, 163, 87),
