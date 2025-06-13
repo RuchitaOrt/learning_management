@@ -17,6 +17,8 @@ import 'package:learning_mgt/provider/sign_In_provider.dart';
 import 'package:learning_mgt/provider/sign_up_provider.dart';
 import 'package:learning_mgt/routes/routers.dart';
 import 'package:learning_mgt/screens/splash_screen.dart';
+import 'package:learning_mgt/widgets/GlobalLists.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 // final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 final GlobalKey<NavigatorState> routeGlobalKey = GlobalKey();
@@ -43,6 +45,17 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    _getAppVersion();
+  }
+Future<void> _getAppVersion() async {
+   
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+     PackageInfo packageInfo = await PackageInfo.fromPlatform();
+setState(() {
+   GlobalLists.versionNumber= packageInfo.version;
+});
+ 
+    });
   }
 
   @override

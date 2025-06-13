@@ -6,7 +6,10 @@ import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
+import 'package:learning_mgt/widgets/GraphCard.dart';
 import 'package:provider/provider.dart';
+
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class HomePage extends StatefulWidget {
   static const String route = "/homeScreen";
@@ -75,29 +78,32 @@ class _HomePageState extends State<HomePage> {
                     count: activeCourses,
                     icon: Icons.play_arrow,
                     color: Colors.orange,
+                    total: 10,
                   ),
                   CourseCard(
                     title: "Enrolled",
                     count: enrolledCourses,
                     icon: Icons.school,
                     color: Colors.blue,
+                    total: 10,
                   ),
                   CourseCard(
                     title: "Completed",
                     count: completedCourses,
                     icon: Icons.check_circle,
                     color: Colors.green,
+                    total: 10,
                   ),
                   CourseCard(
                     title: "Pending",
                     count: pendingCourses,
                     icon: Icons.pending_actions,
                     color: Colors.red,
+                    total: 10,
                   ),
                 ],
               ),
 
-              const SizedBox(height: 20),
 
               // Ongoing Courses Section
               Text(
@@ -130,135 +136,7 @@ class _HomePageState extends State<HomePage> {
                 style:LMSStyles.tsblackTileBold,
               ),
               const SizedBox(height: 8),
-             Container(
-  height: SizeConfig.blockSizeVertical * 40,
-  width: double.infinity,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(16),
-    border: Border.all(color: Colors.grey.shade300),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black12,
-        blurRadius: 8,
-        offset: Offset(0, 4),
-      )
-    ],
-  ),
-  child: Padding(
-    padding: const EdgeInsets.all(30.0),
-    child: LineChart(
-      LineChartData(
-        minX: 0,
-        maxX: 5,
-        minY: 0,
-        maxY: 100,
-        gridData: FlGridData(
-          show: true,
-          drawVerticalLine: true,
-          horizontalInterval: 20,
-          verticalInterval: 1,
-          getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.grey.shade200,
-            strokeWidth: 1,
-          ),
-          getDrawingVerticalLine: (value) => FlLine(
-            color: Colors.grey.shade200,
-            strokeWidth: 1,
-          ),
-        ),
-        titlesData: FlTitlesData(
-          show: true,
-          bottomTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              interval: 1,
-              getTitlesWidget: (value, meta) {
-                const style = TextStyle(
-                  fontSize: 12,
-                  color: Colors.black54,
-                );
-                switch (value.toInt()) {
-                  case 0:
-                    return Text('Mon', style: style);
-                  case 1:
-                    return Text('Tue', style: style);
-                  case 2:
-                    return Text('Wed', style: style);
-                  case 3:
-                    return Text('Thu', style: style);
-                  case 4:
-                    return Text('Fri', style: style);
-                  case 5:
-                    return Text('Sat', style: style);
-                }
-                return const Text('');
-              },
-              reservedSize: 30,
-            ),
-          ),
-          leftTitles: AxisTitles(
-            sideTitles: SideTitles(
-              showTitles: true,
-              interval: 20,
-              getTitlesWidget: (value, meta) => Text(
-                '${value.toInt()}%',
-                style: const TextStyle(fontSize: 10, color: Colors.black45),
-              ),
-              reservedSize: 32,
-            ),
-          ),
-          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        ),
-        borderData: FlBorderData(
-          show: false,
-        ),
-        lineBarsData: [
-          LineChartBarData(
-            spots: const [
-              FlSpot(0, 20),
-              FlSpot(1, 40),
-              FlSpot(2, 60),
-              FlSpot(3, 80),
-              FlSpot(4, 90),
-              FlSpot(5, 100),
-            ],
-            isCurved: true,
-            gradient: LinearGradient(
-              colors: [
-                 LearningColors.darkBlue,
-               LearningColors.darkBlue,
-              ],
-            ),
-            barWidth: 4,
-            isStrokeCapRound: true,
-            dotData: FlDotData(
-              show: true,
-              getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-                radius: 4,
-                color: Colors.white,
-                strokeWidth: 1,
-                strokeColor:  LearningColors.darkBlue,
-              ),
-            ),
-            belowBarData: BarAreaData(
-              show: true,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.blue.shade200.withOpacity(0.3),
-                  Colors.blue.shade50.withOpacity(0.0),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-          ),
-        ],
-      ),
-    ),
-  ),
-)
+           GraphCard()
 
             ],
           ),
@@ -271,6 +149,7 @@ class _HomePageState extends State<HomePage> {
 class CourseCard extends StatelessWidget {
   final String title;
   final int count;
+  final int total; // total courses for progress
   final IconData icon;
   final Color color;
 
@@ -278,43 +157,69 @@ class CourseCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.count,
+    required this.total,
     required this.icon,
     required this.color,
   });
 
   @override
   Widget build(BuildContext context) {
+    double percent = (total == 0) ? 0 : count / total;
+
     return Container(
-      //  elevation: 0.5,
-      height: SizeConfig.blockSizeVertical * 17,
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        
-       color: 
-      //LearningColors.white,
-        color.withOpacity(0.1),
+        color:
+        Colors.white,
+        //  color.withOpacity(0.1),
         borderRadius: BorderRadius.circular(16),
-        // border: Border.all(color: color.withOpacity(0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            "$count",
-            style: TextStyle(
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-              color: LearningColors.black,
+          // Circular Progress
+          CircularPercentIndicator(
+            radius: 35.0,
+            lineWidth: 6.0,
+            percent: percent.clamp(0.0, 1.0),
+            center: Text(
+              "$count",
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+            progressColor: color,
+            backgroundColor: color.withOpacity(0.2),
+            circularStrokeCap: CircularStrokeCap.round,
+          ),
+          const SizedBox(height: 16),
+ Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "$title Course${count != 1 ? "s" : ""}",
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.black87,
+                  ),
+                ),
+                
+              ],
             ),
           ),
-          SizedBox(height: SizeConfig.blockSizeVertical * 2),
-          Text(
-            "$title Course${count != 1 ? "s" : ""}",
-            style: TextStyle(
-              color: LearningColors.black,
-              fontSize: 14,
-            ),
-          ),
+
+         
+         
         ],
       ),
     );
