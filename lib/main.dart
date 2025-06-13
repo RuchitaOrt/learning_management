@@ -10,6 +10,7 @@ import 'package:learning_mgt/provider/StepProvider.dart';
 
 import 'package:learning_mgt/provider/TrainingProvider.dart';
 import 'package:learning_mgt/provider/faqprovider.dart';
+// import 'package:learning_mgt/provider/feedbackprovider.dart';
 import 'package:learning_mgt/provider/instituteprovider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/provider/sign_In_provider.dart';
@@ -17,7 +18,7 @@ import 'package:learning_mgt/provider/sign_up_provider.dart';
 import 'package:learning_mgt/routes/routers.dart';
 import 'package:learning_mgt/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
-final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+// final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 final GlobalKey<NavigatorState> routeGlobalKey = GlobalKey();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +73,9 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider<FAQProvider>(
           create: (context) => FAQProvider(),
         ),
+        // ChangeNotifierProvider<FeedbackProvider>(
+        //   create: (context) => FeedbackProvider(),
+        // ),
         ChangeNotifierProvider(
           create: (_) => StepProvider(),
         ),

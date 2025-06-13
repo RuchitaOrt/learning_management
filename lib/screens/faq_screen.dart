@@ -17,6 +17,7 @@ class FAQScreen extends StatefulWidget {
 }
 
 class _FAQScreenState extends State<FAQScreen> {
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String selectedCategory = "My Account";
   String searchQuery = "";
 
@@ -38,11 +39,13 @@ class _FAQScreenState extends State<FAQScreen> {
           return true;
         },
         child: Scaffold(
+          key: scaffoldKey,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: CustomAppBar(
               isSearchClickVisible: () {},
-              isSearchValueVisible: provider.isSearchIconVisible,
+              isSearchValueVisible: false,
+              onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
             ),
           ),
           drawer: CustomDrawer(),

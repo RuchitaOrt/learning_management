@@ -20,6 +20,7 @@ class Ceritification extends StatefulWidget {
 
 class _CeritificationState extends State<Ceritification> {
   String? selectedCategory;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -74,7 +75,7 @@ class _CeritificationState extends State<Ceritification> {
                         padding: const EdgeInsets.only(left: 8),
                         child: Text(
                           "Certification",
-                          style: LMSStyles.tsHeadingbold.copyWith(fontSize: 20),
+                          style: LMSStyles.tsHeadingbold.copyWith(fontSize: 18),
                         ),
                       ),
                     ],
@@ -170,7 +171,7 @@ class _CeritificationState extends State<Ceritification> {
                     child: ElevatedButton(
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: LearningColors.neutral300,
+                        backgroundColor: Colors.white,
                         padding:
                             EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         shape: RoundedRectangleBorder(
@@ -180,7 +181,7 @@ class _CeritificationState extends State<Ceritification> {
                       ),
                       child: Text(
                         LMSStrings.strView,
-                        style: LMSStyles.tsWhiteNeutral50W60016,
+                        style: LMSStyles.tsblackNeutralbold,
                       ),
                     ),
                   ),

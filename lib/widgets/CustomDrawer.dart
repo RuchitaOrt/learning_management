@@ -7,7 +7,9 @@ import 'package:learning_mgt/screens/CoursePage.dart';
 import 'package:learning_mgt/screens/HomePage.dart';
 import 'package:learning_mgt/screens/Recommendation.dart';
 import 'package:learning_mgt/screens/ResultScreen.dart';
+import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/screens/faq_screen.dart';
+import 'package:learning_mgt/screens/FeedbackScreen.dart';
 import 'package:learning_mgt/screens/settingshome.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 
@@ -62,7 +64,7 @@ class CustomDrawer extends StatelessWidget {
               Navigator.of(
                 routeGlobalKey.currentContext!,
               ).pushNamed(
-                HomePage.route,
+                TabScreen.route,
               );
             },
           ),
@@ -111,8 +113,15 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.feedback,
             label: 'FeedBack',
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to settings
+              Navigator.of(
+                routeGlobalKey.currentContext!,
+              ).pushNamed(
+                FeedbackScreen.route,
+                arguments: {
+                  'selectedPos': -1,
+                  'isSignUp': false,
+                },
+              );
             },
           ),
           _buildDrawerItem(
@@ -129,7 +138,7 @@ class CustomDrawer extends StatelessWidget {
                   'isSignUp': false,
                 },
               );
-            }
+            },
           ),
           _buildDrawerItem(
             context: context,

@@ -15,6 +15,7 @@ import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
+
 class Recommendation extends StatefulWidget {
   static const String route = "/Recommendation";
   @override
@@ -22,6 +23,7 @@ class Recommendation extends StatefulWidget {
 }
 
 class _RecommendationState extends State<Recommendation> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String? selectedCategory;
 
   @override
@@ -348,8 +350,8 @@ class _RecommendationState extends State<Recommendation> {
       // Show loading spinner while fetching data
 
       return Scaffold(
-         drawer: CustomDrawer(),
-         key: scaffoldKey,
+        drawer: CustomDrawer(),
+        key: scaffoldKey,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: CustomAppBar(
@@ -357,7 +359,7 @@ class _RecommendationState extends State<Recommendation> {
               // provider.toggleSearchIconCategory();
             },
             isSearchValueVisible: provider.isSearchIconVisible,
-             onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
+            onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
           ),
         ),
         body: Container(

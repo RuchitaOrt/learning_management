@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
+import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
-import 'package:learning_mgt/Utils/sizeConfig.dart';
-import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/ResultProvider.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
@@ -18,6 +18,7 @@ class ResultScreen extends StatefulWidget {
 }
 
 class _ResultScreenState extends State<ResultScreen> {
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final List<CourseResult> results = [
     CourseResult(
       courseName: 'Ea reprehenderit in ullam eaque.',
@@ -62,6 +63,326 @@ class _ResultScreenState extends State<ResultScreen> {
     // Add more as needed
   ];
 
+  void _showAttemptBottomSheet(BuildContext context, CourseResult item) {
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => DraggableScrollableSheet(
+      initialChildSize: 0.85,
+      maxChildSize: 0.95,
+      minChildSize: 0.5,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFF8F9FA),
+                Color(0xFFE9ECEF),
+              ],
+            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              // Handle bar
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 8),
+                height: 4,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+
+              // Course title
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+                child: Container(
+                  // decoration: BoxDecoration(
+                  //   color: Colors.white,
+                  //   border: Border.all(color: Colors.grey.shade200, width: 1),
+                  //   borderRadius: BorderRadius.circular(12),
+                  //   boxShadow: [
+                  //     BoxShadow(
+                  //       color: Colors.grey.withOpacity(0.1),
+                  //       spreadRadius: 1,
+                  //       blurRadius: 8,
+                  //       offset: Offset(0, 2),
+                  //     ),
+                  //   ],
+                  // ),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16,0,16,0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 8, 0, 16),
+                          child: Row(
+                            children: [
+                              // Institute image instead of icon
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      spreadRadius: 1,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    LMSImagePath.certificateLogo, // Replace with your image path
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Macosnar Training Institute Corp.",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          "Chart Plotting Techniques",
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          "Master precise plotting methods for complex voyages.",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        SizedBox(height: 16),
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: Colors.orange, width: 1),
+                          ),
+                          child: Text(
+                            "Attempts left: 1",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.orange,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 20),
+
+              // Attempts timeline
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: ListView(
+                    controller: scrollController,
+                    children: [
+                      _buildAttemptItem(
+                        attemptNumber: "01",
+                        date: "10th January, 10:40",
+                        mode: "Online",
+                        isSuccess: true,
+                        isLast: false,
+                      ),
+                      _buildAttemptItem(
+                        attemptNumber: "02",
+                        date: "10th January, 10:40",
+                        mode: "Institutes",
+                        isSuccess: false,
+                        isLast: false,
+                      ),
+                      _buildAttemptItem(
+                        attemptNumber: "03",
+                        date: "10th January, 10:40",
+                        mode: "Online",
+                        isSuccess: false,
+                        isLast: false,
+                      ),
+                      _buildAttemptItem(
+                        attemptNumber: "04",
+                        date: "10th January, 10:40",
+                        mode: "Institutes",
+                        isSuccess: false,
+                        isLast: true,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              // Reattempt button
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.blue, Colors.blue.shade700],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue.withOpacity(0.3),
+                        spreadRadius: 1,
+                        blurRadius: 8,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(
+                              "Starting reattempt for ${item.courseName}")));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      "Reattempt Exam",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ),
+  );
+}
+
+
+// Add this helper method for building attempt items:
+  Widget _buildAttemptItem({
+    required String attemptNumber,
+    required String date,
+    required String mode,
+    required bool isSuccess,
+    required bool isLast, // Add this parameter to identify the last item
+  }) {
+    return Container(
+      margin: EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Timeline column with icon and line
+          Column(
+            children: [
+              // Status icon
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: isSuccess ? Colors.green : Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isSuccess ? Icons.check : Icons.close,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+
+              // Connecting line (only if not the last item)
+              if (!isLast)
+                Container(
+                  width: 2,
+                  height: 40,
+                  color: Colors.grey[300],
+                  margin: EdgeInsets.only(top: 8),
+                ),
+            ],
+          ),
+
+          SizedBox(width: 16),
+
+          // Attempt details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  "Attempt $attemptNumber",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  mode,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String? selectedResult;
   @override
   Widget build(BuildContext context) {
@@ -69,7 +390,7 @@ class _ResultScreenState extends State<ResultScreen> {
       create: (_) => ResultProvider(),
       child: Scaffold(
         key: scaffoldKey,
-       drawer: CustomDrawer(),
+        drawer: CustomDrawer(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: CustomAppBar(
@@ -77,7 +398,7 @@ class _ResultScreenState extends State<ResultScreen> {
               // provider.toggleSearchIconCategory();
             },
             isSearchValueVisible: false,
-             onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
+            onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
           ),
         ),
         body: Consumer<ResultProvider>(
@@ -89,10 +410,19 @@ class _ResultScreenState extends State<ResultScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Results",
                           style: LMSStyles.tsHeadingbold.copyWith(fontSize: 18),
+                        ),
+                        GestureDetector(
+                          onTap: () {},
+                          child: SvgPicture.asset(
+                            LMSImagePath.filter,
+                            width: 40,
+                            height: 40,
+                          ),
                         ),
                       ],
                     ),
@@ -330,10 +660,7 @@ class _ResultScreenState extends State<ResultScreen> {
                                   height: 45,
                                   child: OutlinedButton(
                                     onPressed: () {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  "Attempted ${item.courseName}")));
+                                      _showAttemptBottomSheet(context, item);
                                     },
                                     style: OutlinedButton.styleFrom(
                                       side: BorderSide(
