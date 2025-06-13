@@ -31,4 +31,5 @@ class LearningColors {
    static const Color redlight = Color(0xffFFD1B0);
     static const Color purplelight = Color(0xffCEC0F3);
     static const Color darkBlue = Color(0xff03599F);
+    static const Color lightBlue = Color(0xffE6F1F9);
 }
