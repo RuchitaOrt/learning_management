@@ -47,9 +47,12 @@ class SignInScreen extends StatelessWidget {
             Consumer<SignInProvider>(builder: (context, signInProvider, _) {
               return SizedBox(
                 width: SizeConfig.blockSizeHorizontal * 100,
-                child: ListView(
+                child:
+                /*ListView(
                   shrinkWrap: true,
-                  physics: ScrollPhysics(),
+                  physics: ScrollPhysics(),*/
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: SizeConfig.blockSizeHorizontal * 1),
                     Row(
@@ -436,6 +439,36 @@ class SignInScreen extends StatelessWidget {
     return Scaffold(
       body: ChangeNotifierProvider(
         create: (_) => SignInProvider(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(
+              LMSImagePath.coverbg,
+              width: SizeConfig.blockSizeHorizontal * 100,
+              height: SizeConfig.blockSizeVertical * 30,
+              fit: BoxFit.cover,
+            ),
+            SizedBox(height: SizeConfig.blockSizeVertical * 2),
+            buildMostInterestedCard(
+              title: LMSStrings.strSignIn,
+              subtitle: LMSStrings.strAccountDetail,
+              color: LearningColors.white,
+              titleStyle: LMSStyles.tsblackTileBold,
+              subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+/*@override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+
+    return Scaffold(
+      body: ChangeNotifierProvider(
+        create: (_) => SignInProvider(),
         child: ListView(
           shrinkWrap: true,
           children: [
@@ -459,5 +492,5 @@ class SignInScreen extends StatelessWidget {
         ),
       ),
     );
-  }
+  }*/
 }

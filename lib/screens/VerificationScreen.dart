@@ -138,7 +138,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
           return Column(
             children: [
               CircleAvatar(
-                radius: 18,
+                radius: 24,
                 backgroundColor: bgColor,
                 child: childContent,
               ),
@@ -146,7 +146,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               Text(
                 steps[stepIndex],
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: 14,
                   color: isCurrent ? LearningColors.darkBlue : Colors.grey.shade600,
                   fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
                 ),
@@ -399,10 +399,6 @@ InputDecoration CommonInputDecoration({
     labelText: label,
     hintText: hint,
     floatingLabelBehavior: FloatingLabelBehavior.auto,
-    /*hintStyle: LMSStyles.tsHintstyle.copyWith(
-      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
-      color: Colors.grey.shade400,
-    ),*/
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
@@ -432,8 +428,13 @@ InputDecoration CommonInputDecoration({
     errorStyle: LMSStyles.tsWhiteNeutral300W50012.copyWith(
       fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2,
     ),
-    suffixIcon: IconButton(
+    /*suffixIcon: IconButton(
       color: LearningColors.neutral300,
+      onPressed: toggle,
+      icon: Icon(isObscured ? Icons.visibility_off : Icons.visibility),
+    ),*/
+    suffixIcon: IconButton(
+      color: isObscured ? LearningColors.neutral300 : LearningColors.darkBlue,
       onPressed: toggle,
       icon: Icon(isObscured ? Icons.visibility_off : Icons.visibility),
     ),
