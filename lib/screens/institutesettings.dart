@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
-import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/instituteprovider.dart';
 import 'package:provider/provider.dart';

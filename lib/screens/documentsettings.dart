@@ -4,7 +4,6 @@ import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
-import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:provider/provider.dart';
 import 'package:file_picker/file_picker.dart'; // Import the file_picker package
 
@@ -55,32 +54,6 @@ class _DocumentSettingState extends State<DocumentSetting> {
         SnackBar(content: Text('Error picking file: $e')),
       );
     }
-  }
-
-  Widget _buildSettingsOption({
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-        child: Row(
-          children: [
-            Icon(icon, color: Colors.grey.shade700),
-            SizedBox(width: 16),
-            Text(
-              title,
-              style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
-            ),
-            Spacer(),
-            Icon(Icons.arrow_forward_ios,
-                size: 16, color: Colors.grey.shade500),
-          ],
-        ),
-      ),
-    );
   }
 
   // --- DocumentUploadBox Widget (Copied for completeness, but you can keep it separate) ---

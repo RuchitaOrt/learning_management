@@ -4,7 +4,6 @@ import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
-import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/screens/documentsettings.dart';
@@ -16,6 +15,7 @@ import 'package:learning_mgt/screens/settings.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:provider/provider.dart'; // For SizeConfig
 
+
 class SettingsHome extends StatefulWidget {
   static const String route = "/settinghome";
   const SettingsHome({Key? key}) : super(key: key);
@@ -25,6 +25,7 @@ class SettingsHome extends StatefulWidget {
 }
 
 class _SettingsHomeState extends State<SettingsHome> {
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   void initState() {
     // TODO: implement initState
@@ -40,6 +41,7 @@ class _SettingsHomeState extends State<SettingsHome> {
         },
         child: Scaffold(
           key: scaffoldKey,
+          drawer: CustomDrawer(),
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: CustomAppBar(
