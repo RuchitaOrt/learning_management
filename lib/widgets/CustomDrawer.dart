@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:learning_mgt/Utils/learning_colors.dart';
+import 'package:learning_mgt/Utils/lms_images.dart';
+import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/screens/Ceritification.dart';
 import 'package:learning_mgt/screens/CoursePage.dart';
@@ -31,11 +33,11 @@ class CustomDrawer extends StatelessWidget {
                 CircleAvatar(
                   radius: 30,
                   backgroundImage: AssetImage(
-                      'assets/images/user_profile.png'), // Replace with your asset
+                    LMSImagePath.whiteCamera), // Replace with your asset
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Welcome, User!',
+                  'Welcome, Ruchita!',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -43,7 +45,7 @@ class CustomDrawer extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'user@example.com',
+                  'ruchita@gmail.com',
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 14,

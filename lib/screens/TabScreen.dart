@@ -17,7 +17,7 @@ class TabScreen extends StatefulWidget {
 
   const TabScreen({
     super.key,
-    this.selectedPos = 0,
+    this.selectedPos=-1,
     this.isSignUp = false,
     this.selectedModule = 0,
   });
@@ -31,6 +31,7 @@ class _TabScreenState extends State<TabScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("Widget seledted tab ${widget.selectedPos}");
     return ChangeNotifierProvider<TabProvider>(
       create: (_) => TabProvider(
         widget.selectedPos,

@@ -1,7 +1,7 @@
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
-Future<void> getAppVersion() async {
+ getAppVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
 
   String appName = packageInfo.appName;
