@@ -63,7 +63,7 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
                 // provider.toggleSearchIconCategory();
               },
               isSearchValueVisible: provider.isSearchIconVisible,
-               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
+               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
             ),
           ),
           body: Container(

@@ -105,7 +105,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 padding: const EdgeInsets.only(right: 15),
                 child: Image.asset(LMSImagePath.menu,width: 20,height: 20,
                 color: LearningColors.darkBlue,),
-                           ),
+               ),
              ),
           ],
         ),

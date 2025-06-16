@@ -42,6 +42,7 @@ class _CoursePageState extends State<CoursePage> {
       }
     });
   }
+
 void _showFilterBottomSheet(BuildContext context) {
   showModalBottomSheet(
     context: context,
@@ -53,9 +54,9 @@ void _showFilterBottomSheet(BuildContext context) {
         // maxChildSize: 0.9,
         // minChildSize: 0.4,
         // initialChildSize: 0.85,
-        initialChildSize: 0.7, // Start at 30% of screen height
-  minChildSize: 0.7,     // Can't shrink below 30%
-  maxChildSize: 0.9, 
+        initialChildSize: 0.5, // Start at 30% of screen height
+  minChildSize: 0.5,     // Can't shrink below 30%
+  maxChildSize: 0.5,
         builder: (context, scrollController) {
           return StatefulBuilder(
             builder: (context, setState) {
@@ -64,7 +65,7 @@ void _showFilterBottomSheet(BuildContext context) {
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                 ),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Center(
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 500), // Fixed width
@@ -74,76 +75,79 @@ void _showFilterBottomSheet(BuildContext context) {
                         Expanded(
                           child: SingleChildScrollView(
                             controller: scrollController,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                /// Header row
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text('Filter',
-                                        style: TextStyle(
-                                            color: LearningColors.black18,
-                                            fontWeight: FontWeight.w800,
-                                            fontSize: 20)),
-                                    TextButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          selectedLocations.clear();
-                                          selectedRanks.clear();
-                                          selectedVesselTypes.clear();
-                                          selectedDurations.clear();
-                                          selectedBridgeWatch.clear();
-                                          selectedEngineWatch.clear();
-                                        });
-                                      },
-                                      child: Text('Reset',
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  /// Header row
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Filter',
                                           style: TextStyle(
-                                              color: LearningColors.darkBlue,
-                                              fontSize: 18)),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
+                                              color: LearningColors.black18,
+                                              fontWeight: FontWeight.w800,
+                                              fontSize: 20)),
+                                      TextButton(
+                                        onPressed: () {
+                                          setState(() {
+                                            selectedLocations.clear();
+                                            selectedRanks.clear();
+                                            selectedVesselTypes.clear();
+                                            selectedDurations.clear();
+                                            selectedBridgeWatch.clear();
+                                            selectedEngineWatch.clear();
+                                          });
+                                        },
+                                        child: Text('Reset',
+                                            style: TextStyle(
+                                                color: LearningColors.darkBlue,
+                                                fontSize: 18)),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
 
-                                // Filter sections
-                                _buildFilterSection(
-                                  title: 'Location',
-                                  options: locations,
-                                  selectedOptions: selectedLocations,
-                                  setState: setState,
-                                ),
-                                // _buildFilterSection(
-                                //   title: 'Rank/Position',
-                                //   options: ranks,
-                                //   selectedOptions: selectedRanks,
-                                //   setState: setState,
-                                // ),
-                                _buildFilterSection(
-                                  title: 'Vessel Type',
-                                  options: vesselTypes,
-                                  selectedOptions: selectedVesselTypes,
-                                  setState: setState,
-                                ),
-                                _buildFilterSection(
-                                  title: 'Duration',
-                                  options: durations,
-                                  selectedOptions: selectedDurations,
-                                  setState: setState,
-                                ),
-                                // _buildFilterSection(
-                                //   title: 'Bridge Watch',
-                                //   options: bridgeWatch,
-                                //   selectedOptions: selectedBridgeWatch,
-                                //   setState: setState,
-                                // ),
-                                // _buildFilterSection(
-                                //   title: 'Engine Watch',
-                                //   options: engineWatch,
-                                //   selectedOptions: selectedEngineWatch,
-                                //   setState: setState,
-                                // ),
-                              ],
+                                  // Filter sections
+                                  _buildFilterSection(
+                                    title: 'Location',
+                                    options: locations,
+                                    selectedOptions: selectedLocations,
+                                    setState: setState,
+                                  ),
+                                  // _buildFilterSection(
+                                  //   title: 'Rank/Position',
+                                  //   options: ranks,
+                                  //   selectedOptions: selectedRanks,
+                                  //   setState: setState,
+                                  // ),
+                                  _buildFilterSection(
+                                    title: 'Vessel Type',
+                                    options: vesselTypes,
+                                    selectedOptions: selectedVesselTypes,
+                                    setState: setState,
+                                  ),
+                                  _buildFilterSection(
+                                    title: 'Duration',
+                                    options: durations,
+                                    selectedOptions: selectedDurations,
+                                    setState: setState,
+                                  ),
+                                  // _buildFilterSection(
+                                  //   title: 'Bridge Watch',
+                                  //   options: bridgeWatch,
+                                  //   selectedOptions: selectedBridgeWatch,
+                                  //   setState: setState,
+                                  // ),
+                                  // _buildFilterSection(
+                                  //   title: 'Engine Watch',
+                                  //   options: engineWatch,
+                                  //   selectedOptions: selectedEngineWatch,
+                                  //   setState: setState,
+                                  // ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -151,7 +155,77 @@ void _showFilterBottomSheet(BuildContext context) {
                         const SizedBox(height: 12),
 
                         /// Fixed Action Buttons
-                        Row(
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, -5),
+                              )
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      side: BorderSide(
+                                        color: LearningColors.darkBlue,
+                                        width: 1.5,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: LearningColors.darkBlue,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      print('Selected Locations: $selectedLocations');
+                                      print('Selected Vessel Types: $selectedVesselTypes');
+                                      print('Selected Durations: $selectedDurations');
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: LearningColors.darkBlue,
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: Text(
+                                      'Apply',
+                                      style: TextStyle(
+                                        color: LearningColors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        /*Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             TextButton(
@@ -179,7 +253,7 @@ void _showFilterBottomSheet(BuildContext context) {
                                   style: TextStyle(color: LearningColors.white)),
                             ),
                           ],
-                        ),
+                        ),*/
                       ],
                     ),
                   ),
@@ -192,6 +266,187 @@ void _showFilterBottomSheet(BuildContext context) {
     },
   );
 }
+
+  /*void _showFilterBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.5,
+          minChildSize: 0.5,
+          maxChildSize: 0.5,
+          builder: (context, scrollController) {
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 500),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Header with drag handle
+                          Column(
+                            children: [
+                              Container(
+                                width: 40,
+                                height: 4,
+                                margin: const EdgeInsets.only(bottom: 12),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text('Filter',
+                                      style: TextStyle(
+                                          color: LearningColors.black18,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 20)),
+                                  TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        selectedLocations.clear();
+                                        selectedRanks.clear();
+                                        selectedVesselTypes.clear();
+                                        selectedDurations.clear();
+                                        selectedBridgeWatch.clear();
+                                        selectedEngineWatch.clear();
+                                      });
+                                    },
+                                    child: Text('Reset',
+                                        style: TextStyle(
+                                            color: LearningColors.darkBlue,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600)),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Content Scrollable
+                          Expanded(
+                            child: SingleChildScrollView(
+                              controller: scrollController,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildFilterSection(
+                                    title: 'Location',
+                                    options: locations,
+                                    selectedOptions: selectedLocations,
+                                    setState: setState,
+                                  ),
+                                  _buildFilterSection(
+                                    title: 'Vessel Type',
+                                    options: vesselTypes,
+                                    selectedOptions: selectedVesselTypes,
+                                    setState: setState,
+                                  ),
+                                  _buildFilterSection(
+                                    title: 'Duration',
+                                    options: durations,
+                                    selectedOptions: selectedDurations,
+                                    setState: setState,
+                                  ),
+                                  const SizedBox(height: 80), // Space for buttons
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, -5),
+                                )
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    style: OutlinedButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      side: BorderSide(
+                                        color: LearningColors.darkBlue,
+                                        width: 1.5,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'Cancel',
+                                      style: TextStyle(
+                                        color: LearningColors.darkBlue,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      print('Selected Locations: $selectedLocations');
+                                      print('Selected Vessel Types: $selectedVesselTypes');
+                                      print('Selected Durations: $selectedDurations');
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: LearningColors.darkBlue,
+                                      padding: const EdgeInsets.symmetric(vertical: 10),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      elevation: 0,
+                                    ),
+                                    child: Text(
+                                      'Apply',
+                                      style: TextStyle(
+                                        color: LearningColors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }*/
 
 Widget _buildFilterSection({
   required String title,
