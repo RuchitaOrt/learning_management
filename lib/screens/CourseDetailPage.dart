@@ -3,6 +3,7 @@ import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 
 import '../Utils/lms_styles.dart';
+import 'OrderSummary.dart';
 
 class CourseDetailPage extends StatefulWidget {
   static const String route = "/CourseDetailPage";
@@ -36,7 +37,9 @@ class _CourseDetailPageState extends State<CourseDetailPage>
           padding: EdgeInsets.all(12),
           color: Colors.white,
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(OrderSummaryScreen.route).then((value) {});
+            },
             style: ElevatedButton.styleFrom(
               backgroundColor: LearningColors.darkBlue,
               shape: RoundedRectangleBorder(

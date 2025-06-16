@@ -136,7 +136,8 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.settings,
             label: 'Settings',
             onTap: () {
-              Navigator.of(
+              Navigator.of(context).pushNamed(SettingsHome.route).then((value) {});
+              /*Navigator.of(
                 routeGlobalKey.currentContext!,
               ).pushNamed(
                 SettingsHome.route,
@@ -144,7 +145,7 @@ class CustomDrawer extends StatelessWidget {
                   'selectedPos': -1,
                   'isSignUp': false,
                 },
-              );
+              );*/
             },
           ),
           Divider(),

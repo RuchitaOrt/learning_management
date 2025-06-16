@@ -15,6 +15,9 @@ import 'package:learning_mgt/screens/settingshome.dart';
 import 'package:learning_mgt/screens/signIn_screen.dart';
 import 'package:learning_mgt/screens/splash_screen.dart';
 
+import '../screens/OrderSummary.dart';
+import '../screens/PaymentScreen.dart';
+
 class Routers {
   // Create a static method to configure the router
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -72,6 +75,14 @@ class Routers {
       case FAQScreen.route:
         return MaterialPageRoute(
           builder: (_) => FAQScreen(),
+        );
+      case CourseEnrollmentScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => CourseEnrollmentScreen(),
+        );
+      case OrderSummaryScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => OrderSummaryScreen(),
         );
       default:
         return MaterialPageRoute(builder: (_) => SplashScreen());

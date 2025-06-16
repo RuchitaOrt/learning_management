@@ -1,3 +1,4 @@
+/*
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_strings.dart';
@@ -85,11 +86,11 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back_ios), 
+                      icon: Icon(Icons.arrow_back_ios),
                       onPressed: () {
-                        Navigator.pop(context); 
+                        Navigator.pop(context);
                       },
-                      padding: EdgeInsets.zero, 
+                      padding: EdgeInsets.zero,
                       constraints: BoxConstraints(),
                     ),
                     Text(
@@ -139,6 +140,14 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
                         "Enter Your State"),
                     informationPlan("COC", personalprovider.COCController,
                         "Enter Your COC"),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        "5 years left from now",
+                        style:
+                        LMSStyles.tsWhiteNeutral300W300.copyWith(fontSize: 14),
+                      ),
+                    ),
                     SizedBox(
                       height: SizeConfig.blockSizeVertical * 1,
                     ),
@@ -194,5 +203,214 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
         ),
       ],
     );
+  }
+}
+*/
+
+
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:learning_mgt/Utils/learning_colors.dart';
+import 'package:learning_mgt/Utils/lms_strings.dart';
+import 'package:learning_mgt/Utils/lms_styles.dart';
+import 'package:learning_mgt/Utils/sizeConfig.dart';
+import 'package:learning_mgt/provider/LandingScreenProvider.dart';
+import 'package:learning_mgt/provider/personal_account_provider.dart';
+import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
+import 'package:provider/provider.dart';
+
+class SeafarerSettings extends StatefulWidget {
+  static const String route = "/SeafarerSettings";
+  const SeafarerSettings({Key? key}) : super(key: key);
+
+  @override
+  _SeafarerSettingsState createState() => _SeafarerSettingsState();
+}
+
+class _SeafarerSettingsState extends State<SeafarerSettings> {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
+      return WillPopScope(
+        onWillPop: () async {
+          return true;
+        },
+        child: Scaffold(
+          body: Container(
+            width: SizeConfig.blockSizeHorizontal * 100,
+            height: SizeConfig.blockSizeVertical * 100,
+            decoration: AppDecorations.gradientBackground,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildAppBar(context),
+                    const SizedBox(height: 10),
+                    Expanded(
+                      child: _buildForm(context),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return Row(
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(),
+        ),
+        const SizedBox(width: 4),
+        Text("Seafarers", style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 18)),
+      ],
+    );
+  }
+
+  Widget _buildForm(BuildContext context) {
+    return Consumer<PersonalAccountProvider>(
+        builder: (context, personalprovider, child) {
+          return ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              _buildField("Seafarers No.", personalprovider.seafarersNoController, "Enter Your Seafarers Number"),
+              _buildField("Passport No.", personalprovider.passportNoController, "Enter Your Passport Number"),
+              _buildField("Department", personalprovider.departmentController, "Enter Your Department"),
+              _buildField("Rank", personalprovider.rankController, "Enter Your Rank"),
+              _buildField("Pin Code", personalprovider.pinCodeController, "Enter Your Pin Code"),
+              _buildField("Country", personalprovider.countryController, "Enter Your Country"),
+              _buildField("City", personalprovider.cityController, "Enter Your City"),
+              _buildField("State", personalprovider.stateController, "Enter Your State"),
+
+              //const SizedBox(height: 10),
+              Text("COC", style: LMSStyles.tsHintstyle.copyWith(fontSize: 14)),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: personalprovider.COCController,
+                      decoration: InputDecoration(
+                        hintText: "Enter Your COC",
+                        hintStyle: LMSStyles.tsHintstyle.copyWith(
+                          fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text("Verify", style: TextStyle(color: Colors.white)),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 6),
+              Padding(
+                padding: const EdgeInsets.only(left: 4),
+                child: Text(
+                  "${_calculateYearsLeft()} years left from now",
+                  style: LMSStyles.tsWhiteNeutral300W300.copyWith(fontSize: 14),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: LearningColors.darkBlue, // Border color
+                            width: 0.5, // Border width
+                          ),
+                          backgroundColor: Colors.transparent, // Transparent background
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: LMSStyles.tsblackNeutralbold.copyWith(
+                            color: LearningColors.darkBlue, // Text color matching border
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: LearningColors.darkBlue,
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 5,
+                        ),
+                        child: Text(
+                          LMSStrings.strSaveChanges,
+                          style: LMSStyles.tsWhiteNeutral50W60016,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          );
+        });
+  }
+
+  Widget _buildField(String title, TextEditingController controller, String hint) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: CustomTextFieldWidget(
+        title: title,
+        hintText: hint,
+        onChange: (val) {},
+        textEditingController: controller,
+        autovalidateMode: AutovalidateMode.disabled,
+      ),
+    );
+  }
+
+  int _calculateYearsLeft() {
+    final now = DateTime.now();
+    return 5; // as per your logic, it's always 5 years from now
   }
 }

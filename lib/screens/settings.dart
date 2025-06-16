@@ -447,14 +447,14 @@ class _SettingsState extends State<Settings> {
               SizedBox(
                 height: SizeConfig.blockSizeVertical * 1,
               ),
-              Center(
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12.0), // optional horizontal padding
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(SizeConfig.blockSizeHorizontal * 25,
-                        SizeConfig.blockSizeVertical * 5),
-                    backgroundColor: LearningColors.primaryBlue550,
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    minimumSize: const Size.fromHeight(50), // full width button
+                    backgroundColor: LearningColors.darkBlue,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -466,6 +466,7 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
               ),
+
 
               SizedBox(
                 height: SizeConfig.blockSizeVertical * 1,

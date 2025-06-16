@@ -25,6 +25,8 @@ class SettingsHome extends StatefulWidget {
 }
 
 class _SettingsHomeState extends State<SettingsHome> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -39,7 +41,7 @@ class _SettingsHomeState extends State<SettingsHome> {
           return true;
         },
         child: Scaffold(
-          key: scaffoldKey,
+          key: _scaffoldKey,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: CustomAppBar(

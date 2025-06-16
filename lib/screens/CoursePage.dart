@@ -14,6 +14,8 @@ import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
 import '../widgets/CustomDrawer.dart';
+import 'OrderSummary.dart';
+import 'PaymentScreen.dart';
 
 class CoursePage extends StatefulWidget {
   static const String route = "/CoursePage";
@@ -623,9 +625,7 @@ class _CoursePageState extends State<CoursePage> {
                           // Enroll button
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context)
-                                  .pushNamed(CoursePage.route)
-                                  .then((value) {});
+                              Navigator.of(context).pushNamed(OrderSummaryScreen.route).then((value) {});
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: LearningColors.darkBlue,

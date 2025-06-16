@@ -64,8 +64,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
     final provider = Provider.of<LandingScreenProvider>(context);
 
     return AppBar(
-      backgroundColor: LearningColors.neutral100,
-      elevation: 0,
+      surfaceTintColor: LearningColors.white,
+      backgroundColor: LearningColors.white,
+      elevation: 5,
       automaticallyImplyLeading: false,
       flexibleSpace: Padding(
         padding: EdgeInsets.only(top: Platform.isAndroid ? 45 : 60, left: 8),
