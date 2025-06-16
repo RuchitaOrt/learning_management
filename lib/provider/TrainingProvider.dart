@@ -224,6 +224,22 @@ class TrainingProvider with ChangeNotifier {
         status: "Completed"
 
       ),
+      TrainingCourse(
+        id: '3',
+        title: 'Flutter for Beginners',
+        description: 'Kickstart your Flutter journey.',
+        imageUrl: 'https://via.placeholder.com/150',
+        mode: "online",
+        noofpeoplevisited: "39",
+        discountedAmount: "70",
+        amount: "65",
+        offerPercentage: "30 %",
+        institue: "Centre for Maritime Education and Training (CMET)",
+        courseDuration: "2 days",
+        completionPercentage: "100",
+        status: "Completed"
+
+      ),
       
     ],
        'Expired ': [
