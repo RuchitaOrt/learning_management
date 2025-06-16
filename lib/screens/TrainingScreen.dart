@@ -246,16 +246,14 @@ class _TrainingScreenState extends State<TrainingScreen> {
 
   Widget _buildCompletedCoursesState(List<TrainingCourse> completedCourses) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 0, 0, 32),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
       child: Column(
         children: [
           Image.asset(
-                LMSImagePath.emptycourse,
-                width: SizeConfig.blockSizeHorizontal * 60,
-                height: SizeConfig.blockSizeVertical * 30,
-              ),
-              SizedBox(height: SizeConfig.blockSizeVertical * 3),
-          SizedBox(height: SizeConfig.blockSizeVertical * 1),
+            LMSImagePath.emptycourse,
+            width: SizeConfig.blockSizeHorizontal * 60,
+            height: SizeConfig.blockSizeVertical * 30,
+          ),
           Text(
             'No Ongoing Courses',
             style: LMSStyles.tsHeadingbold.copyWith(fontSize: 18),
@@ -271,7 +269,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: SizeConfig.blockSizeVertical * 2),
+          SizedBox(height: SizeConfig.blockSizeVertical * 1),
           ElevatedButton(
             onPressed: () {
               // Add your enrollment navigation logic here
@@ -279,9 +277,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
             style: ElevatedButton.styleFrom(
               minimumSize: Size(
                 SizeConfig.blockSizeHorizontal * 40,
-                SizeConfig.blockSizeVertical * 6,
+                SizeConfig.blockSizeVertical * 4,
               ),
-              backgroundColor: LearningColors.primaryBlue550,
+              backgroundColor: LearningColors.darkBlue,
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -293,9 +291,9 @@ class _TrainingScreenState extends State<TrainingScreen> {
               style: LMSStyles.tsWhiteNeutral50W60016.copyWith(fontSize: 16),
             ),
           ),
-          SizedBox(height: SizeConfig.blockSizeVertical * 3),
+          SizedBox(height: SizeConfig.blockSizeVertical * 2),
           SizedBox(
-            height: SizeConfig.blockSizeVertical * 40,
+            height: SizeConfig.blockSizeVertical * 26,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               physics: ClampingScrollPhysics(),
@@ -345,34 +343,124 @@ class _TrainingScreenState extends State<TrainingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                // Header row with certificate logo and institute
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Image.asset(
+                      LMSImagePath.certificateLogo,
+                      height: 24,
+                      width: 24,
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
+                    Expanded(
+                      child: Text(
+                        course.institue,
+                        style: LMSStyles.tsHeadingbold.copyWith(fontSize: 16),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Course title with view icon inline
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          course.title,
+                          style:
+                              LMSStyles.tsSubHeadingBold.copyWith(fontSize: 16),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        // View icon inline only with title
+                        IconButton(
+                          onPressed: () {
+                            // Navigate to course details
+                          },
+                          icon: Icon(
+                            Icons.visibility,
+                            color: Colors.black54,
+                            size: 20,
+                          ),
+                          padding: EdgeInsets.all(4),
+                          constraints: BoxConstraints(
+                            minWidth: 32,
+                            minHeight: 32,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      course.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: LMSStyles.tsSubHeadingBold.copyWith(
+                        fontWeight: FontWeight.w200,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                // Course description on separate line
+
+                SizedBox(height: 16),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(Icons.access_time,
+                        size: 14, color: Colors.grey.shade600),
+                    SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        course.courseDuration,
+                        style: LMSStyles.tsHeading.copyWith(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(Icons.people, size: 14, color: Colors.grey.shade600),
+                    SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        course.noofpeoplevisited,
+                        style: LMSStyles.tsHeading.copyWith(fontSize: 12),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                // Download icon with timer
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    // Download icon
+                    Icon(
+                      Icons.download,
+                      color:
+                          timerStatus == 'expired' ? Colors.grey : Colors.black54,
+                      size: 24,
+                    ),
+
+                    // Timer positioned near download icon
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: timerStatus == 'expired'
-                            ? Colors.red.shade100
-                            : Colors.red.shade50,
+                            ? Colors.white
+                            : Colors.white,
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(
-                            color: timerStatus == 'expired'
-                                ? Colors.red.shade300
-                                : Colors.red.shade200,
-                            width: 1),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(
-                              timerStatus == 'expired'
-                                  ? Icons.timer_off
-                                  : Icons.timer,
-                              color: timerStatus == 'expired'
-                                  ? Colors.red
-                                  : Colors.red,
-                              size: 12),
-                          SizedBox(width: 4),
                           Text(
                             timerStatus == 'expired'
                                 ? 'Expired'
@@ -387,223 +475,6 @@ class _TrainingScreenState extends State<TrainingScreen> {
                             ),
                           ),
                         ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 8,
-                ),
-                // Header row with certificate logo, institute, and timer
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Left side: Certificate logo and institute
-                    Expanded(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Image.asset(
-                            LMSImagePath.certificateLogo,
-                            height: 24,
-                            width: 24,
-                          ),
-                          SizedBox(width: SizeConfig.blockSizeHorizontal * 2),
-                          Expanded(
-                            child: Text(
-                              course.institue,
-                              style: LMSStyles.tsHeadingbold
-                                  .copyWith(fontSize: 16),
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Right side: Timer in top-right corner
-                  ],
-                ),
-                SizedBox(height: 8),
-
-                // Course title
-                Text(
-                  course.title,
-                  style: LMSStyles.tsSubHeadingBold.copyWith(fontSize: 16),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 8),
-
-                // Course description
-                Text(
-                  course.description,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: LMSStyles.tsSubHeadingBold.copyWith(
-                    fontWeight: FontWeight.w200,
-                    fontSize: 12,
-                  ),
-                ),
-
-                SizedBox(height: 8),
-
-                // Course details row
-                Row(
-                  children: [
-                    Icon(Icons.access_time,
-                        size: 14, color: Colors.grey.shade600),
-                    SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        course.courseDuration,
-                        style: LMSStyles.tsHeading.copyWith(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Icon(Icons.people, size: 14, color: Colors.grey.shade600),
-                    SizedBox(width: 4),
-                    Flexible(
-                      child: Text(
-                        course.noofpeoplevisited,
-                        style: LMSStyles.tsHeading.copyWith(fontSize: 12),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
-
-                // Completion badge
-                // Container(
-                //   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                //   decoration: BoxDecoration(
-                //     color: Colors.green,
-                //     borderRadius: BorderRadius.circular(12),
-                //   ),
-                //   child: Text(
-                //     'COMPLETED',
-                //     style: TextStyle(
-                //       color: Colors.white,
-                //       fontSize: 12,
-                //       fontWeight: FontWeight.bold,
-                //     ),
-                //   ),
-                // ),
-                // SizedBox(height: 16),
-
-                Divider(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: course.status == "Expired"
-                    ? Row(
-                        children: [
-                          Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text('The Course has been expired',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: LMSStyles.tsSubHeadingBold.copyWith(
-                                        color: LearningColors.red,
-                                        fontSize: 12)),
-                              ],
-                            ),
-                          ),
-                          ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              minimumSize: Size(
-                                  SizeConfig.blockSizeHorizontal * 24,
-                                  SizeConfig.blockSizeVertical * 4),
-                              backgroundColor: LearningColors.darkBlue,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 5,
-                            ),
-                            child: Text(
-                              LMSStrings.strReapplylNow,
-                              style: LMSStyles.tsWhiteNeutral50W60016,
-                            ),
-                          )
-                        ],
-                      )
-                    : Padding(
-                        padding: const EdgeInsets.only(top: 4, bottom: 16),
-                        child: Container(
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: ProgressBar(
-                                  currentPosition:
-                                      double.parse(course.completionPercentage),
-                                  duration: double.parse("100"),
-                                ),
-                              ),
-                              SizedBox(
-                                width: SizeConfig.blockSizeHorizontal * 2,
-                              ),
-                              Text("${course.completionPercentage} %")
-                            ],
-                          ),
-                        ),
-                      ),
-              ),
-
-                // Action buttons (simplified without timer)
-                Row(
-                  children: [
-                    // View button
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // Navigate to course details
-                        },
-                        icon: Icon(Icons.visibility, size: 14),
-                        label: Text(
-                          'View',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: LearningColors.primaryBlue550,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 6),
-                          minimumSize: Size(0, 32),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-
-                    // Download button
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: timerStatus == 'expired' ? null : () {},
-                        icon: Icon(Icons.download, size: 14),
-                        label: Text(
-                          'Download',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: timerStatus == 'expired'
-                              ? Colors.grey
-                              : Colors.green,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 6),
-                          minimumSize: Size(0, 32),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                        ),
                       ),
                     ),
                   ],
@@ -654,7 +525,7 @@ class _TrainingScreenState extends State<TrainingScreen> {
                     labelStyle: TextStyle(
                       color: selectedCategory == category
                           ? LearningColors.neutral100
-                          : Colors.black,
+                          : Colors.black54,
                     ),
                   ),
                 );

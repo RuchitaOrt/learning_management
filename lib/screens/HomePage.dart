@@ -95,8 +95,8 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),
           
-          
                 // Ongoing Courses Section
+                const SizedBox(height: 8),
                 Text(
                   "Ongoing Courses",
                   style: LMSStyles.tsblackTileBold,
