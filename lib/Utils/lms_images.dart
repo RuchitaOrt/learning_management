@@ -18,4 +18,5 @@ static String menu = "assets/images/menu.png";
   static String selectedTraing = "assets/images/selectedTraining.svg";
   static String unselectedTraining = "assets/images/unselectedTraining.svg";
       static String home = "assets/images/home.svg";
+      static String emptycourse = "assets/images/emptycourse.png";
 }

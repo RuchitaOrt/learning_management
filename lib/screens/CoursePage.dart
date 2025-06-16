@@ -544,8 +544,6 @@ Widget _buildFilterSection({
           return false;
         },
         child: Scaffold(
-         
-       
           body: Container(
             width: SizeConfig.blockSizeHorizontal * 100,
             height: SizeConfig.blockSizeVertical * 100,

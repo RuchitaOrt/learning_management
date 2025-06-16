@@ -9,7 +9,6 @@ import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:provider/provider.dart';
 
-
 class TabScreen extends StatefulWidget {
   static const String route = "/tab_screen";
   final int selectedPos;
@@ -18,7 +17,7 @@ class TabScreen extends StatefulWidget {
 
   const TabScreen({
     super.key,
-    this.selectedPos=-1,
+    this.selectedPos = -1,
     this.isSignUp = false,
     this.selectedModule = 0,
   });
@@ -28,12 +27,12 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> {
-final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime? _lastBackPressed;
 
   @override
   Widget build(BuildContext context) {
-    print("Widget seledted tab ${widget.selectedPos}");
+    print("Widget selected tab ${widget.selectedPos}");
     return ChangeNotifierProvider<TabProvider>(
       create: (_) => TabProvider(
         widget.selectedPos,
@@ -65,16 +64,14 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
             child: Scaffold(
               key: scaffoldKey,
-                 appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: CustomAppBar(
-              isSearchClickVisible: () {
-                // provider.toggleSearchIconCategory();
-              },
-              isSearchValueVisible: false,
-               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
-            ),
-          ),
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: CustomAppBar(
+                  isSearchClickVisible: () {},
+                  isSearchValueVisible: false,
+                  onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
+                ),
+              ),
               drawer: CustomDrawer(),
               body: provider.getCurrentPage(),
               floatingActionButton: FloatingActionButton(

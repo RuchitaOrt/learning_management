@@ -30,115 +30,107 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
       return Scaffold(
-     
-        backgroundColor: Colors.grey[100],
-        
-        // appBar: PreferredSize(
-        //   preferredSize: const Size.fromHeight(kToolbarHeight),
-        //   child: CustomAppBar(
-        //     isSearchClickVisible: () {},
-        //     isSearchValueVisible: provider.isSearchIconVisible,
-        //       onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
-        //   ),
-        // ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Welcome Text
-              Text(
-                "Welcome, Ruchita!",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: LearningColors.black,
+        body: Container(
+          decoration: AppDecorations.gradientBackground,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Welcome Text
+                Text(
+                  "Welcome, Ruchita!",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: LearningColors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 10),
-
-              // Overview Heading
-              Text(
-                "Overview",
-                style: LMSStyles.tsblackTileBold,
-              ),
-              const SizedBox(height: 8),
-
-              // Grid Cards
-              GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 6,
-                mainAxisSpacing: 6,
-                childAspectRatio: 1.3,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                children: [
-                  CourseCard(
-                    title: "Active",
-                    count: activeCourses,
-                    icon: Icons.play_arrow,
-                    color: Colors.orange,
-                    total: 10,
-                  ),
-                  CourseCard(
-                    title: "Enrolled",
-                    count: enrolledCourses,
-                    icon: Icons.school,
-                    color: Colors.blue,
-                    total: 10,
-                  ),
-                  CourseCard(
-                    title: "Completed",
-                    count: completedCourses,
-                    icon: Icons.check_circle,
-                    color: Colors.green,
-                    total: 10,
-                  ),
-                  CourseCard(
-                    title: "Pending",
-                    count: pendingCourses,
-                    icon: Icons.pending_actions,
-                    color: Colors.red,
-                    total: 10,
-                  ),
-                ],
-              ),
-
-const SizedBox(height: 8),
-              // Ongoing Courses Section
-              Text(
-                "Ongoing Courses",
-                style: LMSStyles.tsblackTileBold,
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                height: 130,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 2.0),
-                      child: OngoingCourseCard(
-                        courseTitle: "Fundamental :Marine Navigation",
-                        progress: (index + 1) * 0.15,
-                      ),
-                    );
-                  },
+                const SizedBox(height: 10),
+          
+                // Overview Heading
+                Text(
+                  "Overview",
+                  style: LMSStyles.tsblackTileBold,
                 ),
-              ),
-
-              const SizedBox(height: 20),
-
-              // Progress Graph
-              Text(
-                "Progress Graph",
-                style:LMSStyles.tsblackTileBold,
-              ),
-              const SizedBox(height: 8),
-           GraphCard()
-
-            ],
+                const SizedBox(height: 8),
+          
+                // Grid Cards
+                GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 6,
+                  mainAxisSpacing: 6,
+                  childAspectRatio: 1.3,
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  children: [
+                    CourseCard(
+                      title: "Active",
+                      count: activeCourses,
+                      icon: Icons.play_arrow,
+                      color: Colors.orange,
+                      total: 10,
+                    ),
+                    CourseCard(
+                      title: "Enrolled",
+                      count: enrolledCourses,
+                      icon: Icons.school,
+                      color: Colors.blue,
+                      total: 10,
+                    ),
+                    CourseCard(
+                      title: "Completed",
+                      count: completedCourses,
+                      icon: Icons.check_circle,
+                      color: Colors.green,
+                      total: 10,
+                    ),
+                    CourseCard(
+                      title: "Pending",
+                      count: pendingCourses,
+                      icon: Icons.pending_actions,
+                      color: Colors.red,
+                      total: 10,
+                    ),
+                  ],
+                ),
+          
+                // Ongoing Courses Section
+                const SizedBox(height: 8),
+                Text(
+                  "Ongoing Courses",
+                  style: LMSStyles.tsblackTileBold,
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  height: 130,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 5,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 2.0),
+                        child: OngoingCourseCard(
+                          courseTitle: "Fundamental :Marine Navigation",
+                          progress: (index + 1) * 0.15,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+          
+                const SizedBox(height: 20),
+          
+                // Progress Graph
+                Text(
+                  "Progress Graph",
+                  style:LMSStyles.tsblackTileBold,
+                ),
+                const SizedBox(height: 8),
+             GraphCard()
+          
+              ],
+            ),
           ),
         ),
       );
