@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
-import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
-import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 

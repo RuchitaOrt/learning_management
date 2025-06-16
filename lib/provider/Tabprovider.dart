@@ -13,7 +13,7 @@ class TabProvider with ChangeNotifier {
 
   TabProvider(int selectedPos, bool isSignUp, LandingScreenProvider read,int selectedModule,) {
     homeScreen = HomePage();
-   
+    print("widget.selectedPos provider ${selectedPos}");
     initTabs(selectedPos,selectedModule);
   }
 

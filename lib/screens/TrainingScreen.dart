@@ -14,6 +14,7 @@ import 'package:learning_mgt/widgets/ProgressBar.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
+
 class TrainingScreen extends StatefulWidget {
   static const String route = "/TrainingScreen";
   @override
@@ -21,6 +22,7 @@ class TrainingScreen extends StatefulWidget {
 }
 
 class _TrainingScreenState extends State<TrainingScreen> {
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String? selectedCategory;
 
   @override

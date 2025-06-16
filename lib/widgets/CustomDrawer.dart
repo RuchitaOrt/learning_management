@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:learning_mgt/Utils/learning_colors.dart';
+import 'package:learning_mgt/Utils/lms_images.dart';
+import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/screens/Ceritification.dart';
 import 'package:learning_mgt/screens/CoursePage.dart';
 import 'package:learning_mgt/screens/HomePage.dart';
 import 'package:learning_mgt/screens/Recommendation.dart';
 import 'package:learning_mgt/screens/ResultScreen.dart';
+import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/screens/faq_screen.dart';
+import 'package:learning_mgt/screens/FeedbackScreen.dart';
 import 'package:learning_mgt/screens/settingshome.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 
@@ -31,11 +35,11 @@ class CustomDrawer extends StatelessWidget {
                 CircleAvatar(
                   radius: 30,
                   backgroundImage: AssetImage(
-                      'assets/images/user_profile.png'), // Replace with your asset
+                    LMSImagePath.whiteCamera), // Replace with your asset
                 ),
                 SizedBox(height: 10),
                 Text(
-                  'Welcome, User!',
+                  'Welcome, Ruchita!',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -43,7 +47,7 @@ class CustomDrawer extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'user@example.com',
+                  'ruchita@gmail.com',
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
@@ -62,7 +66,7 @@ class CustomDrawer extends StatelessWidget {
               Navigator.of(
                 routeGlobalKey.currentContext!,
               ).pushNamed(
-                HomePage.route,
+                TabScreen.route,
               );
             },
           ),
@@ -111,8 +115,15 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.feedback,
             label: 'FeedBack',
             onTap: () {
-              Navigator.pop(context);
-              // Navigate to settings
+              Navigator.of(
+                routeGlobalKey.currentContext!,
+              ).pushNamed(
+                FeedbackScreen.route,
+                arguments: {
+                  'selectedPos': -1,
+                  'isSignUp': false,
+                },
+              );
             },
           ),
           _buildDrawerItem(
@@ -129,7 +140,7 @@ class CustomDrawer extends StatelessWidget {
                   'isSignUp': false,
                 },
               );
-            }
+            },
           ),
           _buildDrawerItem(
             context: context,

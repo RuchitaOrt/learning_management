@@ -3,11 +3,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/dto/tab_dto.dart';
-import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/Tabprovider.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:provider/provider.dart';
+
 
 class TabScreen extends StatefulWidget {
   static const String route = "/tab_screen";
@@ -17,7 +17,7 @@ class TabScreen extends StatefulWidget {
 
   const TabScreen({
     super.key,
-    this.selectedPos = 0,
+    this.selectedPos=-1,
     this.isSignUp = false,
     this.selectedModule = 0,
   });
@@ -27,10 +27,12 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> {
+final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   DateTime? _lastBackPressed;
 
   @override
   Widget build(BuildContext context) {
+    print("Widget seledted tab ${widget.selectedPos}");
     return ChangeNotifierProvider<TabProvider>(
       create: (_) => TabProvider(
         widget.selectedPos,
