@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:learning_mgt/provider/CertificateProvider.dart';
 import 'package:learning_mgt/provider/CourseProvider.dart';
@@ -32,7 +33,8 @@ Future<void> main() async {
 
   runApp(MyApp());
 }
-
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 class MyApp extends StatefulWidget {
   const MyApp() : super();
   @override

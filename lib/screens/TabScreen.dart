@@ -5,6 +5,7 @@ import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/dto/tab_dto.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/Tabprovider.dart';
+import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:provider/provider.dart';
 
@@ -61,8 +62,19 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
                 return false;
               }
             },
+
             child: Scaffold(
               key: scaffoldKey,
+                 appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: CustomAppBar(
+              isSearchClickVisible: () {
+                // provider.toggleSearchIconCategory();
+              },
+              isSearchValueVisible: false,
+               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
+            ),
+          ),
               drawer: CustomDrawer(),
               body: provider.getCurrentPage(),
               floatingActionButton: FloatingActionButton(

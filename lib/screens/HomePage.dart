@@ -33,14 +33,14 @@ class _HomePageState extends State<HomePage> {
      
         backgroundColor: Colors.grey[100],
         
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: CustomAppBar(
-            isSearchClickVisible: () {},
-            isSearchValueVisible: provider.isSearchIconVisible,
-              onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
-          ),
-        ),
+        // appBar: PreferredSize(
+        //   preferredSize: const Size.fromHeight(kToolbarHeight),
+        //   child: CustomAppBar(
+        //     isSearchClickVisible: () {},
+        //     isSearchValueVisible: provider.isSearchIconVisible,
+        //       onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
+        //   ),
+        // ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
 
-
+const SizedBox(height: 8),
               // Ongoing Courses Section
               Text(
                 "Ongoing Courses",
@@ -167,7 +167,7 @@ class CourseCard extends StatelessWidget {
     double percent = (total == 0) ? 0 : count / total;
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color:
         Colors.white,

@@ -545,16 +545,7 @@ Widget _buildFilterSection({
         },
         child: Scaffold(
          
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(kToolbarHeight),
-            child: CustomAppBar(
-              isSearchClickVisible: () {
-                // provider.toggleSearchIconCategory();
-              },
-              isSearchValueVisible: provider.isSearchIconVisible,
-               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
-            ),
-          ),
+       
           body: Container(
             width: SizeConfig.blockSizeHorizontal * 100,
             height: SizeConfig.blockSizeVertical * 100,
