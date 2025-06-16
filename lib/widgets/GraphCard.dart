@@ -46,7 +46,7 @@ class _GraphCardState extends State<GraphCard> {
             children: [
               const Text(
                 "Performance Overview",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               Container(

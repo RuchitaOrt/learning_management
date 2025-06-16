@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
+import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/screens/Videoscreen.dart';
 
 import '../Utils/lms_styles.dart';
 import 'OrderSummary.dart';
@@ -74,18 +76,24 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                       fit: BoxFit.cover,
                     ),
                     Container(color: Colors.black.withOpacity(0.4)),
-                    Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.play_circle_fill,
-                              size: 64, color: Colors.white),
-                          SizedBox(height: 8),
-                          Text(
-                            "Watch Demo",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ],
+                    GestureDetector(
+                      onTap: ()
+                      {
+                        _navigateToVideoScreen("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4","","","",false,"","");
+                      },
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.play_circle_fill,
+                                size: 64, color: Colors.white),
+                            SizedBox(height: 8),
+                            Text(
+                              "Watch Demo",
+                              style: TextStyle(color: Colors.white, fontSize: 16),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
@@ -530,5 +538,40 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       label: Text(text),
       backgroundColor: Colors.grey.shade200,
     );
+  }
+
+   void _navigateToVideoScreen(
+      String video,
+      String videoTopicSlug,
+      String videoCourseSlug,
+      String videoWatchTime,
+      bool isTrailer,
+      String courseID,
+      String topicID,
+     ) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => VideoScreen(
+                videoCategory: "",
+                video: video,
+                videoCourseSlug: videoCourseSlug,
+                videoTopicSlug: videoTopicSlug,
+                videoWatchTime: videoWatchTime,
+                isTrailer: isTrailer,
+                courseID: courseID,
+                topicID: topicID,
+                
+              )),
+    );
+
+    // If the result is true, trigger the refresh logic for the previous page
+    if (result == true) {
+      Navigator.pushReplacementNamed(
+        routeGlobalKey.currentContext!,
+        CourseDetailPage.route,
+       
+      );
+    }
   }
 }

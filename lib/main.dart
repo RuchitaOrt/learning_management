@@ -32,7 +32,7 @@ Future<void> main() async {
 
   runApp(MyApp());
 }
-
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 class MyApp extends StatefulWidget {
   const MyApp() : super();
   @override
