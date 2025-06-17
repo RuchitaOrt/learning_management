@@ -7,6 +7,8 @@ class CertificateProvider {
   final String instituteID;
   final String courseDuration;
   final String downloadLink;
+  DateTime? expiryDate;
+  bool? isDownloaded;
 
 
   CertificateProvider(
@@ -17,7 +19,9 @@ class CertificateProvider {
     required this.instituteID,
     required this.downloadLink,
     required this.courseDuration,
-   
+    this.expiryDate,
+    this.isDownloaded,
+
   });
 }
 

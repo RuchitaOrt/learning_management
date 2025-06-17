@@ -9,13 +9,10 @@ import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/CourseProvider.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/screens/CourseDetailPage.dart';
-import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
-
-import '../widgets/CustomDrawer.dart';
+import 'HomePage.dart';
 import 'OrderSummary.dart';
-import 'PaymentScreen.dart';
 
 class CoursePage extends StatefulWidget {
   static const String route = "/CoursePage";
@@ -26,6 +23,7 @@ class CoursePage extends StatefulWidget {
 class _CoursePageState extends State<CoursePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String? selectedCategory;
+  String? selectedModule;
 
   @override
   void initState() {
@@ -116,12 +114,6 @@ void _showFilterBottomSheet(BuildContext context) {
                                     selectedOptions: selectedLocations,
                                     setState: setState,
                                   ),
-                                  // _buildFilterSection(
-                                  //   title: 'Rank/Position',
-                                  //   options: ranks,
-                                  //   selectedOptions: selectedRanks,
-                                  //   setState: setState,
-                                  // ),
                                   _buildFilterSection(
                                     title: 'Vessel Type',
                                     options: vesselTypes,
@@ -134,18 +126,6 @@ void _showFilterBottomSheet(BuildContext context) {
                                     selectedOptions: selectedDurations,
                                     setState: setState,
                                   ),
-                                  // _buildFilterSection(
-                                  //   title: 'Bridge Watch',
-                                  //   options: bridgeWatch,
-                                  //   selectedOptions: selectedBridgeWatch,
-                                  //   setState: setState,
-                                  // ),
-                                  // _buildFilterSection(
-                                  //   title: 'Engine Watch',
-                                  //   options: engineWatch,
-                                  //   selectedOptions: selectedEngineWatch,
-                                  //   setState: setState,
-                                  // ),
                                 ],
                               ),
                             ),
@@ -225,35 +205,6 @@ void _showFilterBottomSheet(BuildContext context) {
                             ),
                           ),
                         ),
-                        /*Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(
-                                'Cancel',
-                                style: TextStyle(color: LearningColors.darkBlue),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () {
-                                print('Selected Locations: $selectedLocations');
-                                print('Selected Ranks: $selectedRanks');
-                                print('Selected Vessel Types: $selectedVesselTypes');
-                                print('Selected Durations: $selectedDurations');
-                                print('Selected Bridge Watch: $selectedBridgeWatch');
-                                print('Selected Engine Watch: $selectedEngineWatch');
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: LearningColors.darkBlue,
-                              ),
-                              child: Text('Apply',
-                                  style: TextStyle(color: LearningColors.white)),
-                            ),
-                          ],
-                        ),*/
                       ],
                     ),
                   ),
@@ -266,187 +217,6 @@ void _showFilterBottomSheet(BuildContext context) {
     },
   );
 }
-
-  /*void _showFilterBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.5,
-          minChildSize: 0.5,
-          maxChildSize: 0.5,
-          builder: (context, scrollController) {
-            return StatefulBuilder(
-              builder: (context, setState) {
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                  ),
-                  // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 500),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Header with drag handle
-                          Column(
-                            children: [
-                              Container(
-                                width: 40,
-                                height: 4,
-                                margin: const EdgeInsets.only(bottom: 12),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text('Filter',
-                                      style: TextStyle(
-                                          color: LearningColors.black18,
-                                          fontWeight: FontWeight.w800,
-                                          fontSize: 20)),
-                                  TextButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        selectedLocations.clear();
-                                        selectedRanks.clear();
-                                        selectedVesselTypes.clear();
-                                        selectedDurations.clear();
-                                        selectedBridgeWatch.clear();
-                                        selectedEngineWatch.clear();
-                                      });
-                                    },
-                                    child: Text('Reset',
-                                        style: TextStyle(
-                                            color: LearningColors.darkBlue,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600)),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-
-                          // Content Scrollable
-                          Expanded(
-                            child: SingleChildScrollView(
-                              controller: scrollController,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  _buildFilterSection(
-                                    title: 'Location',
-                                    options: locations,
-                                    selectedOptions: selectedLocations,
-                                    setState: setState,
-                                  ),
-                                  _buildFilterSection(
-                                    title: 'Vessel Type',
-                                    options: vesselTypes,
-                                    selectedOptions: selectedVesselTypes,
-                                    setState: setState,
-                                  ),
-                                  _buildFilterSection(
-                                    title: 'Duration',
-                                    options: durations,
-                                    selectedOptions: selectedDurations,
-                                    setState: setState,
-                                  ),
-                                  const SizedBox(height: 80), // Space for buttons
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          Container(
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, -5),
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      side: BorderSide(
-                                        color: LearningColors.darkBlue,
-                                        width: 1.5,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Cancel',
-                                      style: TextStyle(
-                                        color: LearningColors.darkBlue,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      print('Selected Locations: $selectedLocations');
-                                      print('Selected Vessel Types: $selectedVesselTypes');
-                                      print('Selected Durations: $selectedDurations');
-                                      Navigator.pop(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: LearningColors.darkBlue,
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    child: Text(
-                                      'Apply',
-                                      style: TextStyle(
-                                        color: LearningColors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            );
-          },
-        );
-      },
-    );
-  }*/
 
 Widget _buildFilterSection({
   required String title,
@@ -529,263 +299,6 @@ Widget _buildFilterSection({
     List<String> selectedDurations = [];
     List<String> selectedBridgeWatch = [];
     List<String> selectedEngineWatch = [];
-  // void _showFilterDialog(BuildContext context) {
-   
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       return StatefulBuilder(
-  //         builder: (context, setState) {
-  //           return AlertDialog(
-  //             title: Row(
-  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //               children: [
-  //                 Text('Filter', style: TextStyle(
-  //                   color: LearningColors.black18,
-  //                   fontWeight: FontWeight.w800,
-  //                   fontSize: 20,
-  //                 )),
-  //                 TextButton(
-  //                   onPressed: () {
-  //                     setState(() {
-  //                       selectedLocations.clear();
-  //                       selectedRanks.clear();
-  //                       selectedVesselTypes.clear();
-  //                       selectedDurations.clear();
-  //                       selectedBridgeWatch.clear();
-  //                       selectedEngineWatch.clear();
-  //                     });
-  //                   },
-  //                   child: Text(
-  //                     'Reset',
-  //                     style: TextStyle(
-  //                       color: LearningColors.darkBlue,
-  //                       fontSize: 18
-  //                     ),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //             content: SingleChildScrollView(
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 children: [
-  //                   Text('Location', style: LMSStyles.tsSubHeadingBold),
-  //                   SizedBox(height: 8),
-  //                   Wrap(
-  //                     spacing: 8.0,
-  //                     runSpacing: 4.0,
-  //                     children: locations.map((location) {
-  //                       final isSelected = selectedLocations.contains(location);
-  //                       return FilterChip(
-  //                         label: Text(location),
-  //                         selected: isSelected,
-  //                         onSelected: (selected) {
-  //                           setState(() {
-  //                             if (selected) {
-  //                               selectedLocations.add(location);
-  //                             } else {
-  //                               selectedLocations.remove(location);
-  //                             }
-  //                           });
-  //                         },
-  //                         selectedColor: LearningColors.darkBlue,
-  //                         checkmarkColor: LearningColors.neutral100,
-  //                         labelStyle: TextStyle(
-  //                           color: isSelected
-  //                               ? LearningColors.neutral100
-  //                               : Colors.black,
-  //                         ),
-  //                       );
-  //                     }).toList(),
-  //                   ),
-  //                   SizedBox(height: 8),
-  //                   Text('Rank/Position', style: LMSStyles.tsSubHeadingBold),
-  //                   SizedBox(height: 8),
-  //                   Wrap(
-  //                     spacing: 8.0,
-  //                     runSpacing: 4.0,
-  //                     children: ranks.map((rank) {
-  //                       final isSelected = selectedRanks.contains(rank);
-  //                       return FilterChip(
-  //                         label: Text(rank),
-  //                         selected: isSelected,
-  //                         onSelected: (selected) {
-  //                           setState(() {
-  //                             if (selected) {
-  //                               selectedRanks.add(rank);
-  //                             } else {
-  //                               selectedRanks.remove(rank);
-  //                             }
-  //                           });
-  //                         },
-  //                         selectedColor: LearningColors.darkBlue,
-  //                         checkmarkColor: LearningColors.neutral100,
-  //                         labelStyle: TextStyle(
-  //                           color: isSelected
-  //                               ? LearningColors.neutral100
-  //                               : Colors.black,
-  //                         ),
-  //                       );
-  //                     }).toList(),
-  //                   ),
-  //                   SizedBox(height: 16),
-  //                   Text('Vessel Type', style: LMSStyles.tsSubHeadingBold),
-  //                   SizedBox(height: 8),
-  //                   Wrap(
-  //                     spacing: 8.0,
-  //                     runSpacing: 4.0,
-  //                     children: vesselTypes.map((vesselType) {
-  //                       final isSelected = selectedVesselTypes.contains(vesselType);
-  //                       return FilterChip(
-  //                         label: Text(vesselType),
-  //                         selected: isSelected,
-  //                         onSelected: (selected) {
-  //                           setState(() {
-  //                             if (selected) {
-  //                               selectedVesselTypes.add(vesselType);
-  //                             } else {
-  //                               selectedVesselTypes.remove(vesselType);
-  //                             }
-  //                           });
-  //                         },
-  //                         selectedColor: LearningColors.darkBlue,
-  //                         checkmarkColor: LearningColors.neutral100,
-  //                         labelStyle: TextStyle(
-  //                           color: isSelected
-  //                               ? LearningColors.neutral100
-  //                               : Colors.black,
-  //                         ),
-  //                       );
-  //                     }).toList(),
-  //                   ),
-  //                   SizedBox(height: 16),
-  //                   Text('Duration', style: LMSStyles.tsSubHeadingBold),
-  //                   SizedBox(height: 8),
-  //                   Wrap(
-  //                     spacing: 8.0,
-  //                     runSpacing: 4.0,
-  //                     children: durations.map((duration) {
-  //                       final isSelected = selectedDurations.contains(duration);
-  //                       return FilterChip(
-  //                         label: Text(duration),
-  //                         selected: isSelected,
-  //                         onSelected: (selected) {
-  //                           setState(() {
-  //                             if (selected) {
-  //                               selectedDurations.add(duration);
-  //                             } else {
-  //                               selectedDurations.remove(duration);
-  //                             }
-  //                           });
-  //                         },
-  //                         selectedColor: LearningColors.darkBlue,
-  //                         checkmarkColor: LearningColors.neutral100,
-  //                         labelStyle: TextStyle(
-  //                           color: isSelected
-  //                               ? LearningColors.neutral100
-  //                               : Colors.black,
-  //                         ),
-  //                       );
-  //                     }).toList(),
-  //                   ),
-  //                   SizedBox(height: 16),
-  //                   Text('Bridge Watch', style: LMSStyles.tsSubHeadingBold),
-  //                   SizedBox(height: 8),
-  //                   Wrap(
-  //                     spacing: 8.0,
-  //                     runSpacing: 4.0,
-  //                     children: bridgeWatch.map((bWatch) {
-  //                       final isSelected = selectedBridgeWatch.contains(bWatch);
-  //                       return FilterChip(
-  //                         label: Text(bWatch),
-  //                         selected: isSelected,
-  //                         onSelected: (selected) {
-  //                           setState(() {
-  //                             if (selected) {
-  //                               selectedBridgeWatch.add(bWatch);
-  //                             } else {
-  //                               selectedBridgeWatch.remove(bWatch);
-  //                             }
-  //                           });
-  //                         },
-  //                         selectedColor: LearningColors.darkBlue,
-  //                         checkmarkColor: LearningColors.neutral100,
-  //                         labelStyle: TextStyle(
-  //                           color: isSelected
-  //                               ? LearningColors.neutral100
-  //                               : Colors.black,
-  //                         ),
-  //                       );
-  //                     }).toList(),
-  //                   ),
-  //                   SizedBox(height: 16),
-  //                   Text('Engine Watch', style: LMSStyles.tsSubHeadingBold),
-  //                   SizedBox(height: 8),
-  //                   Wrap(
-  //                     spacing: 8.0,
-  //                     runSpacing: 4.0,
-  //                     children: engineWatch.map((eWatch) {
-  //                       final isSelected = selectedEngineWatch.contains(eWatch);
-  //                       return FilterChip(
-  //                         label: Text(eWatch),
-  //                         selected: isSelected,
-  //                         onSelected: (selected) {
-  //                           setState(() {
-  //                             if (selected) {
-  //                               selectedEngineWatch.add(eWatch);
-  //                             } else {
-  //                               selectedEngineWatch.remove(eWatch);
-  //                             }
-  //                           });
-  //                         },
-  //                         selectedColor: LearningColors.darkBlue,
-  //                         checkmarkColor: LearningColors.neutral100,
-  //                         labelStyle: TextStyle(
-  //                           color: isSelected
-  //                               ? LearningColors.neutral100
-  //                               : Colors.black,
-  //                         ),
-  //                       );
-  //                     }).toList(),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             actions: [
-  //               TextButton(
-  //                 onPressed: () {
-  //                   Navigator.of(context).pop();
-  //                 },
-  //                 child: Text('Cancel', style: TextStyle(color: LearningColors.darkBlue),),
-  //               ),
-  //               ElevatedButton(
-  //                 onPressed: () {
-  //                   // Apply filters here
-  //                   print('Selected Locations: $selectedLocations');
-  //                   print('Selected Ranks: $selectedRanks');
-  //                   print('Selected Vessel Types: $selectedVesselTypes');
-  //                   print('Selected Durations: $selectedDurations');
-  //                   print('Selected Bridge Watch: $selectedBridgeWatch');
-  //                   print('Selected Engine Watch: $selectedEngineWatch');
-
-  //                   // Close the dialog
-  //                   Navigator.of(context).pop();
-  //                 },
-  //                 style: ElevatedButton.styleFrom(
-  //                   backgroundColor: LearningColors.darkBlue,
-  //                 ),
-  //                 child: Text('Apply', style: TextStyle(color: LearningColors.white)),
-  //               ),
-  //             ],
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -811,15 +324,42 @@ Widget _buildFilterSection({
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(
+                      height: SizeConfig.blockSizeVertical * 1,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8),
+                      child: Text(
+                        "Ongoing Course",
+                        style: LMSStyles.tsblackTileBold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: CurrentCourseCard(
+                        courseTitle: "Fundamental: Marine Navigation",
+                        progress: 0.65,
+                        currentModule: "Module 3: Navigation Techniques",
+                        onModuleChanged: (value) {
+                          setState(() {
+                            selectedModule = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: SizeConfig.blockSizeVertical * 1,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
-                            "Recommended Courses",
+                            "Explore Courses",
                             style:
-                                LMSStyles.tsHeadingbold.copyWith(fontSize: 20),
+                                LMSStyles.tsblackTileBold,
                           ),
                         ),
                         GestureDetector(
@@ -1023,15 +563,6 @@ Widget _buildFilterSection({
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              /*if (course.discountedAmount != course.amount)
-                                Text(
-                                  '\$${course.discountedAmount}',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    decoration: TextDecoration.lineThrough,
-                                    color: Colors.grey[500],
-                                  ),
-                                ),*/
                               Text(
                                 'INR ${course.amount}',
                                 style: TextStyle(
@@ -1040,24 +571,6 @@ Widget _buildFilterSection({
                                   color: LearningColors.darkBlue,
                                 ),
                               ),
-                              /*if (course.discountedAmount != course.amount)
-                                Container(
-                                  margin: EdgeInsets.only(top: 4),
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 6, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.green[50],
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: Text(
-                                    '${course.offerPercentage}% OFF',
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.green[800],
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),*/
                             ],
                           ),
 
@@ -1125,193 +638,4 @@ Widget _buildFilterSection({
       ),
     );
   }
-
-// Helper widget for metadata items
-  Widget _buildMetaItem({required IconData icon, required String text}) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 16,
-          color: LearningColors.darkBlue,
-        ),
-        SizedBox(width: 4),
-        Text(
-          text,
-          style: TextStyle(
-            fontSize: 13,
-            color: Colors.grey[700],
-          ),
-        ),
-      ],
-    );
-  }
-
-  /*Widget _buildVerticalCard(Course course) {
-    return GestureDetector(
-      onTap: ()
-      {
-          Navigator.of(routeGlobalKey.currentContext!)
-                        .pushNamed(CourseDetailPage.route)
-                        .then((value) {});
-      },
-      child: Card(
-        elevation: 0.5,
-        margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        child: Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10, top: 5),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              *//*Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Image.asset(LMSImagePath.certificateLogo),
-                    SizedBox(
-                      width: SizeConfig.blockSizeHorizontal * 1,
-                    ),
-                    Container(
-                      width: SizeConfig.blockSizeHorizontal * 70,
-                      child: Text(
-                        course.institue,
-                        style: LMSStyles.tsHeadingbold,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ]),*//*
-              SizedBox(
-                height: SizeConfig.blockSizeVertical * 1,
-              ),
-              Text(course.title, style: LMSStyles.tsSubHeadingBold),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical * 0.1,
-              ),
-              Text(
-                course.description,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: LMSStyles.tsSubHeadingBold
-                    .copyWith(fontWeight: FontWeight.w200, fontSize: 14),
-              ),
-              SizedBox(
-                height: SizeConfig.blockSizeVertical * 2,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(LMSImagePath.mode),
-                        SizedBox(
-                          width: SizeConfig.blockSizeHorizontal * 1,
-                        ),
-                        Text(course.mode, style: LMSStyles.tsHeading),
-                      ],
-                    ),
-                  ),
-                  *//*Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          SvgPicture.asset(LMSImagePath.usermultiple),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 1,
-                          ),
-                          Text(course.noofpeoplevisited,
-                              style: LMSStyles.tsHeading),
-                        ],
-                      ),
-                    ),
-                   
-                  ),*//*
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(LMSImagePath.time),
-                        SizedBox(
-                          width: SizeConfig.blockSizeHorizontal * 1,
-                        ),
-                        Text(course.courseDuration, style: LMSStyles.tsHeading),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Divider(),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '\$ ${course.discountedAmount}',
-                            overflow: TextOverflow.ellipsis,
-                            style: LMSStyles.tsHeading.copyWith(decoration: TextDecoration.lineThrough, fontSize: LMSStyles.tsHeading.fontSize! + 2),
-                          ),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 2,
-                          ),
-                          Text('\$ ${course.amount}',
-                              overflow: TextOverflow.ellipsis,
-                              style: LMSStyles.tsSubHeadingBold.copyWith(fontSize: LMSStyles.tsSubHeadingBold.fontSize! + 2)),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 5,
-                          ),
-                          *//*SvgPicture.asset(LMSImagePath.offer),
-                          SizedBox(
-                            width: SizeConfig.blockSizeHorizontal * 1,
-                          ),
-                          Text("${course.offerPercentage} off",
-                              overflow: TextOverflow.ellipsis,
-                              style: LMSStyles.tsSubHeadingBold
-                                  .copyWith(color: Colors.green)),*//*
-                        ],
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        // Navigator.of(context)
-                        //     .pushNamed(Settings.route)
-                        //     .then((value) {});
-                        Navigator.of(context)
-                            .pushNamed(CoursePage.route)
-                            .then((value) {});
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(SizeConfig.blockSizeHorizontal * 40,
-                            SizeConfig.blockSizeVertical * 4),
-                        backgroundColor: LearningColors.darkBlue,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 5,
-                      ),
-                      child: Text(
-                        LMSStrings.strEnrollNow,
-                        style: LMSStyles.tsWhiteNeutral50W60016,
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }*/
 }

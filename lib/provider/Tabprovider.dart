@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/dto/tab_dto.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
+import 'package:learning_mgt/screens/Ceritification.dart';
 import 'package:learning_mgt/screens/HomePage.dart';
 import 'package:learning_mgt/screens/CoursePage.dart';
 import 'package:learning_mgt/screens/TrainingScreen.dart';
@@ -29,6 +30,15 @@ class TabProvider with ChangeNotifier {
         onClicked: () => onTabSelected(0),
       ),
       TabDTO(
+        name: "Certifications",
+        imagePathSelected: LMSImagePath.certificateLogo,
+        imagePathUnselected: LMSImagePath.unselectedTraining,
+        pageIC: Ceritification(),
+        pageManager: Ceritification(),
+        isSelected: false,
+        onClicked: () => onTabSelected(1),
+      ),
+      /*TabDTO(
         name: "Your Training",
         imagePathSelected: LMSImagePath.selectedTraing,
         imagePathUnselected: LMSImagePath.unselectedTraining,
@@ -36,7 +46,7 @@ class TabProvider with ChangeNotifier {
         pageManager: TrainingScreen(),
         isSelected: false,
         onClicked: () => onTabSelected(1),
-      ),
+      ),*/
      
     
     ];

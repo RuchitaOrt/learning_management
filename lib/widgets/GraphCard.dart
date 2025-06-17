@@ -50,33 +50,53 @@ class _GraphCardState extends State<GraphCard> {
               ),
               const Spacer(),
               Container(
-                height: 25,
-                padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
+                height: 38,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.grey.shade100,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: LearningColors.darkBlue.withOpacity(0.2), width: 1.2),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
                 ),
                 child: DropdownButtonHideUnderline(
                   child: DropdownButton<String>(
                     value: selectedRange,
-                    icon: const Icon(Icons.arrow_drop_down),
-                    style: const TextStyle(color: Colors.black, fontSize: 14),
+                    dropdownColor: Colors.white,
+                    icon: const Icon(Icons.keyboard_arrow_down, color: LearningColors.darkBlue),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 14,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
                     items: filterOptions.map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
-                        child: Text(value, style: const TextStyle(fontSize: 14)),
+                        child: Text(
+                          value,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                        ),
                       );
                     }).toList(),
                     onChanged: (String? newValue) {
                       setState(() {
                         selectedRange = newValue!;
-                        // TODO: Update data based on selection
                       });
                     },
                   ),
                 ),
               ),
+
             ],
           ),
 
