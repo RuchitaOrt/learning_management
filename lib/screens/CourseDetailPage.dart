@@ -76,7 +76,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                     GestureDetector(
                       onTap: ()
                       {
-                        _navigateToVideoScreen("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4","","","",false,"","");
+                        // _navigateToVideoScreen("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4","","","",false,"","");
                       },
                       child: Center(
                         child: Column(
@@ -537,38 +537,38 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     );
   }
 
-   void _navigateToVideoScreen(
-      String video,
-      String videoTopicSlug,
-      String videoCourseSlug,
-      String videoWatchTime,
-      bool isTrailer,
-      String courseID,
-      String topicID,
-     ) async {
-    final result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => VideoScreen(
-                videoCategory: "",
-                video: video,
-                videoCourseSlug: videoCourseSlug,
-                videoTopicSlug: videoTopicSlug,
-                videoWatchTime: videoWatchTime,
-                isTrailer: isTrailer,
-                courseID: courseID,
-                topicID: topicID,
+  //  void _navigateToVideoScreen(
+  //     String video,
+  //     String videoTopicSlug,
+  //     String videoCourseSlug,
+  //     String videoWatchTime,
+  //     bool isTrailer,
+  //     String courseID,
+  //     String topicID,
+  //    ) async {
+  //   final result = await Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //         builder: (context) => VideoScreen(
+  //               videoCategory: "",
+  //               video: video,
+  //               videoCourseSlug: videoCourseSlug,
+  //               videoTopicSlug: videoTopicSlug,
+  //               videoWatchTime: videoWatchTime,
+  //               isTrailer: isTrailer,
+  //               courseID: courseID,
+  //               topicID: topicID,
                 
-              )),
-    );
+  //             )),
+  //   );
 
-    // If the result is true, trigger the refresh logic for the previous page
-    if (result == true) {
-      Navigator.pushReplacementNamed(
-        routeGlobalKey.currentContext!,
-        CourseDetailPage.route,
+  //   // If the result is true, trigger the refresh logic for the previous page
+  //   if (result == true) {
+  //     Navigator.pushReplacementNamed(
+  //       routeGlobalKey.currentContext!,
+  //       CourseDetailPage.route,
        
-      );
-    }
-  }
+  //     );
+  //   }
+  // }
 }

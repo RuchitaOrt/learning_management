@@ -107,7 +107,8 @@ class _VerificationScreenState extends State<VerificationScreen> {
     );
   }*/
 
-  Widget stepIndicator(BuildContext context, int currentStep, bool isSubmitted) {
+  Widget stepIndicator(
+      BuildContext context, int currentStep, bool isSubmitted) {
     final steps = ['Basic', 'Detail', 'Upload'];
 
     return Row(
@@ -127,12 +128,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
             childContent = Icon(Icons.check, color: Colors.white, size: 20);
           } else if (isCurrent) {
             bgColor = LearningColors.darkBlue; // Current step uses darkBlue
-            childContent = Text('${stepIndex + 1}',
-                style: TextStyle(color: Colors.white));
+            childContent =
+                Text('${stepIndex + 1}', style: TextStyle(color: Colors.white));
           } else {
             bgColor = Colors.grey.shade400; // Inactive steps remain grey
-            childContent = Text('${stepIndex + 1}',
-                style: TextStyle(color: Colors.white));
+            childContent =
+                Text('${stepIndex + 1}', style: TextStyle(color: Colors.white));
           }
 
           return Column(
@@ -147,7 +148,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 steps[stepIndex],
                 style: TextStyle(
                   fontSize: 12,
-                  color: isCurrent ? LearningColors.darkBlue : Colors.grey.shade600,
+                  color: isCurrent
+                      ? LearningColors.darkBlue
+                      : Colors.grey.shade600,
                   fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
@@ -216,36 +219,104 @@ class _VerificationScreenState extends State<VerificationScreen> {
               stepIndicator(context, current, isSubmitted),
               SizedBox(height: 10),
               Expanded(
-                child: current == -1
-                    ? BasicFormWidget()
-                    : (!isSubmitted
-                        ? forms[current]
-                        : Center(
-                            child: Text(
-                                'Your registration has been successfully submitted! ',
-                                textAlign: TextAlign.center,))),
-              ),
+                  child: current == -1
+                      ? BasicFormWidget()
+                      : (!isSubmitted
+                          ? forms[current]
+                          : Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // GIF animation
+                                Container(
+                                  height: 120,
+                                  width: 120,
+                                  child: Image.asset(
+                                    'assets/images/successful.gif', // Add your GIF path here
+                                    fit: BoxFit.contain,
+                                  ),
+                                ),
+                                SizedBox(height: 24),
 
+                                Text(
+                                  'Application no: #268-136-734',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                // Registration success message
+                                Text(
+                                  'Your registration has been successfully submitted!',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black87,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Kindly visit the training center with a printed copy of your documents for validation.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                                // SizedBox(height: 32),
+                              ],
+                            ))),
               if (isSubmitted)
                 Center(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.of(
-                        routeGlobalKey.currentContext!,
-                      ).pushNamed(
-                        TabScreen.route,
-                        arguments: {
-                          'selectedPos': -1,
-                          'isSignUp': false,
+                  child: Column(
+                    children: [
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(
+                            routeGlobalKey.currentContext!,
+                          ).pushNamed(
+                            TabScreen.route,
+                            arguments: {
+                              'selectedPos': -1,
+                              'isSignUp': false,
+                            },
+                          );
                         },
-                      );
-                    },
-                    label: Text(
-                      'Go to Home',
-                      style: TextStyle(color: LearningColors.neutral100),
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: LearningColors.primaryBlue500),
+                        label: Text(
+                          'Go to Home',
+                          style: TextStyle(color: LearningColors.neutral100),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: LearningColors.primaryBlue500),
+                      ),
+                      SizedBox(height: 8),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.of(
+                            routeGlobalKey.currentContext!,
+                          ).pushNamed(
+                            TabScreen.route,
+                            arguments: {
+                              'selectedPos': 0,
+                              'isSignUp': false,
+                            },
+                          );
+                        },
+                        label: Text(
+                          'Browse Courses',
+                          style: TextStyle(color: LearningColors.black18),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            side: BorderSide(color: Colors.black, width: 1.5),
+                            elevation: 0,
+                      ),
+                      ),
+                    ],
                   ),
                 )
               else
@@ -262,13 +333,15 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           padding: EdgeInsets.symmetric(vertical: 16),*/
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
-                          padding: EdgeInsets.symmetric(vertical: 16), // internal padding
+                          padding: EdgeInsets.symmetric(
+                              vertical: 16), // internal padding
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           elevation: 5,
                         ),
-                        onPressed: current > 0 ? stepProvider.previousStep : null,
+                        onPressed:
+                            current > 0 ? stepProvider.previousStep : null,
                         child: Text('Back'),
                       ),
                     ),
@@ -284,19 +357,22 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           padding: EdgeInsets.symmetric(vertical: 16),*/
                           backgroundColor: LearningColors.darkBlue,
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16), // internal padding
+                          padding: EdgeInsets.symmetric(
+                              vertical: 16), // internal padding
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
                           elevation: 5,
                         ),
                         onPressed: () {
-                          final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+                          final signUpProvider = Provider.of<SignUpProvider>(
+                              context,
+                              listen: false);
                           final formKey = current == 0
                               ? signUpProvider.formKeyBasic
                               : current == 1
-                              ? signUpProvider.formKeyDetail
-                              : signUpProvider.formKeyUpload;
+                                  ? signUpProvider.formKeyDetail
+                                  : signUpProvider.formKeyUpload;
 
                           if (formKey.currentState?.validate() ?? false) {
                             if (current == 2) {
@@ -305,9 +381,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
                               stepProvider.nextStep();
                             }
                           } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Please fix errors before proceeding'))
-                            );
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: Text(
+                                    'Please fix errors before proceeding')));
                           }
                         },
                         child: Text(current == 2 ? 'Submit' : 'Next'),
@@ -315,7 +391,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     ),
                   ],
                 ),
-                /*Row(
+              /*Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     ElevatedButton(
@@ -350,7 +426,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     ),
                   ],
                 ),*/
-//
             ],
           ),
         ),
@@ -399,10 +474,6 @@ InputDecoration CommonInputDecoration({
     labelText: label,
     hintText: hint,
     floatingLabelBehavior: FloatingLabelBehavior.auto,
-    /*hintStyle: LMSStyles.tsHintstyle.copyWith(
-      fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
-      color: Colors.grey.shade400,
-    ),*/
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
@@ -433,19 +504,20 @@ InputDecoration CommonInputDecoration({
       fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2,
     ),
     suffixIcon: IconButton(
-      color: LearningColors.neutral300,
+      color: isObscured
+          ? LearningColors.neutral300
+          : const Color.fromARGB(169, 3, 89, 159),
       onPressed: toggle,
       icon: Icon(isObscured ? Icons.visibility_off : Icons.visibility),
     ),
     hintStyle: LMSStyles.tsHintstyle.copyWith(
       fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
     ),
-    // labelStyle: LMSStyles.tsHeading.copyWith(fontSize: LMSStyles.tsHeading.fontSize! + 2),
     labelStyle: LMSStyles.tsHintstyle.copyWith(
       fontSize: LMSStyles.tsHintstyle.fontSize! + 5,
     ),
     contentPadding: EdgeInsets.symmetric(
-      vertical: 15, // Increased padding to accommodate larger text
+      vertical: 16,
       horizontal: 16.0,
     ),
   );
@@ -460,35 +532,45 @@ class BasicFormWidget extends StatelessWidget {
     return Form(
       key: signUpProvider.formKeyBasic,
       child: ListView(
-        padding: EdgeInsets.zero, // removes default padding
+        padding: EdgeInsets.zero,
         shrinkWrap: true,
         physics: ClampingScrollPhysics(),
         children: [
-          Expanded(
-            child: CustomTextFieldWidget(
-              title: LMSStrings.strFirstName,
-              hintText: LMSStrings.strEnterFirstName,
-              onChange: (val) {},
-              textEditingController: signUpProvider.firstNameController,
-              autovalidateMode: AutovalidateMode.disabled,
-              validator: signUpProvider.validateFirstName,
-            ),
-          ),
-          SizedBox(width: 10), // Space between fields
-
-          // Last Name
-          Expanded(
-            child: CustomTextFieldWidget(
-              title: LMSStrings.strLastName,
-              hintText: LMSStrings.strEnterLastName,
-              onChange: (val) {},
-              textEditingController: signUpProvider.lastNameController,
-              autovalidateMode: AutovalidateMode.disabled,
-              validator: signUpProvider.validateLastName,
-            ),
+          SizedBox(height: 8),
+          // First Name and Last Name in a Row
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextFieldWidget(
+                  title: LMSStrings.strFirstName,
+                  hintText: LMSStrings.strEnterFirstName,
+                  onChange: (val) {},
+                  textEditingController: signUpProvider.firstNameController,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  validator: signUpProvider.validateFirstName,
+                ),
+              ), // Space between fields
+            ],
           ),
 
-          // Email
+          SizedBox(height: 0), // Add vertical spacing
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextFieldWidget(
+                  title: LMSStrings.strLastName,
+                  hintText: LMSStrings.strEnterLastName,
+                  onChange: (val) {},
+                  textEditingController: signUpProvider.lastNameController,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  validator: signUpProvider.validateLastName,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 0), // Add vertical spacing
+
+          // Email (full width)
           CustomTextFieldWidget(
             title: LMSStrings.strEmail,
             hintText: LMSStrings.strEnterEmail,
@@ -499,7 +581,6 @@ class BasicFormWidget extends StatelessWidget {
             suffixIcon: TextButton(
               onPressed: () {
                 // Add logic to send OTP to email
-                // signUpProvider.sendEmailOtp();
               },
               child: Text(
                 "Send OTP",
@@ -510,8 +591,9 @@ class BasicFormWidget extends StatelessWidget {
               ),
             ),
           ),
+          SizedBox(height: 0),
 
-          // Phone Number
+          // Phone Number (full width)
           CustomTextFieldWidget(
             title: LMSStrings.strPhoneNo,
             hintText: LMSStrings.strEnterPhoneNo,
@@ -524,25 +606,10 @@ class BasicFormWidget extends StatelessWidget {
             textEditingController: signUpProvider.phoneNumberController,
             autovalidateMode: AutovalidateMode.disabled,
             validator: signUpProvider.validatePhoneNumber,
-            // suffixIcon: TextButton(
-            //   onPressed: () {
-            //     // Call your send OTP logic here
-            //     // signUpProvider.sendOtp(); // Example method
-            //   },
-            //   child: Text(
-            //     "Send OTP",
-            //     style: TextStyle(
-            //         color: LearningColors.primaryBlue500,
-            //         fontWeight: FontWeight.bold,
-            //         fontSize: 12),
-            //   ),
-            // ),
           ),
-
           SizedBox(height: 8),
-          /*Text(LMSStrings.strpassword,
-              style: LMSStyles.tsWhiteNeutral100W50014),
-          SizedBox(height: 8),*/
+
+          // Password field
           TextFormField(
             style: LMSStyles.tsWhiteNeutral300W50012,
             obscureText: signUpProvider.isPasswordObscured,
@@ -555,10 +622,9 @@ class BasicFormWidget extends StatelessWidget {
               toggle: signUpProvider.togglePasswordVisibility,
             ),
           ),
-          SizedBox(height: 14),
-          /*Text(LMSStrings.strConfirmpassword,
-              style: LMSStyles.tsWhiteNeutral100W50014),
-          SizedBox(height: 8),*/
+          SizedBox(height: 16),
+
+          // Confirm Password field
           TextFormField(
             style: LMSStyles.tsWhiteNeutral300W50012,
             obscureText: signUpProvider.isconfirmPasswordObscured,
@@ -590,6 +656,7 @@ class DetailFormWidget extends StatelessWidget {
         shrinkWrap: true,
         physics: ClampingScrollPhysics(),
         children: [
+          SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -651,21 +718,14 @@ class DetailFormWidget extends StatelessWidget {
                               value: dept,
                               groupValue: tempSelected,
                               onChanged: (value) {
-                                setState(() {
-                                  tempSelected = value;
-                                });
+                                Navigator.pop(context, value);
                               },
                             );
                           }).toList(),
                         );
                       },
                     ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context, tempSelected),
-                        child: Text('Select'),
-                      ),
-                    ],
+                    // Remove the actions section entirely since we don't need the Select button
                   );
                 },
               );
@@ -703,21 +763,13 @@ class DetailFormWidget extends StatelessWidget {
                               value: dept,
                               groupValue: tempSelected,
                               onChanged: (value) {
-                                setState(() {
-                                  tempSelected = value;
-                                });
+                                Navigator.pop(context, value);
                               },
                             );
                           }).toList(),
                         );
                       },
                     ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context, tempSelected),
-                        child: Text('Select'),
-                      ),
-                    ],
                   );
                 },
               );
@@ -755,21 +807,13 @@ class DetailFormWidget extends StatelessWidget {
                               value: dept,
                               groupValue: tempSelected,
                               onChanged: (value) {
-                                setState(() {
-                                  tempSelected = value;
-                                });
+                                Navigator.pop(context, value);
                               },
                             );
                           }).toList(),
                         );
                       },
                     ),
-                    actions: [
-                      ElevatedButton(
-                        onPressed: () => Navigator.pop(context, tempSelected),
-                        child: Text('Select'),
-                      ),
-                    ],
                   );
                 },
               );
@@ -791,7 +835,7 @@ class DetailFormWidget extends StatelessWidget {
             onTap: () async {
               DateTime? pickedDate = await showDatePicker(
                 context: context,
-                initialDate: DateTime(2000, 1, 1), // default initial date
+                initialDate: DateTime.now(), // default initial date
                 firstDate: DateTime(1900), // earliest allowed date
                 lastDate: DateTime.now(), // no future dates
               );
@@ -810,6 +854,18 @@ class DetailFormWidget extends StatelessWidget {
             hintText: LMSStrings.strPincodeHint,
             onChange: (val) {},
             textEditingController: signUpProvider.pincodeController,
+            suffixIcon: TextButton(
+              onPressed: () {
+                // Add logic to send OTP to email
+              },
+              child: Text(
+                "Locate Me",
+                style: TextStyle(
+                    color: LearningColors.darkBlue,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12),
+              ),
+            ),
             // autovalidateMode: AutovalidateMode.disabled,
             // validator: signUpProvider.validatePincodet,
           ),
@@ -819,7 +875,6 @@ class DetailFormWidget extends StatelessWidget {
   }
 }
 
-// UploadFormWidget: Step 3 (dummy example)
 class UploadFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -829,70 +884,141 @@ class UploadFormWidget extends StatelessWidget {
       key: provider.formKeyUpload,
       child: provider.documentFields.isEmpty
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: provider.documentFields.length,
-              itemBuilder: (context, index) {
-                final doc = provider.documentFields[index];
-                return CustomTextFieldWidget(
-                  title: doc.name,
-                  isFieldReadOnly: true,
-                  hintText: doc.hint,
-                  textEditingController: provider.controllers[doc.name]!,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (_) => provider
-                      .validateFile(provider.selectedFilePaths[doc.name]),
-                  onChange: (val) {}, // optional
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      if (provider.selectedFilePaths[doc.name] == null) {
-                        provider.pickFile(doc.name);
-                      } else {
-                        showImageDialog(
-                          provider.selectedFilePaths[doc.name],
-                          doc.name,
-                        );
-                      }
+          : Column(
+              children: [
+                Expanded(
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(top: 8),
+                    itemCount: provider.documentFields.length,
+                    itemBuilder: (context, index) {
+                      final doc = provider.documentFields[index];
+                      return CustomTextFieldWidget(
+                        title: doc.name,
+                        isFieldReadOnly: true,
+                        hintText: doc.hint,
+                        textEditingController: provider.controllers[doc.name]!,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (_) => provider
+                            .validateFile(provider.selectedFilePaths[doc.name]),
+                        onChange: (val) {}, // optional
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            if (provider.selectedFilePaths[doc.name] == null) {
+                              provider.pickFile(doc.name);
+                            } else {
+                              showImageDialog(
+                                provider.selectedFilePaths[doc.name],
+                                doc.name,
+                              );
+                            }
+                          },
+                          child: Icon(
+                            provider.selectedFilePaths[doc.name] == null
+                                ? Icons.upload
+                                : Icons.remove_red_eye,
+                          ),
+                        ),
+                      );
                     },
-                    child: Icon(
-                      provider.selectedFilePaths[doc.name] == null
-                          ? Icons.upload
-                          : Icons.remove_red_eye,
+                  ),
+                ),
+                // Note text after all fields
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, top: 8, bottom: 16),
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black87,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'Note',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: ': Allowed file types: ',
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: 'PDF',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: ', ',
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: 'JPG',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: ', ',
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: 'PNG',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: '. Maximum file size: ',
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: '2 MB',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.redAccent),
+                        ),
+                        TextSpan(
+                          text: ' per file.',
+                          style: TextStyle(color: Colors.redAccent),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
+                ),
+              ],
             ),
-     
     );
   }
+}
 
-  void showImageDialog(String? selectedPath, String pickedValue) {
-    if (selectedPath == null) return;
+void showImageDialog(String? selectedPath, String pickedValue) {
+  if (selectedPath == null) return;
 
-    showDialog(
-      context: routeGlobalKey.currentContext!,
-      builder: (_) => AlertDialog(
-        title: Text("Selected Image"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.file(File(selectedPath)),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                final signUpProvider = Provider.of<SignUpProvider>(
-                    routeGlobalKey.currentContext!,
-                    listen: false);
-                Navigator.of(routeGlobalKey.currentContext!)
-                    .pop(); // close dialog
-                signUpProvider
-                    .pickBirthCertificateFile(pickedValue); // re-trigger picker
-              },
-              child: const Text("Change Image"),
-            )
-          ],
-        ),
+  showDialog(
+    context: routeGlobalKey.currentContext!,
+    builder: (_) => AlertDialog(
+      title: Text("Selected Image"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.file(File(selectedPath)),
+          const SizedBox(height: 10),
+          ElevatedButton(
+            onPressed: () {
+              final signUpProvider = Provider.of<SignUpProvider>(
+                  routeGlobalKey.currentContext!,
+                  listen: false);
+              Navigator.of(routeGlobalKey.currentContext!)
+                  .pop(); // close dialog
+              signUpProvider
+                  .pickBirthCertificateFile(pickedValue); // re-trigger picker
+            },
+            child: const Text("Change Image"),
+          )
+        ],
       ),
-    );
-  }
+    ),
+  );
 }

@@ -16,8 +16,17 @@ class SignInProvider with ChangeNotifier {
 
   bool get isCheckedTerms => _isCheckedTerms;
 
+  bool _isChecked = false;
+
+  bool get isChecked => _isChecked;
+
+  bool _showTermsError = false;
+  
+  bool get showTermsError => _showTermsError;
+
   void toggleTermsCheckbox(bool? value) {
     _isCheckedTerms = value ?? false;
+    _showTermsError = false; // Hide error when checkbox is toggled
     notifyListeners();
   }
   // Setter
@@ -66,9 +75,6 @@ class SignInProvider with ChangeNotifier {
     return null;
   }
 
-  bool _isChecked = false;
-
-  bool get isChecked => _isChecked;
 
   void toggleCheckbox(bool? value) {
     _isChecked = value ?? false;
@@ -77,7 +83,9 @@ class SignInProvider with ChangeNotifier {
 
   // Method to validate form
   bool validateForm() {
-    return _formKey.currentState?.validate() ?? false;
+    bool isFormValid = _formKey.currentState?.validate() ?? false;
+    validateTermsAcceptance();
+    return isFormValid && _isCheckedTerms;
   }
 
   
@@ -88,6 +96,9 @@ class SignInProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
+  void validateTermsAcceptance() {
+    _showTermsError = !_isCheckedTerms;
+    notifyListeners();
+  }
 
 }

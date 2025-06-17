@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
@@ -10,6 +9,7 @@ import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/sign_In_provider.dart';
 import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/screens/VerificationScreen.dart';
+import 'package:learning_mgt/screens/forgotPassword_screen.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -36,7 +36,7 @@ class SignInScreen extends StatelessWidget {
   }) {
     return Container(
       width: SizeConfig.blockSizeHorizontal * 100,
-      height: SizeConfig.blockSizeVertical * 100,
+      height: SizeConfig.blockSizeVertical * 62.5,
       decoration: AppDecorations.gradientBackground,
       child: Padding(
         padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 0),
@@ -84,7 +84,8 @@ class SignInScreen extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(left: 10, right: 10),
                           child: Form(
-                            key: signInProvider.formKey, // Wrap all fields inside the Form widget
+                            key: signInProvider
+                                .formKey, // Wrap all fields inside the Form widget
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -92,11 +93,13 @@ class SignInScreen extends StatelessWidget {
                                   title: LMSStrings.strEmail,
                                   hintText: LMSStrings.strEnterEmail,
                                   onChange: (val) {},
-                                  textEditingController: signInProvider.emailController,
+                                  textEditingController:
+                                      signInProvider.emailController,
                                   autovalidateMode: AutovalidateMode.disabled,
                                   validator: signInProvider.validateEmailField,
                                 ),
-                                SizedBox(height: SizeConfig.blockSizeVertical * 2),
+                                SizedBox(
+                                    height: SizeConfig.blockSizeVertical * 1),
                                 // Password Field with Validation
                                 /*CustomTextFieldWidget(
                                   title: LMSStrings.strpassword,
@@ -108,29 +111,37 @@ class SignInScreen extends StatelessWidget {
                                 ),*/
                                 TextFormField(
                                   style: LMSStyles.tsWhiteNeutral300W50012,
-                                  obscureText: signInProvider.isPasswordObscured,
+                                  obscureText:
+                                      signInProvider.isPasswordObscured,
                                   controller: signInProvider.passwordController,
                                   validator: signInProvider.validatePassword,
                                   decoration: CommonInputDecoration(
                                     hint: LMSStrings.strEnterpassword,
                                     label: LMSStrings.strpassword,
-                                    isObscured: signInProvider.isPasswordObscured,
-                                    toggle: signInProvider.togglePasswordVisibility,
+                                    isObscured:
+                                        signInProvider.isPasswordObscured,
+                                    toggle:
+                                        signInProvider.togglePasswordVisibility,
                                   ),
                                 ),
-                                SizedBox(height: SizeConfig.blockSizeVertical * 0.2),
+                                SizedBox(
+                                    height: SizeConfig.blockSizeVertical * 0.2),
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: GestureDetector(
                                     onTap: () {
-                                      // Handle forget password
+                                      Navigator.of(
+                                              routeGlobalKey.currentContext!)
+                                          .pushNamed(ForgotPasswordScreen.route)
+                                          .then((value) {});
                                     },
                                     child: Stack(
                                       alignment: Alignment.bottomCenter,
                                       children: [
                                         Text(
                                           LMSStrings.strForgetPassword,
-                                          style: TextStyle(color: LearningColors.darkBlue),
+                                          style: TextStyle(
+                                              color: LearningColors.darkBlue),
                                         ),
                                         Positioned(
                                           bottom: 0,
@@ -145,7 +156,8 @@ class SignInScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: SizeConfig.blockSizeVertical * 2),
+                                SizedBox(
+                                    height: SizeConfig.blockSizeVertical * 2),
                                 /*Text(
                                   LMSStrings.strpassword,
                                   style: LMSStyles.tsblackNeutralbold,
@@ -210,13 +222,16 @@ class SignInScreen extends StatelessWidget {
                                       onChanged: (val) {
                                         signInProvider.toggleTermsCheckbox(val);
                                       },
-                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                      visualDensity: VisualDensity(horizontal: -4, vertical: -4),
+                                      materialTapTargetSize:
+                                          MaterialTapTargetSize.shrinkWrap,
+                                      visualDensity: VisualDensity(
+                                          horizontal: -4, vertical: -4),
                                     ),
                                     Expanded(
                                       child: RichText(
                                         text: TextSpan(
-                                          text: ' I accept the terms and privacy policy',
+                                          text:
+                                              ' I accept the terms and privacy policy',
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 14,
@@ -226,6 +241,7 @@ class SignInScreen extends StatelessWidget {
                                         maxLines: 2,
                                       ),
                                     ),
+
                                     /*Flexible(
                                       child: Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -279,7 +295,19 @@ class SignInScreen extends StatelessWidget {
                                       ),
                                     ),*/
                                   ],
-                                )
+                                ),
+                                if (signInProvider.showTermsError)
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.only(left: 26, top: 0),
+                                    child: Text(
+                                      'Please accept the terms and privacy policy',
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -295,26 +323,30 @@ class SignInScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 16, right: 10), // only side padding
+                  padding: const EdgeInsets.only(
+                      left: 10, top: 16, right: 10), // only side padding
                   child: Consumer<SignInProvider>(
                     builder: (context, signInProvider, _) {
                       return SizedBox(
                         width: double.infinity, // full width
                         child: ElevatedButton(
                           onPressed: () {
-                            Navigator.of(
-                              routeGlobalKey.currentContext!,
-                            ).pushNamed(
-                              TabScreen.route,
-                              arguments: {
-                                'selectedPos': -1,
-                                'isSignUp': false,
-                              },
-                            );
+                            if (signInProvider.validateForm()) {
+                              Navigator.of(
+                                routeGlobalKey.currentContext!,
+                              ).pushNamed(
+                                TabScreen.route,
+                                arguments: {
+                                  'selectedPos': -1,
+                                  'isSignUp': false,
+                                },
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: LearningColors.darkBlue,
-                            padding: EdgeInsets.symmetric(vertical: 14), // internal padding
+                            padding: EdgeInsets.symmetric(
+                                vertical: 14), // internal padding
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
@@ -329,7 +361,7 @@ class SignInScreen extends StatelessWidget {
                     },
                   ),
                 ),
-                SizedBox(height: SizeConfig.blockSizeHorizontal * 12),
+                SizedBox(height: SizeConfig.blockSizeHorizontal * 10),
                 GestureDetector(
                   onTap: () {
                     Navigator.of(routeGlobalKey.currentContext!)
@@ -342,11 +374,14 @@ class SignInScreen extends StatelessWidget {
                         children: [
                           TextSpan(
                             text: LMSStrings.strHaveAnAccount,
-                            style: LMSStyles.tsWhiteNeutral300W3002.copyWith(color: LearningColors.neutralBlue750),
+                            style: LMSStyles.tsWhiteNeutral300W3002
+                                .copyWith(color: LearningColors.neutralBlue750),
                           ),
                           TextSpan(
                             text: LMSStrings.strCreateAnAccount,
-                            style: LMSStyles.tsOrange50W60016.copyWith(decoration: TextDecoration.underline, color: LearningColors.darkBrown),
+                            style: LMSStyles.tsOrange50W60016.copyWith(
+                                decoration: TextDecoration.underline,
+                                color: LearningColors.darkBrown),
                           ),
                         ],
                       ),
@@ -438,6 +473,7 @@ class SignInScreen extends StatelessWidget {
         create: (_) => SignInProvider(),
         child: ListView(
           shrinkWrap: true,
+          physics: ClampingScrollPhysics(),
           children: [
             Image.asset(
               LMSImagePath.coverbg,
