@@ -18,11 +18,15 @@ class LMSStrings {
   static const String strSignIn = "Sign In";
   static const String strSignUp = "Sign Up";
   static const String strCreateAnAccount = "Create an account";
+  static const String strCreateANewPassword = "Create a New Password";
+  static const String strResetPassword = "Reset Password";
+  static const String strCreateNewPasswordDetail = "Enter a new password for your account below.";
   static const String strForgetPassword = "Forgot password?";
   static const String strForgetYourPassword = "Forgot your password?";
   static const String strForgetPasswordDetail =
       "Enter the email address associated with your \naccount, and we'll send you a link to reset your \npassword.";
   static const String strResetLink = "Send Reset OTP";
+  static const String strResetLinkSent = "Reset Link Sent!";
   static const String strResetLinkDetail =
       "We've sent a password reset link to your email \naddress. Please check your inbox (and spam folder) \nto reset your password.";
   static const String strHome = "Home";

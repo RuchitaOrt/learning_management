@@ -11,6 +11,7 @@ import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/screens/TrainingScreen.dart';
 import 'package:learning_mgt/screens/VerificationScreen.dart';
 import 'package:learning_mgt/screens/faq_screen.dart';
+import 'package:learning_mgt/screens/forgotPassword_screen.dart';
 import 'package:learning_mgt/screens/settingshome.dart';
 import 'package:learning_mgt/screens/signIn_screen.dart';
 import 'package:learning_mgt/screens/splash_screen.dart';
@@ -35,6 +36,18 @@ class Routers {
       case VerificationScreen.route:
         return MaterialPageRoute(
           builder: (_) => VerificationScreen(),
+        );
+      case ForgotPasswordScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => ForgotPasswordScreen(),
+        );
+      case ResetLinkSentScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => ResetLinkSentScreen(),
+        );
+      case ChangePasswordScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => ChangePasswordScreen(),
         );
       case SettingsHome.route:
         return MaterialPageRoute(
