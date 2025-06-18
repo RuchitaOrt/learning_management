@@ -292,10 +292,11 @@ class _CeritificationState extends State<Ceritification> {
                     padding: const EdgeInsets.symmetric(horizontal: 8),
                     child: Text(
                       "My Certifications",
-                      style: LMSStyles.tsHeadingbold.copyWith(
+                      style: LMSStyles.tsblackTileBold,
+                      /*style: LMSStyles.tsHeadingbold.copyWith(
                         fontSize: 24,
                         color: LearningColors.darkBlue,
-                      ),
+                      ),*/
                     ),
                   ),
                   SizedBox(height: 16),
@@ -361,9 +362,11 @@ class _CeritificationState extends State<Ceritification> {
                       children: [
                         Text(
                           course.title,
-                          style: LMSStyles.tsHeadingbold.copyWith(
+                          style: TextStyle(
                             fontSize: 16,
+                            fontWeight: FontWeight.w600,
                             color: LearningColors.darkBlue,
+                            letterSpacing: 0.5,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -371,8 +374,10 @@ class _CeritificationState extends State<Ceritification> {
                         SizedBox(height: 4),
                         Text(
                           course.description,
-                          style: LMSStyles.tsSubHeadingBold.copyWith(
-                            color: Colors.grey.shade600,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
                           ),
                         ),
                       ],
