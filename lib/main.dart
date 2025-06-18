@@ -4,8 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:learning_mgt/provider/CertificateProvider.dart';
 import 'package:learning_mgt/provider/CourseProvider.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
+import 'package:learning_mgt/provider/NotificationProvider.dart';
 import 'package:learning_mgt/provider/RecommendedCourseProvider.dart';
 import 'package:learning_mgt/provider/ResultProvider.dart';
+import 'package:learning_mgt/provider/SearchProvider.dart';
 import 'package:learning_mgt/provider/StepProvider.dart';
 
 import 'package:learning_mgt/provider/TrainingProvider.dart';
@@ -112,6 +114,12 @@ setState(() {
       create: (_) => StepProvider(),
       
     ),
+        ChangeNotifierProvider<SearchProvider>(
+          create: (context) => SearchProvider(),
+        ),
+        ChangeNotifierProvider<NotificationProvider>(
+          create: (context) => NotificationProvider(),
+        ),
     
       ],
       child: MaterialApp(

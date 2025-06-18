@@ -220,16 +220,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: scaffoldKey,
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: CustomAppBar(
-          isSearchClickVisible: () {},
-          isSearchValueVisible: false,
-          onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
-        ),
-      ),
-      endDrawer: CustomDrawer(),
+      backgroundColor: LearningColors.white,
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: EdgeInsets.all(12),
@@ -459,6 +450,349 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     final institutes = [
       {
         'logo': 'assets/images/aims.png',
+        'name': 'AIMS Institute of Maritime Studies (Sucursal De Seafarers Training Center, Inc. - PANAMÁ)',
+        'address': '216–B wing, Plot No–44, Sai Chambers, Sector 11, Opp Railway Station, C.B.D. Belapur (East), Navi Mumbai 400 614, India.',
+        'phone': '+91-(0)22–41277001 / +91-(0)22–65263121',
+        'email': 'training@aimsmaritime.com',
+        'start_date': '12-06-2023',
+        'duration': '6 Months',
+      },
+      {
+        'logo': 'assets/images/maritime.png',
+        'name': 'Centre for Maritime Education and Training (CMET)',
+        'address': 'Bakshi, Ka Talab, Lucknow, India',
+        'phone': '+915222735015',
+        'email': 'cmetlucknow@gmail.com',
+        'start_date': '01-08-2023',
+        'duration': '3 Months',
+      },
+    ];
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: institutes.length,
+      itemBuilder: (context, index) {
+        final institute = institutes[index];
+        return Card(
+          color: LearningColors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Logo
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    institute['logo']!,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(width: 12),
+
+                // Text content
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        institute['name']!,
+                        style: LMSStyles.tsblackTileBold2,
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Address
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.location_on, color: Colors.orange, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              institute['address']!,
+                              style: LMSStyles.tsWhiteNeutral300W500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Phone
+                      Row(
+                        children: [
+                          Icon(Icons.phone, color: Colors.orange, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              institute['phone']!,
+                              style: LMSStyles.tsWhiteNeutral300W500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Email
+                      Row(
+                        children: [
+                          Icon(Icons.email, color: Colors.orange, size: 16),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              institute['email']!,
+                              style: LMSStyles.tsWhiteNeutral300W500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Start Date & Duration
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_today, color: Colors.orange, size: 16),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Start: ${institute['start_date']}',
+                            style: LMSStyles.tsWhiteNeutral300W500.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(width: 16),
+                          Icon(Icons.timer, color: Colors.orange, size: 16),
+                          const SizedBox(width: 8),
+                          Text(
+                            institute['duration']!,
+                            style: LMSStyles.tsWhiteNeutral300W500.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /*Widget _buildInstituteTab() {
+    final institutes = [
+      {
+        'logo': 'assets/images/aims.png',
+        'name': 'AIMS Institute of Maritime Studies',
+        'subtitle': 'Sucursal De Seafarers Training Center, Inc. - PANAMÁ',
+        'address': '216–B wing, Plot No–44, Sai Chambers, Sector 11, Opp Railway Station, C.B.D. Belapur (East), Navi Mumbai 400 614, India.',
+        'phone': '+91-(0)22–41277001 / +91-(0)22–65263121',
+        'email': 'training@aimsmaritime.com',
+        'start_date': '12-06-2023',
+        'duration': '6 Months',
+      },
+      {
+        'logo': 'assets/images/maritime.png',
+        'name': 'Centre for Maritime Education and Training',
+        'subtitle': 'CMET',
+        'address': 'Bakshi, Ka Talab, Lucknow, India',
+        'phone': '+915222735015',
+        'email': 'cmetlucknow@gmail.com',
+        'start_date': '01-08-2023',
+        'duration': '3 Months',
+      },
+    ];
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: institutes.length,
+      itemBuilder: (context, index) {
+        final institute = institutes[index];
+        return Card(
+          color: LearningColors.white,
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          margin: const EdgeInsets.only(bottom: 20),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with logo and name
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Logo with container for better framing
+                    Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color: Colors.grey.shade200,
+                          width: 1,
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          institute['logo']!,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+
+                    // Name and subtitle
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            institute['name']!,
+                            style: LMSStyles.tsblackTileBold2.copyWith(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (institute['subtitle'] != null)
+                            Text(
+                              institute['subtitle']!,
+                              style: LMSStyles.tsblackTileBold2.copyWith(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Divider
+                Divider(
+                  color: Colors.grey.shade300,
+                  height: 1,
+                ),
+                const SizedBox(height: 16),
+
+                // Info items in a compact grid
+                Wrap(
+                  spacing: 16,
+                  runSpacing: 16,
+                  children: [
+                    // Address
+                    _buildInfoItem(
+                      icon: Icons.location_on,
+                      color: Colors.blue,
+                      title: 'Address',
+                      value: institute['address']!,
+                    ),
+
+                    // Phone
+                    _buildInfoItem(
+                      icon: Icons.phone,
+                      color: Colors.green,
+                      title: 'Phone',
+                      value: institute['phone']!,
+                    ),
+
+                    // Email
+                    _buildInfoItem(
+                      icon: Icons.email,
+                      color: Colors.orange,
+                      title: 'Email',
+                      value: institute['email']!,
+                    ),
+
+                    // Start Date
+                    _buildInfoItem(
+                      icon: Icons.calendar_today,
+                      color: Colors.purple,
+                      title: 'Start Date',
+                      value: institute['start_date']!,
+                    ),
+
+                    // Duration
+                    _buildInfoItem(
+                      icon: Icons.timer,
+                      color: Colors.red,
+                      title: 'Duration',
+                      value: institute['duration']!,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoItem({
+    required IconData icon,
+    required Color color,
+    required String title,
+    required String value,
+  }) {
+    return SizedBox(
+      width: 160, // Fixed width for consistent grid
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: color,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.black,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }*/
+
+  /*Widget _buildInstituteTab() {
+    final institutes = [
+      {
+        'logo': 'assets/images/aims.png',
         'name':
             'AIMS Institute of Maritime Studies (Sucursal De Seafarers Training Center, Inc. - PANAMÁ)',
         'address':
@@ -481,8 +815,13 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       itemBuilder: (context, index) {
         final institute = institutes[index];
         return Card(
+<<<<<<< HEAD
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+=======
+          color: LearningColors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+>>>>>>> 9be207df9109c68a79807449d7826715d804191b
           margin: const EdgeInsets.only(bottom: 16),
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -553,7 +892,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         );
       },
     );
-  }
+  }*/
 
   Widget _buildModulesTab() {
     final modules = [
@@ -594,14 +933,18 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       child: ExpansionPanelList.radio(
         expandedHeaderPadding: EdgeInsets.symmetric(vertical: 4),
         elevation: 2,
-        children: modules.map<ExpansionPanelRadio>((module) {
-          final index = modules.indexOf(module);
+        children: modules.asMap().entries.map<ExpansionPanelRadio>((entry) {
+          final index = entry.key + 1; // 1-based index
+          final module = entry.value;
+
           return ExpansionPanelRadio(
             value: index,
             headerBuilder: (context, isExpanded) {
               return ListTile(
-                title: Text(module['title'].toString(),
-                    style: LMSStyles.tsSubHeadingBold),
+                title: Text(
+                  '$index. ${module['title']}',
+                  style: LMSStyles.tsSubHeadingBold,
+                ),
                 subtitle: Text("4 lectures  |  4 min",
                     style: LMSStyles.tsWhiteNeutral300W500),
               );
@@ -664,15 +1007,14 @@ class _CourseDetailPageState extends State<CourseDetailPage>
           expandedHeaderPadding: const EdgeInsets.symmetric(vertical: 4),
           elevation: 2,
           children: faqs.asMap().entries.map<ExpansionPanelRadio>((entry) {
-            final index = entry.key;
+            final index = entry.key + 1;
             final item = entry.value;
 
             return ExpansionPanelRadio(
               value: index,
               headerBuilder: (context, isExpanded) {
                 return ListTile(
-                  title: Text(item['question']!,
-                      style: LMSStyles.tsSubHeadingBold),
+                  title: Text('$index. ${item['question']!}', style: LMSStyles.tsSubHeadingBold),
                 );
               },
               body: Container(

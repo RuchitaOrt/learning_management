@@ -11,6 +11,9 @@ import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
+import '../screens/NotificationScreen.dart';
+import '../screens/SearchScreen.dart';
+
 class CustomAppBar extends StatefulWidget {
   final VoidCallback isSearchClickVisible;
   final bool isSearchValueVisible;
@@ -93,12 +96,33 @@ class _CustomAppBarState extends State<CustomAppBar> {
             // ),
             Padding(
               padding: const EdgeInsets.only(right: 15),
-              child: SvgPicture.asset(LMSImagePath.search),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => SearchScreen(
+                        onCloseSearch: () => Navigator.of(context).pop(),
+                      ),
+                    ),
+                  );
+                },
+                child: SvgPicture.asset(LMSImagePath.search),
+              ),
             ),
             SizedBox(width: SizeConfig.blockSizeHorizontal * 0.2),
+            // In your _CustomAppBarState class
             Padding(
               padding: const EdgeInsets.only(right: 15),
-              child: SvgPicture.asset(LMSImagePath.notify),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => NotificationScreen(),
+                    ),
+                  );
+                },
+                child: SvgPicture.asset(LMSImagePath.notify),
+              ),
             ),
            SizedBox(width: SizeConfig.blockSizeHorizontal * 0.2),
 

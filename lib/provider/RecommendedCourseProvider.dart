@@ -17,8 +17,7 @@ class RecommendedCourse {
   final String courseStatus;//recommeded,mandatory
 
 
-  RecommendedCourse(
-     {
+  RecommendedCourse({
     required this.id,
     required this.title,
     required this.description,
@@ -97,8 +96,7 @@ class RecommendedCourseProvider with ChangeNotifier {
           institue: "Centre for Maritime Education and Training (CMET)",
           courseDuration: "2 days",
             status: LMSStrings.strPending,
-        courseStatus: LMSStrings.strRecommended
-          ),
+        courseStatus: LMSStrings.strRecommended),
       RecommendedCourse(
           id: '2',
           title: 'Figma Essentials',
