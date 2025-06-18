@@ -1,11 +1,15 @@
 // notification_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:intl/intl.dart';
 
+import '../Utils/lms_images.dart';
 import '../Utils/lms_styles.dart';
 import '../provider/NotificationProvider.dart';
+import 'HomePage.dart';
+import 'TabScreen.dart';
 
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({Key? key}) : super(key: key);
@@ -21,12 +25,18 @@ class NotificationScreen extends StatelessWidget {
           actions: [
             Consumer<NotificationProvider>(
               builder: (context, provider, child) {
-                return TextButton(
-                  onPressed: provider.markAllAsRead,
-                  child: const Text(
-                    'Mark all as read',
-                    style: TextStyle(color: LearningColors.darkBlue),
+                return IconButton(
+                  icon: SvgPicture.asset(
+                    LMSImagePath.home,
                   ),
+                  onPressed: () {
+                    provider.markAllAsRead(); // Mark all notifications as read
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => TabScreen()),
+                    );
+                  },
+                  tooltip: 'Home', // Optional tooltip
                 );
               },
             ),
