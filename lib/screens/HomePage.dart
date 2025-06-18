@@ -261,14 +261,14 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.32,
+                  height: MediaQuery.of(context).size.height * 0.35,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 4,
                     itemBuilder: (context, index) {
                       final courses = [
                         {
-                          'title': 'Advanced Navigation',
+                          'title': 'Advanced Navigation Navigation Navigation Navigation Navigation Navigation',
                           'content': '6 Modules · 2 Projects',
                           'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlbIDRuVn3XZxVDRbpIMoYUUx-hS9v63awWLH97LbfhPw4VkQUK8iquu2LDFpaazgfSHM&usqp=CAU',
                           'duration': '8h 45m · 1.5L+ Learners',
@@ -905,7 +905,7 @@ class RecommendedCourseItem extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.network(
                   image,
-                  height: 140,
+                  height: MediaQuery.of(context).size.height * 0.18,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -953,7 +953,7 @@ class RecommendedCourseItem extends StatelessWidget {
                 Text(
                   title,
                   style: LMSStyles.tsblackTileBold2,
-                  maxLines: 2,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),

@@ -358,8 +358,7 @@ Widget _buildFilterSection({
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
                             "Explore Courses",
-                            style:
-                                LMSStyles.tsblackTileBold,
+                            style: LMSStyles.tsblackTileBold,
                           ),
                         ),
                         GestureDetector(

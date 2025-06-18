@@ -75,24 +75,29 @@ class _SplashScreenState extends State<SplashScreen>
         decoration: AppDecorations.gradientBackground,
         child: Stack(
           children: [
-            Center(
-              child: SvgPicture.asset(
-                LMSImagePath.splashLogo,
-                height: height / 6,
-                width: height / 6,
+            Padding(
+              padding: const EdgeInsets.only(left: 80, right: 80),
+              child: Center(
+                child: SvgPicture.asset(
+                  LMSImagePath.splashLogo,
+                  height: height / 6,
+                  width: height / 6,
+                ),
               ),
             ),
             Positioned(
               bottom: 24,
               left: 0,
               right: 0,
-              child: Text(
-                "Version :${GlobalLists.versionNumber}",
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: LearningColors.darkBlue,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
+              child: SafeArea(
+                child: Text(
+                  "Version :${GlobalLists.versionNumber}",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: LearningColors.darkBlue,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ),
