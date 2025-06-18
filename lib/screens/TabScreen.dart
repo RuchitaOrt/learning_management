@@ -17,7 +17,7 @@ class TabScreen extends StatefulWidget {
 
   const TabScreen({
     super.key,
-    this.selectedPos = -1,
+    required this.selectedPos,
     this.isSignUp = false,
     this.selectedModule = 0,
   });

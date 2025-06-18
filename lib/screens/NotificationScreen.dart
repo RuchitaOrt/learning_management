@@ -33,7 +33,7 @@ class NotificationScreen extends StatelessWidget {
                     provider.markAllAsRead(); // Mark all notifications as read
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => TabScreen()),
+                      MaterialPageRoute(builder: (context) => TabScreen(selectedPos: 0,)),
                     );
                   },
                   tooltip: 'Home', // Optional tooltip

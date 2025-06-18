@@ -501,7 +501,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                     children: [
                       Text(
                         institute['name']!,
-                        style: LMSStyles.tsblackTileBold2,
+                        style: LMSStyles.tsblackTileBold2.copyWith(fontSize: 15),
                       ),
                       const SizedBox(height: 8),
 
@@ -943,7 +943,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               return ListTile(
                 title: Text(
                   '$index. ${module['title']}',
-                  style: LMSStyles.tsSubHeadingBold,
+                  style: LMSStyles.tsSubHeadingBold.copyWith(fontSize: 15),
                 ),
                 subtitle: Text("4 lectures  |  4 min",
                     style: LMSStyles.tsWhiteNeutral300W500),
@@ -953,19 +953,24 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               color: Colors.blue.shade50,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Column(
-                children: (module['lectures'] as List<String>).map((lecture) {
-                  return ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.play_circle_fill,
-                        color: LearningColors.darkBlue),
-                    title:
-                        Text(lecture, style: LMSStyles.tsWhiteNeutral300W500),
-                    trailing:
-                        Text("4:24", style: LMSStyles.tsWhiteNeutral300W500),
-                  );
-                }).toList(),
+                children: List.generate(
+                  (module['lectures'] as List<String>).length * 2 - 1,
+                      (i) {
+                    final isDivider = i.isOdd;
+                    if (isDivider) return Divider(color: Colors.grey.shade300);
+                    final index = i ~/ 2;
+                    final lecture = (module['lectures'] as List<String>)[index];
+                    return ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(Icons.play_circle_fill, color: LearningColors.darkBlue),
+                      title: Text(lecture, style: LMSStyles.tsWhiteNeutral300W500),
+                      trailing: Text("4:24", style: LMSStyles.tsWhiteNeutral300W500),
+                    );
+                  },
+                ),
               ),
             ),
+
           );
         }).toList(),
       ),
@@ -1014,7 +1019,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               value: index,
               headerBuilder: (context, isExpanded) {
                 return ListTile(
-                  title: Text('$index. ${item['question']!}', style: LMSStyles.tsSubHeadingBold),
+                  title: Text('$index. ${item['question']!}', style: LMSStyles.tsSubHeadingBold.copyWith(fontSize: 15)),
                 );
               },
               body: Container(

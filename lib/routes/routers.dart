@@ -71,7 +71,7 @@ class Routers {
         );
       case TabScreen.route:
         return MaterialPageRoute(
-          builder: (_) => TabScreen(),
+          builder: (_) => TabScreen(selectedPos: 0,),
         );
       case TrainingScreen.route:
         return MaterialPageRoute(

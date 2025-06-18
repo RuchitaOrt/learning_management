@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
@@ -1013,13 +1014,41 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               const SizedBox(height: 16),
 
               // Terms and Conditions
-              Text(
-                'By completing your purchase, you agree to our Terms of Use and Privacy Policy.',
-                style: LMSStyles.tsHeading.copyWith(
-                  color: LearningColors.neutral500,
-                  fontSize: 12,
+              RichText(
+                textAlign: TextAlign.start,
+                text: TextSpan(
+                  style: LMSStyles.tsHeading.copyWith(
+                    color: LearningColors.neutral500,
+                    fontSize: 12,
+                  ),
+                  children: [
+                    const TextSpan(text: 'By completing your purchase, you agree to our '),
+                    TextSpan(
+                      text: 'Terms of Use',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {},
+                    ),
+                    const TextSpan(text: ' and '),
+                    TextSpan(
+                      text: 'Privacy Policy',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          // TODO: Handle Privacy Policy tap
+                        },
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
                 ),
               ),
+
               const SizedBox(height: 24),
 
               // Pay Button
