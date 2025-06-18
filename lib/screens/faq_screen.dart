@@ -328,6 +328,7 @@ class FAQDetailScreen extends StatefulWidget {
 class _FAQDetailScreenState extends State<FAQDetailScreen> {
   Map<String, dynamic>? currentCategory;
   int? expandedQuestionIndex;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -342,25 +343,26 @@ class _FAQDetailScreenState extends State<FAQDetailScreen> {
   Widget build(BuildContext context) {
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
       return Scaffold(
-        // appBar: PreferredSize(
-        //   preferredSize: const Size.fromHeight(kToolbarHeight),
-        //   child: CustomAppBar(
-        //     isSearchClickVisible: () {
-        //       // provider.toggleSearchIconCategory();
-        //     },
-        //     isSearchValueVisible: provider.isSearchIconVisible,
-        //   ),
-        // ),
+        key: scaffoldKey,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: CustomAppBar(
+                  isSearchClickVisible: () {},
+                  isSearchValueVisible: false,
+                  onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+                ),
+              ),
+              endDrawer: CustomDrawer(),
         body: Container(
           decoration: AppDecorations.gradientBackground,
           child: Padding(
-            padding: EdgeInsets.fromLTRB(0, 32, 0, 32),
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 32),
             // EdgeInsetsGeometry.fromLTRB(0.0, 32.0, 0.0, 0.0),
             child: Column(
               children: [
                 // Custom Header
                 Padding(
-                  padding: const EdgeInsets.only(left: 0, bottom: 0, top: 16),
+                  padding: const EdgeInsets.only(left: 0, bottom: 0, top: 8),
                   child: Row(
                     children: [
                       IconButton(

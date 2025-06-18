@@ -24,6 +24,7 @@ class _CoursePageState extends State<CoursePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String? selectedCategory;
   String? selectedModule;
+  bool isSelected = false;
 
   @override
   void initState() {
@@ -41,264 +42,276 @@ class _CoursePageState extends State<CoursePage> {
     });
   }
 
-void _showFilterBottomSheet(BuildContext context) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    builder: (context) {
-      return DraggableScrollableSheet(
-        expand: false,
-        // maxChildSize: 0.9,
-        // minChildSize: 0.4,
-        // initialChildSize: 0.85,
-        initialChildSize: 0.5, // Start at 30% of screen height
-  minChildSize: 0.5,     // Can't shrink below 30%
-  maxChildSize: 0.5,
-        builder: (context, scrollController) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                ),
-                // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 500), // Fixed width
-                    child: Column(
-                      children: [
-                        // Content Scrollable
-                        Expanded(
-                          child: SingleChildScrollView(
-                            controller: scrollController,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  /// Header row
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('Filter',
-                                          style: TextStyle(
-                                              color: LearningColors.black18,
-                                              fontWeight: FontWeight.w800,
-                                              fontSize: 20)),
-                                      TextButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            selectedLocations.clear();
-                                            selectedRanks.clear();
-                                            selectedVesselTypes.clear();
-                                            selectedDurations.clear();
-                                            selectedBridgeWatch.clear();
-                                            selectedEngineWatch.clear();
-                                          });
-                                        },
-                                        child: Text('Reset',
+  void _showFilterBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return DraggableScrollableSheet(
+          expand: false,
+          // maxChildSize: 0.9,
+          // minChildSize: 0.4,
+          // initialChildSize: 0.85,
+          initialChildSize: 0.5, // Start at 30% of screen height
+          minChildSize: 0.5, // Can't shrink below 30%
+          maxChildSize: 0.5,
+          builder: (context, scrollController) {
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(20)),
+                  ),
+                  // padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints:
+                          const BoxConstraints(maxWidth: 500), // Fixed width
+                      child: Column(
+                        children: [
+                          // Content Scrollable
+                          Expanded(
+                            child: SingleChildScrollView(
+                              controller: scrollController,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    /// Header row
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text('Filter',
                                             style: TextStyle(
-                                                color: LearningColors.darkBlue,
-                                                fontSize: 18)),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
+                                                color: LearningColors.black18,
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 20)),
+                                        TextButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              selectedLocations.clear();
+                                              selectedRanks.clear();
+                                              selectedVesselTypes.clear();
+                                              selectedDurations.clear();
+                                              selectedBridgeWatch.clear();
+                                              selectedEngineWatch.clear();
+                                            });
+                                          },
+                                          child: Text('Reset',
+                                              style: TextStyle(
+                                                  color:
+                                                      LearningColors.darkBlue,
+                                                  fontSize: 18)),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
 
-                                  // Filter sections
-                                  _buildFilterSection(
-                                    title: 'Location',
-                                    options: locations,
-                                    selectedOptions: selectedLocations,
-                                    setState: setState,
+                                    // Filter sections
+                                    _buildFilterSection(
+                                      title: 'Location',
+                                      options: locations,
+                                      selectedOptions: selectedLocations,
+                                      setState: setState,
+                                    ),
+                                    _buildFilterSection(
+                                      title: 'Vessel Type',
+                                      options: vesselTypes,
+                                      selectedOptions: selectedVesselTypes,
+                                      setState: setState,
+                                    ),
+                                    _buildFilterSection(
+                                      title: 'Duration',
+                                      options: durations,
+                                      selectedOptions: selectedDurations,
+                                      setState: setState,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 12),
+
+                          /// Fixed Action Buttons
+                          Container(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, -5),
+                                )
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 5),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: OutlinedButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        side: BorderSide(
+                                          color: LearningColors.darkBlue,
+                                          width: 1.5,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
+                                      child: Text(
+                                        'Cancel',
+                                        style: TextStyle(
+                                          color: LearningColors.darkBlue,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                  _buildFilterSection(
-                                    title: 'Vessel Type',
-                                    options: vesselTypes,
-                                    selectedOptions: selectedVesselTypes,
-                                    setState: setState,
-                                  ),
-                                  _buildFilterSection(
-                                    title: 'Duration',
-                                    options: durations,
-                                    selectedOptions: selectedDurations,
-                                    setState: setState,
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        print(
+                                            'Selected Locations: $selectedLocations');
+                                        print(
+                                            'Selected Vessel Types: $selectedVesselTypes');
+                                        print(
+                                            'Selected Durations: $selectedDurations');
+                                        Navigator.pop(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            LearningColors.darkBlue,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        elevation: 0,
+                                      ),
+                                      child: Text(
+                                        'Apply',
+                                        style: TextStyle(
+                                          color: LearningColors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                        ),
-
-                        const SizedBox(height: 12),
-
-                        /// Fixed Action Buttons
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, -5),
-                              )
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    style: OutlinedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      side: BorderSide(
-                                        color: LearningColors.darkBlue,
-                                        width: 1.5,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Cancel',
-                                      style: TextStyle(
-                                        color: LearningColors.darkBlue,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      print('Selected Locations: $selectedLocations');
-                                      print('Selected Vessel Types: $selectedVesselTypes');
-                                      print('Selected Durations: $selectedDurations');
-                                      Navigator.pop(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: LearningColors.darkBlue,
-                                      padding: const EdgeInsets.symmetric(vertical: 10),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      elevation: 0,
-                                    ),
-                                    child: Text(
-                                      'Apply',
-                                      style: TextStyle(
-                                        color: LearningColors.white,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        },
-      );
-    },
-  );
-}
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 
-Widget _buildFilterSection({
-  required String title,
-  required List<String> options,
-  required List<String> selectedOptions,
-  required void Function(void Function()) setState,
-}) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(title, style: LMSStyles.tsSubHeadingBold),
-      const SizedBox(height: 8),
-      Wrap(
-        spacing: 8,
-        runSpacing: 4,
-        children: options.map((option) {
-          final isSelected = selectedOptions.contains(option);
-          return FilterChip(
-            label: Text(option),
-            selected: isSelected,
-            showCheckmark: false, // ✅ Hides the tick mark
-            onSelected: (selected) {
-              setState(() {
-                if (selected) {
-                  selectedOptions.add(option);
-                } else {
-                  selectedOptions.remove(option);
-                }
-              });
-            },
-            selectedColor: LearningColors.darkBlue,
-            labelStyle: TextStyle(
-              color: isSelected
-                  ? LearningColors.neutral100
-                  : Colors.black,
-            ),
-          );
-        }).toList(),
-      ),
-      const SizedBox(height: 16),
-    ],
-  );
-}
+  Widget _buildFilterSection({
+    required String title,
+    required List<String> options,
+    required List<String> selectedOptions,
+    required void Function(void Function()) setState,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title, style: LMSStyles.tsSubHeadingBold),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 4,
+          children: options.map((option) {
+            final isSelected = selectedOptions.contains(option);
+            return FilterChip(
+              label: Text(option),
+              selected: isSelected,
+              showCheckmark: false, // ✅ Hides the tick mark
+              onSelected: (selected) {
+                setState(() {
+                  if (selected) {
+                    selectedOptions.add(option);
+                  } else {
+                    selectedOptions.remove(option);
+                  }
+                });
+              },
+              selectedColor: LearningColors.darkBlue,
+              labelStyle: TextStyle(
+                color: isSelected ? LearningColors.neutral100 : Colors.black,
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
 
- final List<String> locations = [
-      'Asia',
-      'Africa',
-      'Europe',
-    ];
-    final List<String> ranks = [
-      'Captains/Masters (50)',
-      'Officers (50)',
-    ];
-    final List<String> vesselTypes = [
-      'Containers (50)',
-      'Tankers (50)',
-    ];
-    final List<String> durations = [
-      '1-10 Days',
-      '10-20 Days',
-      '20-30 Days',
-    ];
-    final List<String> bridgeWatch = [
-      'Level 1',
-      'Level 2',
-      'Level 3',
-    ];
-    final List<String> engineWatch = [
-      'Level 1',
-      'Level 2',
-      'Level 3',
-    ];
+  final List<String> locations = [
+    'Asia',
+    'Africa',
+    'Europe',
+  ];
+  final List<String> ranks = [
+    'Captains/Masters (50)',
+    'Officers (50)',
+  ];
+  final List<String> vesselTypes = [
+    'Containers (50)',
+    'Tankers (50)',
+  ];
+  final List<String> durations = [
+    '1-10 Days',
+    '10-20 Days',
+    '20-30 Days',
+  ];
+  final List<String> bridgeWatch = [
+    'Level 1',
+    'Level 2',
+    'Level 3',
+  ];
+  final List<String> engineWatch = [
+    'Level 1',
+    'Level 2',
+    'Level 3',
+  ];
 
-    String? selectedRank;
-    String? selectedVesselType;
-    String? selectedDuration;
-    List<String> selectedLocations = [];
-    List<String> selectedRanks = [];
-    List<String> selectedVesselTypes = [];
-    List<String> selectedDurations = [];
-    List<String> selectedBridgeWatch = [];
-    List<String> selectedEngineWatch = [];
+  String? selectedRank;
+  String? selectedVesselType;
+  String? selectedDuration;
+  List<String> selectedLocations = [];
+  List<String> selectedRanks = [];
+  List<String> selectedVesselTypes = [];
+  List<String> selectedDurations = [];
+  List<String> selectedBridgeWatch = [];
+  List<String> selectedEngineWatch = [];
 
   @override
   Widget build(BuildContext context) {
@@ -383,7 +396,8 @@ Widget _buildFilterSection({
                         child: Row(
                           children: categories.map((category) {
                             return Padding(
-                              padding: const EdgeInsets.only(right: 8.0), // spacing between chips
+                              padding: const EdgeInsets.only(
+                                  right: 8.0), // spacing between chips
                               child: ChoiceChip(
                                 label: Text(category),
                                 selected: selectedCategory == category,
@@ -412,7 +426,8 @@ Widget _buildFilterSection({
                         courseProvider.coursesByCategory[selectedCategory!] !=
                             null) ...[
                       ...courseProvider.coursesByCategory[selectedCategory!]!
-                          .map((course) => _buildVerticalCard(course))
+                          .map((course) => _buildVerticalCard(course,
+                              selectedCategory!)) // ✅ Pass selectedCategory
                           .toList()
                     ]
                   ],
@@ -425,7 +440,7 @@ Widget _buildFilterSection({
     });
   }
 
-  Widget _buildVerticalCard(Course course) {
+  Widget _buildVerticalCard(Course course, String currentCategory) {
     return GestureDetector(
       onTap: () {
         Navigator.of(routeGlobalKey.currentContext!)
@@ -473,19 +488,19 @@ Widget _buildFilterSection({
                           color: LearningColors.darkBlue.withOpacity(0.1),
                           image: course.imageUrl != null
                               ? DecorationImage(
-                            image: NetworkImage(course.imageUrl!),
-                            fit: BoxFit.cover,
-                          )
+                                  image: NetworkImage(course.imageUrl!),
+                                  fit: BoxFit.cover,
+                                )
                               : null,
                         ),
                         child: course.imageUrl == null
                             ? Center(
-                          child: Icon(
-                            Icons.school,
-                            size: 40,
-                            color: LearningColors.darkBlue,
-                          ),
-                        )
+                                child: Icon(
+                                  Icons.school,
+                                  size: 40,
+                                  color: LearningColors.darkBlue,
+                                ),
+                              )
                             : null,
                       ),
                       SizedBox(height: 12),
@@ -526,32 +541,60 @@ Widget _buildFilterSection({
                       ),
                       SizedBox(height: 16),
 
-                      // Course metadata (mode, duration)
+                      // Course metadata (mode, duration) with category badge
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment
+                            .spaceEvenly, // Changed to spaceEvenly for full width distribution
                         children: [
-                          Row(
-                            children: [
-                              SvgPicture.asset(LMSImagePath.mode),
-                              SizedBox(
-                                width: SizeConfig.blockSizeHorizontal * 1,
-                              ),
-                              Text(course.mode, style: LMSStyles.tsHeading),
-                            ],
+                          // Mode section
+                          Expanded(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(LMSImagePath.mode),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal * 1),
+                                Text(course.mode, style: LMSStyles.tsHeading),
+                              ],
+                            ),
                           ),
-                          SizedBox(width: 24),
-                          Row(
-                            children: [
-                              SvgPicture.asset(LMSImagePath.time),
-                              SizedBox(
-                                width: SizeConfig.blockSizeHorizontal * 1,
-                              ),
-                              Text(course.courseDuration, style: LMSStyles.tsHeading),
-                            ],
+
+                          // Duration section
+                          Expanded(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(LMSImagePath.time),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal * 1),
+                                Text(course.courseDuration,
+                                    style: LMSStyles.tsHeading),
+                              ],
+                            ),
+                          ),
+
+                          // Category section
+                          Expanded(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.circle,
+                                  size: 14,
+                                  color: LearningColors.darkBlue,
+                                ),
+                                SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal * 1),
+                                Text(
+                                  _getDisplayCategory(currentCategory),
+                                  style: LMSStyles.tsHeading,
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
+
                       SizedBox(height: 16),
 
                       // Price and enroll button
@@ -576,7 +619,9 @@ Widget _buildFilterSection({
                           // Enroll button
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context).pushNamed(OrderSummaryScreen.route).then((value) {});
+                              Navigator.of(context)
+                                  .pushNamed(OrderSummaryScreen.route)
+                                  .then((value) {});
                             },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: LearningColors.darkBlue,
@@ -605,36 +650,62 @@ Widget _buildFilterSection({
 
               // Popular badge
               //if (course.isPopular)
-                Positioned(
-                  top: 16,
-                  right: 16,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: Colors.amber[600],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.star, size: 14, color: Colors.white),
-                        SizedBox(width: 4),
-                        Text(
-                          'Popular',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
+              Positioned(
+                top: 24,
+                left: 24,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.amber[600],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.star, size: 14, color: Colors.white),
+                      SizedBox(width: 4),
+                      Text(
+                        'Popular',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
+              ),
+              Positioned(
+                top: 16,
+                right: 16,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(8), // rounded square
+                    // border: Border.all(width: 1)
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      isSelected ? Icons.bookmark : Icons.bookmark_border,
+                      color: LearningColors.darkBlue,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        isSelected = !isSelected;
+                      });
+                    },
+                  ),
+                ),
+              )
             ],
           ),
         ),
       ),
     );
+  }
+
+  String _getDisplayCategory(String selectedCategory) {
+    return selectedCategory == 'All' ? 'General' : selectedCategory;
   }
 }

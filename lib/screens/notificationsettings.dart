@@ -4,6 +4,8 @@ import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
+import 'package:learning_mgt/widgets/CustomAppBar.dart';
+import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +18,8 @@ class NotificationSettings extends StatefulWidget {
 }
 
 class _NotificationSettingsState extends State<NotificationSettings> {
+
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   // Email notification switches
   bool accountActivityNotifications = true;
   bool courseUpdatesAndRecommendations = true;
@@ -44,6 +48,16 @@ class _NotificationSettingsState extends State<NotificationSettings> {
           return true;
         },
         child: Scaffold(
+          key: scaffoldKey,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: CustomAppBar(
+                  isSearchClickVisible: () {},
+                  isSearchValueVisible: false,
+                  onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+                ),
+              ),
+              endDrawer: CustomDrawer(),
           body: Container(
             width: SizeConfig.blockSizeHorizontal * 100,
             height: SizeConfig.blockSizeVertical * 100,

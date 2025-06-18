@@ -12,10 +12,9 @@ class Course {
   final String discountedAmount;
   final String amount;
   final String offerPercentage;
+  // final String? category;
 
-
-  Course(
-     {
+  Course({
     required this.id,
     required this.title,
     required this.description,
@@ -27,6 +26,7 @@ class Course {
     required this.discountedAmount,
     required this.amount,
     required this.offerPercentage,
+    // this.category,
   });
 }
 
@@ -36,40 +36,49 @@ class CourseProvider with ChangeNotifier {
       Course(
           id: '1',
           title: 'Naval Operations Course',
-          description: 'Provides training in planning and executing complex naval missions and maritime operations.',
-          imageUrl: 'https://responsiblestatecraft.org/media-library/screen-shot-2020-07-10-at-1-49-23-pm.png?id=34283984&width=1200&height=800&quality=90&coordinates=0%2C45%2C0%2C45',
+          description:
+              'Provides training in planning and executing complex naval missions and maritime operations.',
+          imageUrl:
+              'https://responsiblestatecraft.org/media-library/screen-shot-2020-07-10-at-1-49-23-pm.png?id=34283984&width=1200&height=800&quality=90&coordinates=0%2C45%2C0%2C45',
           mode: "online",
           noofpeoplevisited: "39",
           discountedAmount: "70",
           amount: "7500",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"
-      ),
+          courseDuration: "2 days",
+          // category: "Navigation"
+          ),
       Course(
           id: '2',
           title: 'Seamanship Training',
           description: 'Learn basics in this Seamanship Training Program.',
-          imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUUF2yQq-oF_SfYG7SRS9SWeA-4kr1e13Slg&s',
+          imageUrl:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTUUF2yQq-oF_SfYG7SRS9SWeA-4kr1e13Slg&s',
           mode: "online",
           noofpeoplevisited: "39",
           discountedAmount: "70",
           amount: "5500",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Safety & Survival"
+          ),
       Course(
-        id: '3',
-        title: 'Merchant Navy Coaching',
-        description: 'Learn the basics of Merchant Navy Coaching.',
-        imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ39MAWDDNIsz60CTsicHJiecj8G05Lw1lMxA&s',
-        mode: "online",
-        noofpeoplevisited: "39",
-        discountedAmount: "70",
-        amount: "6500",
-        offerPercentage: "30 %",
-        institue: "Centre for Maritime Education and Training (CMET)",
-        courseDuration: "2 days",),
+          id: '3',
+          title: 'Merchant Navy Coaching',
+          description: 'Learn the basics of Merchant Navy Coaching.',
+          imageUrl:
+              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ39MAWDDNIsz60CTsicHJiecj8G05Lw1lMxA&s',
+          mode: "online",
+          noofpeoplevisited: "39",
+          discountedAmount: "70",
+          amount: "6500",
+          offerPercentage: "30 %",
+          institue: "Centre for Maritime Education and Training (CMET)",
+          courseDuration: "2 days",
+          // category: "Navigation"
+          ),
     ],
     'Navigation': [
       Course(
@@ -83,7 +92,9 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Navigation"
+          ),
       Course(
           id: '2',
           title: 'Figma Essentials',
@@ -95,7 +106,9 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Navigation"
+          ),
       Course(
           id: '3',
           title: 'Figma Essentials',
@@ -107,9 +120,11 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Navigation"
+          ),
     ],
-    'Safety & Survial': [
+    'Safety & Survival': [
       Course(
           id: '3',
           title: 'Flutter for Beginners',
@@ -121,7 +136,9 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Safety & Survival"
+          ),
       Course(
           id: '4',
           title: 'Dart Language',
@@ -133,7 +150,9 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Safety & Survival"
+          ),
     ],
     'Engineering': [
       Course(
@@ -147,7 +166,9 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Engineering"
+          ),
       Course(
           id: '4',
           title: 'Dart Language',
@@ -159,9 +180,11 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Engineering"
+          ),
     ],
-    'Cargo Handling ': [
+    'Cargo Handling': [
       Course(
           id: '3',
           title: 'Flutter for Beginners',
@@ -173,7 +196,9 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Cargo Handling"
+          ),
       Course(
           id: '4',
           title: 'Dart Language',
@@ -185,9 +210,11 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Cargo Handling"
+          ),
     ],
-    'Compilance': [
+    'Compliance': [
       Course(
           id: '3',
           title: 'Flutter for Beginners',
@@ -199,7 +226,9 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Compliance"
+          ),
       Course(
           id: '4',
           title: 'Dart Language',
@@ -211,7 +240,9 @@ class CourseProvider with ChangeNotifier {
           amount: "65",
           offerPercentage: "30 %",
           institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days"),
+          courseDuration: "2 days",
+          // category: "Compliance"
+          ),
     ],
   };
 

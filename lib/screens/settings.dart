@@ -8,6 +8,8 @@ import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/screens/VerificationScreen.dart';
+import 'package:learning_mgt/widgets/CustomAppBar.dart';
+import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart'; // For SizeConfig
 
@@ -20,6 +22,9 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -34,15 +39,16 @@ class _SettingsState extends State<Settings> {
           return true;
         },
         child: Scaffold(
-          // appBar: PreferredSize(
-          //   preferredSize: const Size.fromHeight(kToolbarHeight),
-          //   child: CustomAppBar(
-          //     isSearchClickVisible: () {
-          //       // provider.toggleSearchIconCategory();
-          //     },
-          //     isSearchValueVisible: provider.isSearchIconVisible,
-          //   ),
-          // ),
+          key: scaffoldKey,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: CustomAppBar(
+                  isSearchClickVisible: () {},
+                  isSearchValueVisible: false,
+                  onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+                ),
+              ),
+              endDrawer: CustomDrawer(),
           body: Container(
             width: SizeConfig.blockSizeHorizontal * 100,
             height: SizeConfig.blockSizeVertical * 100,

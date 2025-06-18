@@ -215,6 +215,8 @@ import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
+import 'package:learning_mgt/widgets/CustomAppBar.dart';
+import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
@@ -227,6 +229,8 @@ class SeafarerSettings extends StatefulWidget {
 }
 
 class _SeafarerSettingsState extends State<SeafarerSettings> {
+
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
@@ -235,6 +239,16 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
           return true;
         },
         child: Scaffold(
+          key: scaffoldKey,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: CustomAppBar(
+                  isSearchClickVisible: () {},
+                  isSearchValueVisible: false,
+                  onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+                ),
+              ),
+              endDrawer: CustomDrawer(),
           body: Container(
             width: SizeConfig.blockSizeHorizontal * 100,
             height: SizeConfig.blockSizeVertical * 100,

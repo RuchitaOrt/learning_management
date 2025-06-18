@@ -3,6 +3,8 @@ import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/instituteprovider.dart';
+import 'package:learning_mgt/widgets/CustomAppBar.dart';
+import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:provider/provider.dart';
 
 class InstituteScreen extends StatefulWidget {
@@ -15,10 +17,21 @@ class InstituteScreen extends StatefulWidget {
 
 class _InstituteScreenState extends State<InstituteScreen> {
   int? expandedIndex;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
+              appBar: PreferredSize(
+                preferredSize: const Size.fromHeight(kToolbarHeight),
+                child: CustomAppBar(
+                  isSearchClickVisible: () {},
+                  isSearchValueVisible: false,
+                  onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+                ),
+              ),
+              endDrawer: CustomDrawer(),
       body: Container(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,

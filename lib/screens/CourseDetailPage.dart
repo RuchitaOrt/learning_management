@@ -3,6 +3,8 @@ import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/screens/Videoscreen.dart';
+import 'package:learning_mgt/widgets/CustomAppBar.dart';
+import 'package:learning_mgt/widgets/CustomDrawer.dart';
 
 import '../Utils/lms_styles.dart';
 import 'OrderSummary.dart';
@@ -18,6 +20,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   bool isSelected = false;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -31,16 +34,211 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     super.dispose();
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     key: scaffoldKey,
+  //     appBar: PreferredSize(
+  //       preferredSize: const Size.fromHeight(kToolbarHeight),
+  //       child: CustomAppBar(
+  //         isSearchClickVisible: () {},
+  //         isSearchValueVisible: false,
+  //         onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+  //       ),
+  //     ),
+  //     endDrawer: CustomDrawer(),
+  //     bottomNavigationBar: SafeArea(
+  //       child: Container(
+  //         padding: EdgeInsets.all(12),
+  //         color: Colors.white,
+  //         child: ElevatedButton(
+  //           onPressed: () {
+  //             Navigator.of(context)
+  //                 .pushNamed(OrderSummaryScreen.route)
+  //                 .then((value) {});
+  //           },
+  //           style: ElevatedButton.styleFrom(
+  //             backgroundColor: LearningColors.darkBlue,
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(10),
+  //             ),
+  //             padding: EdgeInsets.symmetric(vertical: 14),
+  //           ),
+  //           child: Text(
+  //             'Enroll for ₹499/mo',
+  //             style: LMSStyles.tsWhiteNeutral50W60016.copyWith(fontSize: 16),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //     body: DefaultTabController(
+  //       length: 5,
+  //       child: CustomScrollView(
+  //         slivers: [
+  //           SliverAppBar(
+  //             pinned: true,
+  //             expandedHeight: 250,
+  //             leading: IconButton(
+  //               icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+  //               onPressed: () => Navigator.pop(context),
+  //             ),
+  //             flexibleSpace: FlexibleSpaceBar(
+  //               background: Stack(
+  //                 fit: StackFit.expand,
+  //                 children: [
+  //                   Image.asset(
+  //                     LMSImagePath.coverbg,
+  //                     fit: BoxFit.cover,
+  //                   ),
+  //                   Container(color: Colors.black.withOpacity(0.4)),
+  //                   GestureDetector(
+  //                     onTap: () {
+  //                       // _navigateToVideoScreen("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4","","","",false,"","");
+  //                     },
+  //                     child: Center(
+  //                       child: Column(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         children: [
+  //                           Icon(Icons.play_circle_fill,
+  //                               size: 64, color: Colors.white),
+  //                           SizedBox(height: 8),
+  //                           Text(
+  //                             "Watch Demo",
+  //                             style:
+  //                                 TextStyle(color: Colors.white, fontSize: 16),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //           SliverToBoxAdapter(
+  //             child: Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Padding(
+  //                   padding: const EdgeInsets.all(16),
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       Row(
+  //                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                         children: [
+  //                           Text("Course Name",
+  //                               style: LMSStyles.tsblackTileBold),
+  //                           Container(
+  //                             decoration: BoxDecoration(
+  //                               color: Colors.blue.shade50,
+  //                               borderRadius:
+  //                                   BorderRadius.circular(8), // rounded square
+  //                             ),
+  //                             child: IconButton(
+  //                               icon: Icon(
+  //                                 isSelected
+  //                                     ? Icons.bookmark
+  //                                     : Icons.bookmark_border,
+  //                                 color: LearningColors.darkBlue,
+  //                               ),
+  //                               onPressed: () {
+  //                                 setState(() {
+  //                                   isSelected = !isSelected;
+  //                                 });
+  //                               },
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       SizedBox(height: 8),
+  //                       Row(
+  //                         children: [
+  //                           Icon(
+  //                             Icons.play_circle_outline,
+  //                             size: 16,
+  //                             color: LearningColors.neutral300,
+  //                           ),
+  //                           SizedBox(width: 4),
+  //                           Text("45 Lectures",
+  //                               style: LMSStyles.tsWhiteNeutral300W300),
+  //                           SizedBox(width: 16),
+  //                           Icon(
+  //                             Icons.access_time,
+  //                             size: 16,
+  //                             color: LearningColors.neutral300,
+  //                           ),
+  //                           SizedBox(width: 4),
+  //                           Text("160 Hours",
+  //                               style: LMSStyles.tsWhiteNeutral300W300),
+  //                         ],
+  //                       ),
+  //                       //SizedBox(height: 16),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 TabBar(
+  //                   tabAlignment: TabAlignment.start,
+  //                   controller: _tabController,
+  //                   isScrollable: true,
+  //                   labelColor: LearningColors.darkBlue,
+  //                   unselectedLabelColor: Colors.grey,
+  //                   indicatorColor: LearningColors.darkBlue,
+  //                   labelStyle: LMSStyles.tsSubHeadingBold,
+  //                   unselectedLabelStyle: LMSStyles.tsWhiteNeutral300W300,
+  //                   padding: EdgeInsets.symmetric(horizontal: 16),
+  //                   tabs: const [
+  //                     Tab(text: "About"),
+  //                     Tab(text: "Institute"),
+  //                     Tab(text: "Modules"),
+  //                     Tab(text: "FAQs"),
+  //                     Tab(text: "Reviews"),
+  //                   ],
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //           SliverFillRemaining(
+  //             hasScrollBody: true,
+  //             child: TabBarView(
+  //               controller: _tabController,
+  //               children: [
+  //                 _buildAboutTab(),
+  //                 _buildInstituteTab(),
+  //                 _buildModulesTab(),
+  //                 _buildFAQsTab(),
+  //                 _buildReviewsTab()
+  //               ],
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: CustomAppBar(
+          isSearchClickVisible: () {},
+          isSearchValueVisible: false,
+          onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+        ),
+      ),
+      endDrawer: CustomDrawer(),
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: EdgeInsets.all(12),
           color: Colors.white,
           child: ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(OrderSummaryScreen.route).then((value) {});
+              Navigator.of(context)
+                  .pushNamed(OrderSummaryScreen.route)
+                  .then((value) {});
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: LearningColors.darkBlue,
@@ -56,134 +254,139 @@ class _CourseDetailPageState extends State<CourseDetailPage>
           ),
         ),
       ),
-      body: DefaultTabController(
-        length: 5,
-        child: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              pinned: true,
-              expandedHeight: 250,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                onPressed: () => Navigator.pop(context),
-              ),
-              flexibleSpace: FlexibleSpaceBar(
-                background: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      LMSImagePath.coverbg,
-                      fit: BoxFit.cover,
-                    ),
-                    Container(color: Colors.black.withOpacity(0.4)),
-                    GestureDetector(
-                      onTap: ()
-                      {
-                        // _navigateToVideoScreen("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4","","","",false,"","");
-                      },
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.play_circle_fill,
-                                size: 64, color: Colors.white),
-                            SizedBox(height: 8),
-                            Text(
-                              "Watch Demo",
-                              style: TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                          ],
+      body: Column(
+        // Changed from CustomScrollView to Column
+        children: [
+          // Fixed Header Section
+          Container(
+            height: 250, // Fixed height for header
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.asset(
+                  LMSImagePath.coverbg,
+                  fit: BoxFit.cover,
+                ),
+                Container(color: Colors.black.withOpacity(0.4)),
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    // Video navigation logic
+                  },
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.play_circle_fill,
+                            size: 64, color: Colors.white),
+                        SizedBox(height: 8),
+                        Text(
+                          "Watch Demo",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Fixed Course Info Section
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Course Name", style: LMSStyles.tsblackTileBold),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue.shade50,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          isSelected ? Icons.bookmark : Icons.bookmark_border,
+                          color: LearningColors.darkBlue,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isSelected = !isSelected;
+                          });
+                        },
                       ),
                     ),
                   ],
                 ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Course Name", style: LMSStyles.tsblackTileBold),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.blue.shade50,
-                                borderRadius: BorderRadius.circular(8),  // rounded square
-                              ),
-                              child: IconButton(
-                                icon: Icon(
-                                  isSelected ? Icons.bookmark : Icons.bookmark_border,
-                                  color: LearningColors.darkBlue,
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    isSelected = !isSelected;
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Icon(Icons.play_circle_outline, size: 16, color: LearningColors.neutral300,),
-                            SizedBox(width: 4),
-                            Text("45 Lectures", style: LMSStyles.tsWhiteNeutral300W300),
-                            SizedBox(width: 16),
-                            Icon(Icons.access_time, size: 16, color: LearningColors.neutral300,),
-                            SizedBox(width: 4),
-                            Text("160 Hours", style: LMSStyles.tsWhiteNeutral300W300),
-                          ],
-                        ),
-                        //SizedBox(height: 16),
-                      ],
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.play_circle_outline,
+                      size: 16,
+                      color: LearningColors.neutral300,
                     ),
-                  ),
-                  TabBar(
-                    tabAlignment: TabAlignment.start,
-                    controller: _tabController,
-                    isScrollable: true,
-                    labelColor: LearningColors.darkBlue,
-                    unselectedLabelColor: Colors.grey,
-                    indicatorColor: LearningColors.darkBlue,
-                    labelStyle: LMSStyles.tsSubHeadingBold,
-                    unselectedLabelStyle: LMSStyles.tsWhiteNeutral300W300,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    tabs: const [
-                      Tab(text: "About"),
-                      Tab(text: "Institute"),
-                      Tab(text: "Modules"),
-                      Tab(text: "FAQs"),
-                      Tab(text: "Reviews"),
-                    ],
-                  ),
-                ],
-              ),
+                    SizedBox(width: 4),
+                    Text("45 Lectures", style: LMSStyles.tsWhiteNeutral300W300),
+                    SizedBox(width: 16),
+                    Icon(
+                      Icons.access_time,
+                      size: 16,
+                      color: LearningColors.neutral300,
+                    ),
+                    SizedBox(width: 4),
+                    Text("160 Hours", style: LMSStyles.tsWhiteNeutral300W300),
+                  ],
+                ),
+              ],
             ),
-            SliverFillRemaining(
-              hasScrollBody: true,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildAboutTab(),
-                  _buildInstituteTab(),
-                  _buildModulesTab(),
-                  _buildFAQsTab(),
-                  _buildReviewsTab()
-                ],
-              ),
+          ),
+
+          // Fixed TabBar
+          TabBar(
+            tabAlignment: TabAlignment.start,
+            controller: _tabController,
+            isScrollable: true,
+            labelColor: LearningColors.darkBlue,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: LearningColors.darkBlue,
+            labelStyle: LMSStyles.tsSubHeadingBold,
+            unselectedLabelStyle: LMSStyles.tsWhiteNeutral300W300,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            tabs: const [
+              Tab(text: "About"),
+              Tab(text: "Institute"),
+              Tab(text: "Modules"),
+              Tab(text: "FAQs"),
+              Tab(text: "Reviews"),
+            ],
+          ),
+
+          // Scrollable Tab Content
+          Expanded(
+            // This makes only the tab content scrollable
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildAboutTab(),
+                _buildInstituteTab(),
+                _buildModulesTab(),
+                _buildFAQsTab(),
+                _buildReviewsTab()
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -228,8 +431,10 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               Text("Course Level", style: LMSStyles.tsWhiteNeutral300W300),
               Text("Beginner", style: LMSStyles.tsblackTileBold),
               SizedBox(height: 12),
-              Text("160 Hours of Lectures", style: LMSStyles.tsWhiteNeutral300W300),
-              Text("1 Month at 5 hours a week", style: LMSStyles.tsblackTileBold),
+              Text("160 Hours of Lectures",
+                  style: LMSStyles.tsWhiteNeutral300W300),
+              Text("1 Month at 5 hours a week",
+                  style: LMSStyles.tsblackTileBold),
               SizedBox(height: 8),
               Divider(),
               SizedBox(height: 8),
@@ -255,9 +460,9 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       {
         'logo': 'assets/images/aims.png',
         'name':
-        'AIMS Institute of Maritime Studies (Sucursal De Seafarers Training Center, Inc. - PANAMÁ)',
+            'AIMS Institute of Maritime Studies (Sucursal De Seafarers Training Center, Inc. - PANAMÁ)',
         'address':
-        '216–B wing, Plot No–44, Sai Chambers, Sector 11, Opp Railway Station, C.B.D. Belapur (East), Navi Mumbai 400 614, India.',
+            '216–B wing, Plot No–44, Sai Chambers, Sector 11, Opp Railway Station, C.B.D. Belapur (East), Navi Mumbai 400 614, India.',
         'phone': '+91-(0)22–41277001 / +91-(0)22–65263121',
         'email': 'training@aimsmaritime.com',
       },
@@ -276,7 +481,8 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       itemBuilder: (context, index) {
         final institute = institutes[index];
         return Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           margin: const EdgeInsets.only(bottom: 16),
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -394,7 +600,8 @@ class _CourseDetailPageState extends State<CourseDetailPage>
             value: index,
             headerBuilder: (context, isExpanded) {
               return ListTile(
-                title: Text(module['title'].toString(), style: LMSStyles.tsSubHeadingBold),
+                title: Text(module['title'].toString(),
+                    style: LMSStyles.tsSubHeadingBold),
                 subtitle: Text("4 lectures  |  4 min",
                     style: LMSStyles.tsWhiteNeutral300W500),
               );
@@ -406,9 +613,12 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                 children: (module['lectures'] as List<String>).map((lecture) {
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
-                    leading: Icon(Icons.play_circle_fill, color: LearningColors.darkBlue),
-                    title: Text(lecture, style: LMSStyles.tsWhiteNeutral300W500),
-                    trailing: Text("4:24", style: LMSStyles.tsWhiteNeutral300W500),
+                    leading: Icon(Icons.play_circle_fill,
+                        color: LearningColors.darkBlue),
+                    title:
+                        Text(lecture, style: LMSStyles.tsWhiteNeutral300W500),
+                    trailing:
+                        Text("4:24", style: LMSStyles.tsWhiteNeutral300W500),
                   );
                 }).toList(),
               ),
@@ -424,17 +634,17 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       {
         "question": "What is User Experience Design?",
         "answer":
-        "Designed for seafarers, crew members, and maritime professionals, this program emphasizes leadership, teamwork, and effective risk management. Participants will engage in real-world simulations and case studies..."
+            "Designed for seafarers, crew members, and maritime professionals, this program emphasizes leadership, teamwork, and effective risk management. Participants will engage in real-world simulations and case studies..."
       },
       {
         "question": "Understanding the elements of user experience?",
         "answer":
-        "This section covers key concepts around user needs, research techniques, and evaluation."
+            "This section covers key concepts around user needs, research techniques, and evaluation."
       },
       {
         "question": "Using the elements - Strategy",
         "answer":
-        "Strategy layer helps you define your user needs and business goals."
+            "Strategy layer helps you define your user needs and business goals."
       },
       {
         "question": "Using the elements - Scope",
@@ -443,7 +653,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       {
         "question": "Using the elements - Structure",
         "answer":
-        "Structure focuses on interaction design and information architecture."
+            "Structure focuses on interaction design and information architecture."
       },
     ];
 
@@ -461,12 +671,14 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               value: index,
               headerBuilder: (context, isExpanded) {
                 return ListTile(
-                  title: Text(item['question']!, style: LMSStyles.tsSubHeadingBold),
+                  title: Text(item['question']!,
+                      style: LMSStyles.tsSubHeadingBold),
                 );
               },
               body: Container(
                 color: Colors.blue.shade50,
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Text(
                   item['answer']!,
                   style: LMSStyles.tsWhiteNeutral300W500,
@@ -486,21 +698,21 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         "date": "Jan 15, 25",
         "title": "Great course! smooth content",
         "content":
-        "Designed for seafarers, crew members, and maritime professionals, this program emphasizes leadership, teamwork..."
+            "Designed for seafarers, crew members, and maritime professionals, this program emphasizes leadership, teamwork..."
       },
       {
         "name": "Ricky Cole",
         "date": "Jan 15, 25",
         "title": "Great course! smooth content",
         "content":
-        "Designed for seafarers, crew members, and maritime professionals, this program emphasizes leadership, teamwork..."
+            "Designed for seafarers, crew members, and maritime professionals, this program emphasizes leadership, teamwork..."
       },
       {
         "name": "Michael Rolfson",
         "date": "Jan 12, 25",
         "title": "Great course! smooth content",
         "content":
-        "Designed for seafarers, crew members, and maritime professionals, this program emphasizes leadership, teamwork..."
+            "Designed for seafarers, crew members, and maritime professionals, this program emphasizes leadership, teamwork..."
       },
     ];
 
@@ -511,19 +723,27 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         final item = reviews[index];
         return Card(
           margin: EdgeInsets.only(bottom: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           elevation: 1,
           child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(children: List.generate(4, (i) => Icon(Icons.star, color: Colors.amber, size: 16))),
+                Row(
+                    children: List.generate(
+                        4,
+                        (i) =>
+                            Icon(Icons.star, color: Colors.amber, size: 16))),
                 SizedBox(height: 8),
-                Text(item['name']!, style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(item['date']!, style: TextStyle(fontSize: 12, color: Colors.grey)),
+                Text(item['name']!,
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(item['date']!,
+                    style: TextStyle(fontSize: 12, color: Colors.grey)),
                 SizedBox(height: 8),
-                Text(item['title']!, style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(item['title']!,
+                    style: TextStyle(fontWeight: FontWeight.bold)),
                 Text(item['content']!),
               ],
             ),
@@ -561,7 +781,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   //               isTrailer: isTrailer,
   //               courseID: courseID,
   //               topicID: topicID,
-                
+
   //             )),
   //   );
 
@@ -570,7 +790,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   //     Navigator.pushReplacementNamed(
   //       routeGlobalKey.currentContext!,
   //       CourseDetailPage.route,
-       
+
   //     );
   //   }
   // }
