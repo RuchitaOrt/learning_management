@@ -53,9 +53,9 @@ class _CoursePageState extends State<CoursePage> {
           // maxChildSize: 0.9,
           // minChildSize: 0.4,
           // initialChildSize: 0.85,
-          initialChildSize: 0.5, // Start at 30% of screen height
-          minChildSize: 0.5, // Can't shrink below 30%
-          maxChildSize: 0.5,
+          initialChildSize: 0.55, // Start at 30% of screen height
+          minChildSize: 0.55, // Can't shrink below 30%
+          maxChildSize: 0.55,
           builder: (context, scrollController) {
             return StatefulBuilder(
               builder: (context, setState) {

@@ -294,27 +294,29 @@ class _VerificationScreenState extends State<VerificationScreen> {
                             backgroundColor: LearningColors.primaryBlue500),
                       ),
                       SizedBox(height: 8),
-                      ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.of(
-                            routeGlobalKey.currentContext!,
-                          ).pushNamed(
-                            TabScreen.route,
-                            arguments: {
-                              'selectedPos': 0,
-                              'isSignUp': false,
-                            },
-                          );
-                        },
-                        label: Text(
-                          'Browse Courses',
-                          style: TextStyle(color: LearningColors.black18),
+                      Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(routeGlobalKey.currentContext!)
+                                .pushNamed(
+                              TabScreen.route,
+                              arguments: {
+                                'selectedPos': 0,
+                                'isSignUp': false,
+                              },
+                            );
+                          },
+                          child: Text(
+                            'Browse Courses',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: LearningColors.black,
+                              decoration: TextDecoration.underline,
+                              decorationColor: LearningColors.black,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            side: BorderSide(color: Colors.black, width: 1.5),
-                            elevation: 0,
-                      ),
                       ),
                     ],
                   ),
@@ -831,29 +833,51 @@ class DetailFormWidget extends StatelessWidget {
             validator: signUpProvider.validateCountry,
           ),
           CustomTextFieldWidget(
-            title: LMSStrings.strDOB,
-            hintText: LMSStrings.strDOBHint,
-            textEditingController: signUpProvider.dobController,
-            isFieldReadOnly: true, // Prevent keyboard from opening
-            autovalidateMode: AutovalidateMode.disabled,
-            validator: signUpProvider.validateDOB,
-            onTap: () async {
-              DateTime? pickedDate = await showDatePicker(
-                context: context,
-                initialDate: DateTime.now(), // default initial date
-                firstDate: DateTime(1900), // earliest allowed date
-                lastDate: DateTime.now(), // no future dates
-              );
-
-              if (pickedDate != null) {
-                // Format the picked date as needed
-                String formattedDate =
-                    DateFormat('dd-MM-yyyy').format(pickedDate);
-                signUpProvider.dobController.text = formattedDate;
-              }
-            },
-            onChange: (val) {}, // Keep for consistency, though not used
+  title: LMSStrings.strDOB,
+  hintText: LMSStrings.strDOBHint,
+  textEditingController: signUpProvider.dobController,
+  isFieldReadOnly: true,
+  autovalidateMode: AutovalidateMode.disabled,
+  validator: signUpProvider.validateDOB,
+  onTap: () async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData.light().copyWith(
+            colorScheme: ColorScheme.light(
+              primary: LearningColors.darkBlue, // Header background and selected date circle
+              onPrimary: Colors.white, // Text color on primary (header text)
+              onSurface: Colors.black, // Default text color for dates
+              surface: Colors.white, // Background color of the picker
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: LearningColors.darkBlue, // OK/Cancel button text color
+                textStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            dialogBackgroundColor: Colors.white, // Overall background
           ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null) {
+      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+      signUpProvider.dobController.text = formattedDate;
+    }
+  },
+  onChange: (val) {},
+),
+
           CustomTextFieldWidget(
             title: LMSStrings.strPincode,
             hintText: LMSStrings.strPincodeHint,
