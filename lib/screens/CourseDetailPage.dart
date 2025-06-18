@@ -220,6 +220,16 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: CustomAppBar(
+          isSearchClickVisible: () {},
+          isSearchValueVisible: false,
+          onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+        ),
+      ),
+      endDrawer: CustomDrawer(),
       backgroundColor: LearningColors.white,
       bottomNavigationBar: SafeArea(
         child: Container(
