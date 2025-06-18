@@ -59,13 +59,13 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       key: scaffoldKey,
-      drawer: CustomDrawer(),
+      endDrawer: CustomDrawer(),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: CustomAppBar(
           isSearchClickVisible: () {},
           isSearchValueVisible: false,
-          onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
+          onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
         ),
       ),
       body: Container(

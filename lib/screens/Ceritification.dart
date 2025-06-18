@@ -269,7 +269,7 @@ class _CeritificationState extends State<Ceritification> {
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
       return Scaffold(
         key: scaffoldKey,
-        drawer: CustomDrawer(),
+        endDrawer: CustomDrawer(),
         /*appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: CustomAppBar(

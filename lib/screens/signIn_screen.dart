@@ -467,37 +467,37 @@ class SignInScreen extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
+  // @override
+  // Widget build(BuildContext context) {
+  //   SizeConfig().init(context);
 
-    return Scaffold(
-      body: ChangeNotifierProvider(
-        create: (_) => SignInProvider(),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.asset(
-              LMSImagePath.coverbg,
-              width: SizeConfig.blockSizeHorizontal * 100,
-              height: SizeConfig.blockSizeVertical * 30,
-              fit: BoxFit.cover,
-            ),
-            SizedBox(height: SizeConfig.blockSizeVertical * 2),
-            buildMostInterestedCard(
-              title: LMSStrings.strSignIn,
-              subtitle: LMSStrings.strAccountDetail,
-              color: LearningColors.white,
-              titleStyle: LMSStyles.tsblackTileBold,
-              subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+  //   return Scaffold(
+  //     body: ChangeNotifierProvider(
+  //       create: (_) => SignInProvider(),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Image.asset(
+  //             LMSImagePath.coverbg,
+  //             width: SizeConfig.blockSizeHorizontal * 100,
+  //             height: SizeConfig.blockSizeVertical * 30,
+  //             fit: BoxFit.cover,
+  //           ),
+  //           SizedBox(height: SizeConfig.blockSizeVertical * 2),
+  //           buildMostInterestedCard(
+  //             title: LMSStrings.strSignIn,
+  //             subtitle: LMSStrings.strAccountDetail,
+  //             color: LearningColors.white,
+  //             titleStyle: LMSStyles.tsblackTileBold,
+  //             subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-/*@override
+@override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
 
@@ -528,5 +528,5 @@ class SignInScreen extends StatelessWidget {
         ),
       ),
     );
-  }*/
+  }
 }

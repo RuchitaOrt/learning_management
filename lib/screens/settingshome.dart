@@ -42,7 +42,7 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
         },
         child: Scaffold(
           key: scaffoldKey,
-          drawer: CustomDrawer(),
+          endDrawer: CustomDrawer(),
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(kToolbarHeight),
             child: CustomAppBar(
@@ -50,7 +50,7 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
                 // provider.toggleSearchIconCategory();
                 
               },
-               onMenuPressed: () => scaffoldKey.currentState?.openDrawer(), 
+               onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(), 
               isSearchValueVisible: provider.isSearchIconVisible,
             ),
           ),

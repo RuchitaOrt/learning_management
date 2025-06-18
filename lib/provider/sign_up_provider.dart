@@ -7,6 +7,8 @@ import 'package:learning_mgt/dto/DocumentField.dart';
 class SignUpProvider with ChangeNotifier {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
+  
+  TextEditingController otpController = TextEditingController();
 
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -104,6 +106,7 @@ class SignUpProvider with ChangeNotifier {
   bool get isPasswordObscured => _isPasswordObscured;
   bool get isconfirmPasswordObscured => _isconfirmPasswordObscured;
   final formKeyBasic = GlobalKey<FormState>();
+  final formKeyOTP = GlobalKey<FormState>();
   final formKeyDetail = GlobalKey<FormState>();
   final formKeyUpload = GlobalKey<FormState>();
   // Toggle password visibility
@@ -260,6 +263,15 @@ class SignUpProvider with ChangeNotifier {
       return 'Phone Number cannot be empty';
     } else if (value.length != 10) {
       return 'Phone Number should be 10 digits';
+    }
+    return null;
+  }
+
+  String? validateOTP(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'OTP cannot be empty';
+    } else if (value.length != 6) {
+      return 'OTP should be 6 digits';
     }
     return null;
   }

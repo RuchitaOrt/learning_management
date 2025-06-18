@@ -69,10 +69,10 @@ class _TabScreenState extends State<TabScreen> {
                 child: CustomAppBar(
                   isSearchClickVisible: () {},
                   isSearchValueVisible: false,
-                  onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
+                  onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
                 ),
               ),
-              drawer: CustomDrawer(),
+              endDrawer: CustomDrawer(),
               body: provider.getCurrentPage(),
               floatingActionButton: FloatingActionButton(
                 shape: RoundedRectangleBorder(

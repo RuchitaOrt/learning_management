@@ -20,6 +20,8 @@ class LMSStrings {
   static const String strCreateAnAccount = "Create an account";
   static const String strCreateANewPassword = "Create a New Password";
   static const String strResetPassword = "Reset Password";
+  static const String strResetPasswordSuccessful = "Password Reset Successfully!";
+  static const String strResetPasswordSuccessfulDetail = "Your password has been updated. You can now log in with your new credentials and continue exploring premium courses.";
   static const String strCreateNewPasswordDetail = "Enter a new password for your account below.";
   static const String strForgetPassword = "Forgot password?";
   static const String strForgetYourPassword = "Forgot your password?";
@@ -28,7 +30,7 @@ class LMSStrings {
   static const String strResetLink = "Send Reset OTP";
   static const String strResetLinkSent = "Reset Link Sent!";
   static const String strResetLinkDetail =
-      "We've sent a password reset link to your email \naddress. Please check your inbox (and spam folder) \nto reset your password.";
+      "We've sent a password reset link to your email address. Please check your inbox (and spam folder) to reset your password.";
   static const String strHome = "Home";
   static const String str03Intro = "Create Your Account";
   static const String strSkip = "Skip";

@@ -78,8 +78,8 @@ class _SplashScreenState extends State<SplashScreen>
             Center(
               child: SvgPicture.asset(
                 LMSImagePath.splashLogo,
-                height: height / 6,
-                width: height / 6,
+                height: height / 8,
+                width: height / 8,
               ),
             ),
             Positioned(

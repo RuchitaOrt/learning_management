@@ -45,10 +45,10 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
             child: CustomAppBar(
               isSearchClickVisible: () {},
               isSearchValueVisible: false,
-              onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
+              onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
             ),
           ),
-          drawer: CustomDrawer(),
+          endDrawer: CustomDrawer(),
           body: Container(
             width: SizeConfig.blockSizeHorizontal * 100,
             height: SizeConfig.blockSizeVertical * 100,

@@ -390,7 +390,7 @@ class _ResultScreenState extends State<ResultScreen> {
       create: (_) => ResultProvider(),
       child: Scaffold(
         key: scaffoldKey,
-        drawer: CustomDrawer(),
+        endDrawer: CustomDrawer(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
           child: CustomAppBar(
@@ -398,7 +398,7 @@ class _ResultScreenState extends State<ResultScreen> {
               // provider.toggleSearchIconCategory();
             },
             isSearchValueVisible: false,
-            onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
+            onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
           ),
         ),
         body: Consumer<ResultProvider>(

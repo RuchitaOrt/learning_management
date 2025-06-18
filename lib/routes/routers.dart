@@ -49,6 +49,10 @@ class Routers {
         return MaterialPageRoute(
           builder: (_) => ChangePasswordScreen(),
         );
+      case PasswordResetSuccessScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => PasswordResetSuccessScreen(),
+        );
       case SettingsHome.route:
         return MaterialPageRoute(
           builder: (_) => SettingsHome(),

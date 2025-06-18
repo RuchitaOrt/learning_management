@@ -350,7 +350,7 @@ class _RecommendationState extends State<Recommendation> {
       // Show loading spinner while fetching data
 
       return Scaffold(
-        drawer: CustomDrawer(),
+        endDrawer: CustomDrawer(),
         key: scaffoldKey,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -359,7 +359,7 @@ class _RecommendationState extends State<Recommendation> {
               // provider.toggleSearchIconCategory();
             },
             isSearchValueVisible: provider.isSearchIconVisible,
-            onMenuPressed: () => scaffoldKey.currentState?.openDrawer(),
+            onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
           ),
         ),
         body: Container(

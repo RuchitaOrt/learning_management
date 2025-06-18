@@ -68,6 +68,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
       backgroundColor: LearningColors.white,
       elevation: 5,
       automaticallyImplyLeading: false,
+      actions: <Widget>[Container()],
       flexibleSpace: Padding(
         padding: EdgeInsets.only(top: Platform.isAndroid ? 45 : 60, left: 8),
         child: Row(
@@ -83,12 +84,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
             ),
             Spacer(),
 
-            IconButton(
-              icon: const Icon(
-                Icons.search,
-                size: 25,
-              ),
-              onPressed: widget.isSearchClickVisible,
+            // IconButton(
+            //   icon: const Icon(
+            //     Icons.search,
+            //     size: 25,
+            //   ),
+            //   onPressed: widget.isSearchClickVisible,
+            // ),
+            Padding(
+              padding: const EdgeInsets.only(right: 15),
+              child: SvgPicture.asset(LMSImagePath.search),
             ),
             SizedBox(width: SizeConfig.blockSizeHorizontal * 0.2),
             Padding(
@@ -103,8 +108,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
               onTap:widget.onMenuPressed ,
                child: Padding(
                 padding: const EdgeInsets.only(right: 15),
-                child: Image.asset(LMSImagePath.menu,width: 20,height: 20,
-                color: LearningColors.darkBlue,),
+                child: SvgPicture.asset(LMSImagePath.menu),
                ),
              ),
           ],

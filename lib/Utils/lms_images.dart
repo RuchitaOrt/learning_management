@@ -12,7 +12,8 @@ class LMSImagePath {
   static String usermultiple = "assets/images/usermultiple.svg";
   static String filter = "assets/images/filter.svg";
   static String notify = "assets/images/notify.svg";
-static String menu = "assets/images/menu.png";
+  static String menu = "assets/images/menu.svg";
+  static String search = "assets/images/search.svg";
   static String selectedCourse = "assets/images/selectedCourse.svg";
   static String unselectedCourse = "assets/images/unselectedCourse.svg";
   static String selectedTraing = "assets/images/selectedTraining.svg";
