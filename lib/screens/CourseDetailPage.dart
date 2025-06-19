@@ -218,7 +218,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   // }
 
   @override
-  Widget build(BuildContext context) {
+  /*Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
       appBar: PreferredSize(
@@ -390,6 +390,187 @@ class _CourseDetailPageState extends State<CourseDetailPage>
             ),
           ),
         ],
+      ),
+    );
+  }*/
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: CustomAppBar(
+          isSearchClickVisible: () {},
+          isSearchValueVisible: false,
+          onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+        ),
+      ),
+      endDrawer: CustomDrawer(),
+      backgroundColor: LearningColors.white,
+      body: CustomScrollView(
+        slivers: [
+          // Fixed Header Section
+          SliverToBoxAdapter(
+            child: Container(
+              height: 250, // Fixed height for header
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Image.asset(
+                    LMSImagePath.coverbg,
+                    fit: BoxFit.cover,
+                  ),
+                  Container(color: Colors.black.withOpacity(0.4)),
+                  Positioned(
+                    top: 8,
+                    left: 8,
+                    child: IconButton(
+                      icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      // Video navigation logic
+                    },
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.play_circle_fill,
+                              size: 64, color: Colors.white),
+                          SizedBox(height: 8),
+                          Text(
+                            "Watch Demo",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Course Info Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Course Name", style: LMSStyles.tsblackTileBold),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.blue.shade50,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: IconButton(
+                          icon: Icon(
+                            isSelected ? Icons.bookmark : Icons.bookmark_border,
+                            color: LearningColors.darkBlue,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              isSelected = !isSelected;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.play_circle_outline,
+                        size: 16,
+                        color: LearningColors.neutral300,
+                      ),
+                      SizedBox(width: 4),
+                      Text("45 Lectures", style: LMSStyles.tsWhiteNeutral300W300),
+                      SizedBox(width: 16),
+                      Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: LearningColors.neutral300,
+                      ),
+                      SizedBox(width: 4),
+                      Text("160 Hours", style: LMSStyles.tsWhiteNeutral300W300),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // TabBar (pinned to stay visible while scrolling)
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _StickyTabBarDelegate(
+              child: TabBar(
+                tabAlignment: TabAlignment.start,
+                controller: _tabController,
+                isScrollable: true,
+                labelColor: LearningColors.darkBlue,
+                unselectedLabelColor: Colors.grey,
+                indicatorColor: LearningColors.darkBlue,
+                labelStyle: LMSStyles.tsSubHeadingBold,
+                unselectedLabelStyle: LMSStyles.tsWhiteNeutral300W300,
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                tabs: const [
+                  Tab(text: "About"),
+                  Tab(text: "Institute"),
+                  Tab(text: "Modules"),
+                  Tab(text: "FAQs"),
+                  Tab(text: "Reviews"),
+                ],
+              ),
+            ),
+          ),
+
+          // Tab Content
+          SliverFillRemaining(
+            hasScrollBody: true,
+            child: TabBarView(
+              controller: _tabController,
+              children: [
+                _buildAboutTab(),
+                _buildInstituteTab(),
+                _buildModulesTab(),
+                _buildFAQsTab(),
+                _buildReviewsTab()
+              ],
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          padding: EdgeInsets.all(12),
+          color: Colors.white,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.of(context)
+                  .pushNamed(OrderSummaryScreen.route)
+                  .then((value) {});
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: LearningColors.darkBlue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 14),
+            ),
+            child: Text(
+              'Enroll for ₹499/mo',
+              style: LMSStyles.tsWhiteNeutral50W60016.copyWith(fontSize: 16),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -593,6 +774,180 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   }*/
 
   Widget _buildInstituteTab() {
+    final List<Map<String, dynamic>> institutes = [
+      {
+        'logo': 'assets/images/aims.png',
+        'name': 'AIMS Institute of Maritime Studies (Sucursal De Seafarers Training Center, Inc. - PANAMÁ)',
+        'address': '216–B wing, Plot No–44, Sai Chambers, Sector 11, Opp Railway Station, C.B.D. Belapur (East), Navi Mumbai 400 614, India.',
+        'phone': '+91-(0)22–41277001 / +91-(0)22–65263121',
+        'email': 'training@aimsmaritime.com',
+        'start_date': '12-06-2023',
+        'end_date': '12-12-2023',
+        'duration': '6 Months',
+        'daily_timings': ['09:00 AM - 11:00 AM', '11:30 AM - 01:30 PM', '02:30 PM - 04:30 PM'],
+      },
+      {
+        'logo': 'assets/images/maritime.png',
+        'name': 'Centre for Maritime Education and Training (CMET)',
+        'address': 'Bakshi, Ka Talab, Lucknow, India',
+        'phone': '+915222735015',
+        'email': 'cmetlucknow@gmail.com',
+        'start_date': '01-08-2023',
+        'end_date': '01-11-2023',
+        'duration': '3 Months',
+        'daily_timings': ['08:00 AM - 10:00 AM', '10:30 AM - 12:30 PM', '01:30 PM - 03:30 PM'],
+      },
+    ];
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: _buildInstituteList(institutes),
+    );
+  }
+
+  List<Widget> _buildInstituteList(List<Map<String, dynamic>> institutes) {
+    return institutes.map((institute) {
+      return Card(
+        color: LearningColors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.only(bottom: 16),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Institute Info
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Logo (only for the main info)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      institute['logo'] as String,
+                      width: 40,
+                      height: 40,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+
+                  // Text content
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          institute['name'] as String,
+                          style: LMSStyles.tsblackTileBold2.copyWith(fontSize: 15),
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Address
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.location_on, color: Colors.orange, size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                institute['address'] as String,
+                                style: LMSStyles.tsWhiteNeutral300W500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Phone
+                        Row(
+                          children: [
+                            Icon(Icons.phone, color: Colors.orange, size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                institute['phone'] as String,
+                                style: LMSStyles.tsWhiteNeutral300W500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Email
+                        Row(
+                          children: [
+                            Icon(Icons.email, color: Colors.orange, size: 16),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                institute['email'] as String,
+                                style: LMSStyles.tsWhiteNeutral300W500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Start Date & Duration
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_today, color: Colors.orange, size: 16),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Start: ${institute['start_date'] as String}',
+                              style: LMSStyles.tsWhiteNeutral300W500.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 8),
+                            Icon(Icons.timer, color: Colors.orange, size: 16),
+                            const SizedBox(width: 8),
+                            Text(
+                              institute['duration'] as String,
+                              style: LMSStyles.tsWhiteNeutral300W500.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              // Timings Section with logo
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(width: 12),
+
+                  // Timings chips (2 per row)
+                  Expanded(
+                    child: Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: (institute['daily_timings'] as List<String>).map((timing) {
+                        return SizedBox(
+                          width: (MediaQuery.of(context).size.width - 120) / 2, // Calculate half width minus padding
+                          child: Chip(
+                            label: Text(timing),
+                            backgroundColor: Colors.orange.withOpacity(0.2),
+                            labelStyle: TextStyle(color: Colors.orange),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    }).toList();
+  }
+
+  /*Widget _buildInstituteTab() {
     final institutes = [
       {
         'logo': 'assets/images/aims.png',
@@ -795,7 +1150,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         ),
       ],
     );
-  }
+  }*/
 
   String _calculateEndDate(String startDate, String duration) {
     // This is a simplified version - you should implement proper date calculation
@@ -1533,4 +1888,29 @@ void _handleResourceAction(String type, Map<String, String> resource) {
   //     );
   //   }
   // }
+}
+
+class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
+  final TabBar child;
+
+  _StickyTabBarDelegate({required this.child});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: LearningColors.white,
+      child: child,
+    );
+  }
+
+  @override
+  double get maxExtent => child.preferredSize.height;
+
+  @override
+  double get minExtent => child.preferredSize.height;
+
+  @override
+  bool shouldRebuild(_StickyTabBarDelegate oldDelegate) {
+    return child != oldDelegate.child;
+  }
 }
