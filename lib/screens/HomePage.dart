@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
+import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/GraphCard.dart';
@@ -183,9 +186,9 @@ class _HomePageState extends State<HomePage> {
 
                 GridView.count(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1.1,
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   children: [
@@ -261,7 +264,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.37,
+                  height:Platform.isIOS?SizeConfig.blockSizeVertical * 35.5:SizeConfig.blockSizeVertical * 39,
+                  // Platform.isIOS?MediaQuery.of(context).size.height * 0.36: MediaQuery.of(context).size.height * 0.39,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 4,
@@ -710,12 +714,14 @@ class CourseCard extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             title,
+            maxLines: 2,
             style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+              
               color: Colors.black87,
             ),
           ),

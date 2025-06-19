@@ -223,7 +223,7 @@ class CustomDrawer extends StatelessWidget {
               'Confirm Logout',
               style: TextStyle(
                 color: LearningColors.darkBlue,
-                fontSize: 18,
+                fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -232,7 +232,7 @@ class CustomDrawer extends StatelessWidget {
         content: Text(
           'Are you sure you want to logout from your account?',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             color: Colors.grey.shade700,
           ),
         ),
@@ -252,7 +252,7 @@ class CustomDrawer extends StatelessWidget {
             child: Text(
               'Cancel',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -282,7 +282,7 @@ class CustomDrawer extends StatelessWidget {
             child: Text(
               'Logout',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
             ),
