@@ -32,11 +32,17 @@ class _TabScreenState extends State<TabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("Widget selected tab ${widget.selectedPos}");
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final selectedPos = args?['selectedPos'] ?? widget.selectedPos;
+    final isSignUp = args?['isSignUp'] ?? widget.isSignUp;
+    print("Route arguments: $args");
+    print("Extracted selectedPos: $selectedPos"); // This should show -1
+    print("Widget selectedPos: ${widget.selectedPos}");
     return ChangeNotifierProvider<TabProvider>(
       create: (_) => TabProvider(
-        widget.selectedPos,
-        widget.isSignUp,
+        selectedPos,
+        isSignUp,
         context.read<LandingScreenProvider>(),
         widget.selectedModule,
       ),
@@ -61,7 +67,6 @@ class _TabScreenState extends State<TabScreen> {
                 return false;
               }
             },
-
             child: Scaffold(
               key: scaffoldKey,
               appBar: PreferredSize(
@@ -69,7 +74,8 @@ class _TabScreenState extends State<TabScreen> {
                 child: CustomAppBar(
                   isSearchClickVisible: () {},
                   isSearchValueVisible: false,
-                  onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+                  onMenuPressed: () =>
+                      scaffoldKey.currentState?.openEndDrawer(),
                 ),
               ),
               endDrawer: CustomDrawer(),

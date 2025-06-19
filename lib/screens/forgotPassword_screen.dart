@@ -58,7 +58,7 @@ class ForgotPasswordScreen extends StatelessWidget {
                 ],
               ),
               SizedBox(height: 30),
-              
+
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -68,36 +68,33 @@ class ForgotPasswordScreen extends StatelessWidget {
                     style: titleStyle,
                   ),
                   SizedBox(height: 12),
-                  
                   Text(
                     subtitle,
                     style: subtitleStyle,
                   ),
-
                   SizedBox(height: 30),
-
                   Consumer<SignInProvider>(
-                      builder: (context, signInProvider, _) {
-                        return Form(
-                          key: signInProvider.formKey,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomTextFieldWidget(
-                                title: LMSStrings.strEmail,
-                                hintText: LMSStrings.strEnterEmail,
-                                onChange: (val) {},
-                                textEditingController:
-                                    signInProvider.emailController,
-                                autovalidateMode: AutovalidateMode.disabled,
-                                validator: signInProvider.validateEmailField,
-                              ),
-                              // Add more form fields here if needed
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                    builder: (context, signInProvider, _) {
+                      return Form(
+                        key: signInProvider.formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTextFieldWidget(
+                              title: LMSStrings.strEmail,
+                              hintText: LMSStrings.strEnterEmail,
+                              onChange: (val) {},
+                              textEditingController:
+                                  signInProvider.emailController,
+                              autovalidateMode: AutovalidateMode.disabled,
+                              validator: signInProvider.validateEmailField,
+                            ),
+                            // Add more form fields here if needed
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
               Spacer(),
@@ -205,71 +202,68 @@ class ResetLinkSentScreen extends StatelessWidget {
   }
 
   Widget buildResetLinkSent({
-  required String title,
-  required String subtitle,
-  required Color color,
-  required TextStyle titleStyle,
-  required TextStyle subtitleStyle,
-}) {
-  return Container(
-    width: SizeConfig.blockSizeHorizontal * 100,
-    height: SizeConfig.blockSizeVertical * 100,
-    decoration: AppDecorations.gradientBackground,
-    child: SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SvgPicture.asset(
-                  LMSImagePath.splashLogo,
-                  height: 40,
-                  width: 40,
-                ),
-              ],
-            ),
-            SizedBox(height: 30),
-            Text(
-              title,
-              style: titleStyle,
-            ),
-            SizedBox(height: 12),
-            Text(
-              subtitle,
-              style: subtitleStyle,
-            ),
-            SizedBox(height: 30),
-            
-            Consumer<SignUpProvider>(
-              builder: (context, signUpProvider, _) {
-                return Form(
-                  key: signUpProvider
-                          .formKeyOTP, 
-                  child: CustomTextFieldWidget(
-                    title: 'Enter OTP',
-                    hintText: 'Enter 6-digit OTP',
-                    inputFormatters: [
-                      LengthLimitingTextInputFormatter(6),
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
-                    textInputType: TextInputType.number,
-                    onChange: (val) {},
-                    textEditingController: signUpProvider.otpController,
-                    autovalidateMode: AutovalidateMode.disabled,
-                    validator: signUpProvider.validateOTP,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required TextStyle titleStyle,
+    required TextStyle subtitleStyle,
+  }) {
+    return Container(
+      width: SizeConfig.blockSizeHorizontal * 100,
+      height: SizeConfig.blockSizeVertical * 100,
+      decoration: AppDecorations.gradientBackground,
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  SvgPicture.asset(
+                    LMSImagePath.splashLogo,
+                    height: 40,
+                    width: 40,
                   ),
-                );
-              },
-            ),
-            
-            Spacer(),
-            Consumer<SignUpProvider>(
-              builder: (context, signUpProvider, _) {
-                return SizedBox(
+                ],
+              ),
+              SizedBox(height: 30),
+              Text(
+                title,
+                style: titleStyle,
+              ),
+              SizedBox(height: 12),
+              Text(
+                subtitle,
+                style: subtitleStyle,
+              ),
+              SizedBox(height: 30),
+              Consumer<SignUpProvider>(
+                builder: (context, signUpProvider, _) {
+                  return Form(
+                    key: signUpProvider.formKeyOTP,
+                    child: CustomTextFieldWidget(
+                      title: 'Enter OTP',
+                      hintText: 'Enter 6-digit OTP',
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(6),
+                        FilteringTextInputFormatter.digitsOnly,
+                      ],
+                      textInputType: TextInputType.number,
+                      onChange: (val) {},
+                      textEditingController: signUpProvider.otpController,
+                      autovalidateMode: AutovalidateMode.disabled,
+                      validator: signUpProvider.validateOTP,
+                    ),
+                  );
+                },
+              ),
+              Spacer(),
+              Consumer<SignUpProvider>(
+                builder: (context, signUpProvider, _) {
+                  return SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -282,54 +276,52 @@ class ResetLinkSentScreen extends StatelessWidget {
                         elevation: 5,
                       ),
                       onPressed: () {
-                          if (signUpProvider.formKeyOTP.currentState
-                                  ?.validate() ??
-                              false) {
-                            Navigator.of(routeGlobalKey.currentContext!)
-                                .pushNamed(
-                              ChangePasswordScreen.route,
-                              arguments: {
-                                'selectedPos': -1,
-                                'isSignUp': false,
-                              },
-                            );
-                          }
-                        },
+                        if (signUpProvider.formKeyOTP.currentState
+                                ?.validate() ??
+                            false) {
+                          Navigator.of(routeGlobalKey.currentContext!)
+                              .pushNamed(
+                            ChangePasswordScreen.route,
+                            arguments: {
+                              'selectedPos': -1,
+                              'isSignUp': false,
+                            },
+                          );
+                        }
+                      },
                       child: Text(
                         LMSStrings.strEnterChangeassword,
                         style: LMSStyles.tsWhiteNeutral50W600162,
                       ),
                     ),
-                  
-                );
-              },
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.of(routeGlobalKey.currentContext!).pop();
+                  );
                 },
-                child: Text(
-                  'Go Back',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: LearningColors.black,
-                    decoration: TextDecoration.underline,
-                    decorationColor: LearningColors.black,
-                    fontWeight: FontWeight.w500,
+              ),
+              SizedBox(height: 16),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(routeGlobalKey.currentContext!).pop();
+                  },
+                  child: Text(
+                    'Go Back',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: LearningColors.black,
+                      decoration: TextDecoration.underline,
+                      decorationColor: LearningColors.black,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 16),
-          ],
+              SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }
 
 class ChangePasswordScreen extends StatelessWidget {
@@ -389,8 +381,7 @@ class ChangePasswordScreen extends StatelessWidget {
                 child: Consumer<SignUpProvider>(
                   builder: (context, signUpProvider, _) {
                     return Form(
-                      key: signUpProvider
-                          .formKeyBasic, 
+                      key: signUpProvider.formKeyBasic,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -407,7 +398,6 @@ class ChangePasswordScreen extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: 16),
-
                           TextFormField(
                             style: LMSStyles.tsWhiteNeutral300W50012,
                             obscureText:
@@ -470,10 +460,14 @@ class ChangePasswordScreen extends StatelessWidget {
               Center(
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.of(routeGlobalKey.currentContext!).pop();
+                    Navigator.of(routeGlobalKey.currentContext!)
+                        .pushNamed(SignInScreen.route, arguments: {
+                      'SelectedPos': -1,
+                      'isSignUp': false,
+                    });
                   },
                   child: Text(
-                    'Go Back',
+                    'Sign In',
                     style: TextStyle(
                       fontSize: 16,
                       color: LearningColors.black,

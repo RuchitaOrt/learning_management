@@ -13,6 +13,7 @@ import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/screens/faq_screen.dart';
 import 'package:learning_mgt/screens/FeedbackScreen.dart';
 import 'package:learning_mgt/screens/settingshome.dart';
+import 'package:learning_mgt/screens/signIn_screen.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -35,7 +36,7 @@ class CustomDrawer extends StatelessWidget {
                 CircleAvatar(
                   radius: 30,
                   backgroundImage: AssetImage(
-                    LMSImagePath.whiteCamera), // Replace with your asset
+                      LMSImagePath.whiteCamera), // Replace with your asset
                 ),
                 SizedBox(height: 10),
                 Text(
@@ -67,6 +68,10 @@ class CustomDrawer extends StatelessWidget {
                 routeGlobalKey.currentContext!,
               ).pushNamed(
                 TabScreen.route,
+                arguments: {
+                  'selectedPos': -1,
+                  'isSignUp': false,
+                },
               );
             },
           ),
@@ -79,7 +84,6 @@ class CustomDrawer extends StatelessWidget {
                 routeGlobalKey.currentContext!,
               ).pushNamed(
                 Recommendation.route,
-                
               );
             },
           ),
@@ -88,11 +92,10 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.book,
             label: 'Result',
             onTap: () {
-             Navigator.of(
+              Navigator.of(
                 routeGlobalKey.currentContext!,
               ).pushNamed(
                 ResultScreen.route,
-                
               );
             },
           ),
@@ -101,11 +104,10 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.person,
             label: 'Certification',
             onTap: () {
-             Navigator.of(
+              Navigator.of(
                 routeGlobalKey.currentContext!,
               ).pushNamed(
                 Ceritification.route,
-                
               );
             },
           ),
@@ -147,7 +149,9 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.settings,
             label: 'Settings',
             onTap: () {
-              Navigator.of(context).pushNamed(SettingsHome.route).then((value) {});
+              Navigator.of(context)
+                  .pushNamed(SettingsHome.route)
+                  .then((value) {});
               /*Navigator.of(
                 routeGlobalKey.currentContext!,
               ).pushNamed(
@@ -165,10 +169,10 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.logout,
             label: 'Logout',
             onTap: () {
-              Navigator.pop(context);
-              // Handle logout
+              _showLogoutDialog(context);
             },
           ),
+
           const Spacer(),
 
           // Footer
@@ -197,4 +201,96 @@ class CustomDrawer extends StatelessWidget {
       onTap: onTap,
     );
   }
+
+  void _showLogoutDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // Prevent dismissing by tapping outside
+    builder: (BuildContext context) {
+      return AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.logout,
+              color: LearningColors.darkBlue,
+              size: 24,
+            ),
+            SizedBox(width: 8),
+            Text(
+              'Confirm Logout',
+              style: TextStyle(
+                color: LearningColors.darkBlue,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        content: Text(
+          'Are you sure you want to logout from your account?',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.grey.shade700,
+          ),
+        ),
+        actions: [
+          // Cancel button
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close dialog
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.grey.shade600,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              'Cancel',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.of(routeGlobalKey.currentContext!).pushNamedAndRemoveUntil(
+                SignInScreen.route,
+                (route) => false, 
+                arguments: {
+                  'selectedPos': -1,
+                  'isSignUp': false,
+                },
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: LearningColors.darkBlue,
+              foregroundColor: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              elevation: 2,
+            ),
+            child: Text(
+              'Logout',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 }

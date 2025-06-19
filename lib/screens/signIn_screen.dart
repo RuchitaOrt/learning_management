@@ -133,6 +133,7 @@ class SignInScreen extends StatelessWidget {
                                   alignment: Alignment.centerRight,
                                   child: GestureDetector(
                                     onTap: () {
+                                      FocusManager.instance.primaryFocus?.unfocus();
                                       Navigator.of(
                                               routeGlobalKey.currentContext!)
                                           .pushNamed(ForgotPasswordScreen.route)
@@ -245,58 +246,58 @@ class SignInScreen extends StatelessWidget {
                                       ),
                                     ),
 
-                                    Center(
-                                      child: Column(
-                                        children: [
-                                          ElevatedButton.icon(
-                                            onPressed: () {
-                                              /*Navigator.of(
-                                                routeGlobalKey.currentContext!,
-                                              ).pushNamed(
-                                                TabScreen.route,
-                                                arguments: {
-                                                  'selectedPos': -1,
-                                                  'isSignUp': false,
-                                                },
-                                              );*/
-                                              Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(builder: (context) => TabScreen(selectedPos: -1,)),
-                                              );
-                                            },
-                                            label: Text(
-                                              'Go to Home',
-                                              style: TextStyle(color: LearningColors.neutral100),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                                backgroundColor: LearningColors.primaryBlue500),
-                                          ),
-                                          SizedBox(height: 8),
-                                          ElevatedButton.icon(
-                                            onPressed: () {
-                                              Navigator.of(
-                                                routeGlobalKey.currentContext!,
-                                              ).pushNamed(
-                                                TabScreen.route,
-                                                arguments: {
-                                                  'selectedPos': 0,
-                                                  'isSignUp': false,
-                                                },
-                                              );
-                                            },
-                                            label: Text(
-                                              'Browse Courses',
-                                              style: TextStyle(color: LearningColors.black18),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.transparent,
-                                              side: BorderSide(color: Colors.black, width: 1.5),
-                                              elevation: 0,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
+                                    // Center(
+                                    //   child: Column(
+                                    //     children: [
+                                    //       ElevatedButton.icon(
+                                    //         onPressed: () {
+                                    //           /*Navigator.of(
+                                    //             routeGlobalKey.currentContext!,
+                                    //           ).pushNamed(
+                                    //             TabScreen.route,
+                                    //             arguments: {
+                                    //               'selectedPos': -1,
+                                    //               'isSignUp': false,
+                                    //             },
+                                    //           );*/
+                                    //           Navigator.pushReplacement(
+                                    //             context,
+                                    //             MaterialPageRoute(builder: (context) => TabScreen(selectedPos: -1,)),
+                                    //           );
+                                    //         },
+                                    //         label: Text(
+                                    //           'Go to Home',
+                                    //           style: TextStyle(color: LearningColors.neutral100),
+                                    //         ),
+                                    //         style: ElevatedButton.styleFrom(
+                                    //             backgroundColor: LearningColors.primaryBlue500),
+                                    //       ),
+                                    //       SizedBox(height: 8),
+                                    //       ElevatedButton.icon(
+                                    //         onPressed: () {
+                                    //           Navigator.of(
+                                    //             routeGlobalKey.currentContext!,
+                                    //           ).pushNamed(
+                                    //             TabScreen.route,
+                                    //             arguments: {
+                                    //               'selectedPos': 0,
+                                    //               'isSignUp': false,
+                                    //             },
+                                    //           );
+                                    //         },
+                                    //         label: Text(
+                                    //           'Browse Courses',
+                                    //           style: TextStyle(color: LearningColors.black18),
+                                    //         ),
+                                    //         style: ElevatedButton.styleFrom(
+                                    //           backgroundColor: Colors.transparent,
+                                    //           side: BorderSide(color: Colors.black, width: 1.5),
+                                    //           elevation: 0,
+                                    //         ),
+                                    //       ),
+                                    //     ],
+                                    //   ),
+                                    // )
 
                                     /*Flexible(
                                       child: Row(
