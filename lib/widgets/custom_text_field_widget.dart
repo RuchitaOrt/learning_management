@@ -138,6 +138,7 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
 
   Widget _textFieldWidget() {
     return TextFormField(
+      cursorColor: LearningColors.darkBlue,
       textCapitalization: widget.textCapitalization,
       autovalidateMode: widget.autovalidateMode,
       controller: widget.textEditingController,

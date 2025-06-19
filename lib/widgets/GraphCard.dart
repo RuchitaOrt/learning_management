@@ -50,8 +50,8 @@ class _GraphCardState extends State<GraphCard> {
               ),
               const Spacer(),
               Container(
-                height: 38,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                height: 36,
+                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -65,11 +65,14 @@ class _GraphCardState extends State<GraphCard> {
                   ],
                 ),
                 child: DropdownButtonHideUnderline(
+                  
                   child: DropdownButton<String>(
+                    
                     value: selectedRange,
                     dropdownColor: Colors.white,
                     icon: const Icon(Icons.keyboard_arrow_down, color: LearningColors.darkBlue),
                     style: const TextStyle(
+                      
                       color: Colors.white,
                       fontWeight: FontWeight.w500,
                       fontSize: 14,
@@ -77,11 +80,15 @@ class _GraphCardState extends State<GraphCard> {
                     borderRadius: BorderRadius.circular(12),
                     items: filterOptions.map((String value) {
                       return DropdownMenuItem<String>(
+                        
                         value: value,
                         child: Text(
+                          
                           value,
-                          style: const TextStyle(
-                            fontSize: 14,
+                          textAlign: TextAlign.center,
+                          style:  TextStyle(
+                        
+                            fontSize: 12,
                             fontWeight: FontWeight.w500,
                             color: Colors.black,
                           ),

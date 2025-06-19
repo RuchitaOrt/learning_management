@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
+import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/GraphCard.dart';
@@ -132,14 +135,14 @@ class _HomePageState extends State<HomePage> {
                 ),
 
 
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // Overview Heading
                 Text(
                   "Overview",
                   style: LMSStyles.tsblackTileBold,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // Grid Cards
                 /*GridView.count(
@@ -183,9 +186,9 @@ class _HomePageState extends State<HomePage> {
 
                 GridView.count(
                   crossAxisCount: 2,
-                  crossAxisSpacing: 12,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.25,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 8,
+                  childAspectRatio: 1.1,
                   physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   children: [
@@ -222,12 +225,12 @@ class _HomePageState extends State<HomePage> {
                 ),
 
                 // Ongoing Courses Section
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 Text(
                   "Ongoing Course",
                   style: LMSStyles.tsblackTileBold,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 CurrentCourseCard(
                   courseTitle: "Fundamental: Marine Navigation",
                   progress: 0.65,
@@ -254,14 +257,15 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),*/
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 Text(
                   "Recommended Course",
                   style: LMSStyles.tsblackTileBold,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.36,
+                  height:Platform.isIOS?SizeConfig.blockSizeVertical * 35.5:SizeConfig.blockSizeVertical * 39,
+                  // Platform.isIOS?MediaQuery.of(context).size.height * 0.36: MediaQuery.of(context).size.height * 0.39,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 4,
@@ -302,14 +306,14 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 // Progress Graph
                 Text(
                   "Progress Graph",
                   style:LMSStyles.tsblackTileBold,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
              GraphCard()
 
               ],
@@ -710,12 +714,14 @@ class CourseCard extends StatelessWidget {
               color: color,
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
             title,
+            maxLines: 2,
             style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontSize: 13,
+              fontWeight: FontWeight.w400,
+              
               color: Colors.black87,
             ),
           ),
@@ -733,86 +739,6 @@ class CourseCard extends StatelessWidget {
     );
   }
 }
-
-/*class CourseCard extends StatelessWidget {
-  final String title;
-  final int count;
-  final int total; // total courses for progress
-  final IconData icon;
-  final Color color;
-
-  const CourseCard({
-    super.key,
-    required this.title,
-    required this.count,
-    required this.total,
-    required this.icon,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    double percent = (total == 0) ? 0 : count / total;
-
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color:
-        Colors.white,
-        //  color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Circular Progress
-          CircularPercentIndicator(
-            radius: 35.0,
-            lineWidth: 6.0,
-            percent: percent.clamp(0.0, 1.0),
-            center: Text(
-              "$count",
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
-            ),
-            progressColor: color,
-            backgroundColor: color.withOpacity(0.2),
-            circularStrokeCap: CircularStrokeCap.round,
-          ),
-          const SizedBox(height: 16),
- Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "$title Course${count != 1 ? "s" : ""}",
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-
-              ],
-            ),
-          ),
-
-
-
-        ],
-      ),
-    );
-  }
-}*/
 
 class OngoingCourseCard extends StatelessWidget {
   final String courseTitle;
@@ -897,6 +823,7 @@ class RecommendedCourseItem extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           /// Image with "Recommended" tag
           Stack(
