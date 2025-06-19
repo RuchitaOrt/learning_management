@@ -45,13 +45,13 @@ class _GraphCardState extends State<GraphCard> {
           Row(
             children: [
               const Text(
-                "Performance Overview",
+                "Performance\nOverview",
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               Container(
                 height: 38,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),

@@ -456,7 +456,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     );
   }
 
-  Widget _buildInstituteTab() {
+  /*Widget _buildInstituteTab() {
     final institutes = [
       {
         'logo': 'assets/images/aims.png',
@@ -588,6 +588,231 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         );
       },
     );
+  }*/
+
+  Widget _buildInstituteTab() {
+    final institutes = [
+      {
+        'logo': 'assets/images/aims.png',
+        'name': 'AIMS Institute of Maritime Studies',
+        'subtitle': 'Sucursal De Seafarers Training Center, Inc. - PANAMÁ',
+        'address': '216–B wing, Plot No–44, Sai Chambers, Sector 11, Opp Railway Station, C.B.D. Belapur (East), Navi Mumbai 400 614, India.',
+        'phone': '+91-(0)22–41277001 / +91-(0)22–65263121',
+        'email': 'training@aimsmaritime.com',
+        'start_date': '12-06-2023',
+        'duration': '6 Months',
+        'status': 'Ongoing', // Added status
+      },
+      {
+        'logo': 'assets/images/maritime.png',
+        'name': 'Centre for Maritime Education and Training',
+        'subtitle': '(CMET)',
+        'address': 'Bakshi, Ka Talab, Lucknow, India',
+        'phone': '+915222735015',
+        'email': 'cmetlucknow@gmail.com',
+        'start_date': '01-08-2023',
+        'duration': '3 Months',
+        'status': 'Upcoming', // Added status
+      },
+    ];
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: institutes.length,
+      itemBuilder: (context, index) {
+        final institute = institutes[index];
+        return Card(
+          color: LearningColors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with logo and name
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Logo
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.asset(
+                        institute['logo']!,
+                        width: 50,
+                        height: 50,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+
+                    // Name and subtitle
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            institute['name']!,
+                            style: LMSStyles.tsblackTileBold2.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          if (institute['subtitle'] != null)
+                            Text(
+                              institute['subtitle']!,
+                              style: LMSStyles.tsblackTileBold2.copyWith(
+                                fontSize: 14,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+
+                    // Status chip
+                    Chip(
+                      backgroundColor: institute['status'] == 'Ongoing'
+                          ? Colors.green[100]
+                          : Colors.blue[100],
+                      label: Text(
+                        institute['status']!,
+                        style: TextStyle(
+                          color: institute['status'] == 'Ongoing'
+                              ? Colors.green[800]
+                              : Colors.blue[800],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Course timeline
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Start Date',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          Text(
+                            institute['start_date']!,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Duration',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          Text(
+                            institute['duration']!,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'Expected Completion',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                          Text(
+                            _calculateEndDate(
+                                institute['start_date']!,
+                                institute['duration']!
+                            ),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Contact information
+                _buildInfoRow(Icons.location_on, institute['address']!),
+                const SizedBox(height: 8),
+                _buildInfoRow(Icons.phone, institute['phone']!),
+                const SizedBox(height: 8),
+                _buildInfoRow(Icons.email, institute['email']!),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildInfoRow(IconData icon, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: Colors.orange, size: 20),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            text,
+            style: LMSStyles.tsWhiteNeutral300W500,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _calculateEndDate(String startDate, String duration) {
+    // This is a simplified version - you should implement proper date calculation
+    try {
+      final parts = startDate.split('-');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+
+      final monthsToAdd = int.parse(duration.split(' ')[0]);
+
+      final newMonth = month + monthsToAdd;
+      final newYear = year + (newMonth ~/ 12);
+      final finalMonth = newMonth % 12;
+
+      return '$day-${finalMonth.toString().padLeft(2, '0')}-$newYear';
+    } catch (e) {
+      return 'N/A';
+    }
   }
 
   /*Widget _buildInstituteTab() {
