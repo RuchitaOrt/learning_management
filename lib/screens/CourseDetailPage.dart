@@ -368,6 +368,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               Tab(text: "About"),
               Tab(text: "Institute"),
               Tab(text: "Modules"),
+              // Tab(text: "Resources"),
               Tab(text: "FAQs"),
               Tab(text: "Reviews"),
             ],
@@ -382,6 +383,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                 _buildAboutTab(),
                 _buildInstituteTab(),
                 _buildModulesTab(),
+                // _buildModulesTab(),
                 _buildFAQsTab(),
                 _buildReviewsTab()
               ],

@@ -37,7 +37,7 @@ class SearchScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
-        icon: const Icon(Icons.arrow_back, color: LearningColors.darkBlue),
+        icon: const Icon(Icons.arrow_back_ios, color: LearningColors.darkBlue),
         onPressed: onCloseSearch,
       ),
       title: Consumer<SearchProvider>(

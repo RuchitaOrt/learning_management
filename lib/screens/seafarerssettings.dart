@@ -206,7 +206,6 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
 }
 */
 
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
@@ -229,7 +228,6 @@ class SeafarerSettings extends StatefulWidget {
 }
 
 class _SeafarerSettingsState extends State<SeafarerSettings> {
-
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
@@ -240,15 +238,15 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
         },
         child: Scaffold(
           key: scaffoldKey,
-              appBar: PreferredSize(
-                preferredSize: const Size.fromHeight(kToolbarHeight),
-                child: CustomAppBar(
-                  isSearchClickVisible: () {},
-                  isSearchValueVisible: false,
-                  onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
-                ),
-              ),
-              endDrawer: CustomDrawer(),
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: CustomAppBar(
+              isSearchClickVisible: () {},
+              isSearchValueVisible: false,
+              onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+            ),
+          ),
+          endDrawer: CustomDrawer(),
           body: Container(
             width: SizeConfig.blockSizeHorizontal * 100,
             height: SizeConfig.blockSizeVertical * 100,
@@ -260,7 +258,7 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildAppBar(context),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     Expanded(
                       child: _buildForm(context),
                     ),
@@ -284,7 +282,8 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
           constraints: const BoxConstraints(),
         ),
         const SizedBox(width: 4),
-        Text("Seafarers", style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 18)),
+        Text("Seafarers",
+            style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 18)),
       ],
     );
   }
@@ -292,126 +291,152 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
   Widget _buildForm(BuildContext context) {
     return Consumer<PersonalAccountProvider>(
         builder: (context, personalprovider, child) {
-          return ListView(
-            padding: EdgeInsets.zero,
+      return ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          _buildField("Seafarers No.", personalprovider.seafarersNoController,
+              "Enter Your Seafarers Number"),
+          _buildField("Passport No.", personalprovider.passportNoController,
+              "Enter Your Passport Number"),
+          _buildField("Department", personalprovider.departmentController,
+              "Enter Your Department"),
+          _buildField(
+              "Rank", personalprovider.rankController, "Enter Your Rank"),
+          _buildField("Pin Code", personalprovider.pinCodeController,
+              "Enter Your Pin Code"),
+          _buildField("Country", personalprovider.countryController,
+              "Enter Your Country"),
+          _buildField(
+              "City", personalprovider.cityController, "Enter Your City"),
+          _buildField(
+              "State", personalprovider.stateController, "Enter Your State"),
+
+          //const SizedBox(height: 10),
+          Text("COC", style: LMSStyles.tsHintstyle.copyWith(fontSize: 14)),
+
+          Row(
             children: [
-              _buildField("Seafarers No.", personalprovider.seafarersNoController, "Enter Your Seafarers Number"),
-              _buildField("Passport No.", personalprovider.passportNoController, "Enter Your Passport Number"),
-              _buildField("Department", personalprovider.departmentController, "Enter Your Department"),
-              _buildField("Rank", personalprovider.rankController, "Enter Your Rank"),
-              _buildField("Pin Code", personalprovider.pinCodeController, "Enter Your Pin Code"),
-              _buildField("Country", personalprovider.countryController, "Enter Your Country"),
-              _buildField("City", personalprovider.cityController, "Enter Your City"),
-              _buildField("State", personalprovider.stateController, "Enter Your State"),
-
-              //const SizedBox(height: 10),
-              Text("COC", style: LMSStyles.tsHintstyle.copyWith(fontSize: 14)),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: personalprovider.COCController,
-                      decoration: InputDecoration(
-                        hintText: "Enter Your COC",
-                        hintStyle: LMSStyles.tsHintstyle.copyWith(
-                          fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              Expanded(
+                child: TextField(
+                  controller: personalprovider.COCController,
+                  decoration: InputDecoration(
+                    hintText: "Enter Your COC",
+                    hintStyle: LMSStyles.tsHintstyle.copyWith(
+                      fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: LearningColors.neutral300, width: 1.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(
+                          color: LearningColors.neutral300, width: 1.0),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 10),
+                    suffixIcon: TextButton(
+                      onPressed: () {
+                        // Add logic to send OTP to email
+                      },
+                      child: Text(
+                        "Verify",
+                        style: TextStyle(
+                            color: LearningColors.darkBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    child: const Text("Verify", style: TextStyle(color: Colors.white)),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 6),
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(
-                  "${_calculateYearsLeft()} years left from now",
-                  style: LMSStyles.tsWhiteNeutral300W300.copyWith(fontSize: 14),
                 ),
               ),
-
-              const SizedBox(height: 20),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: LearningColors.darkBlue, // Border color
-                            width: 0.5, // Border width
-                          ),
-                          backgroundColor: Colors.transparent, // Transparent background
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          'Cancel',
-                          style: LMSStyles.tsblackNeutralbold.copyWith(
-                            color: LearningColors.darkBlue, // Text color matching border
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: LearningColors.darkBlue,
-                          padding: EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 5,
-                        ),
-                        child: Text(
-                          LMSStrings.strSaveChanges,
-                          style: LMSStyles.tsWhiteNeutral50W60016,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              )
+              // const SizedBox(width: 10),
+              // ElevatedButton(
+              //   onPressed: () {},
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: Colors.green,
+              //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(8),
+              //     ),
+              //   ),
+              //   child: const Text("Verify", style: TextStyle(color: Colors.white)),
+              // ),
             ],
-          );
-        });
+          ),
+
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(
+              "${_calculateYearsLeft()} years left from now",
+              style: LMSStyles.tsWhiteNeutral300W300.copyWith(fontSize: 14),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+
+          Row(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: LearningColors.darkBlue, // Border color
+                        width: 0.5, // Border width
+                      ),
+                      backgroundColor:
+                          Colors.transparent, // Transparent background
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      'Cancel',
+                      style: LMSStyles.tsblackNeutralbold.copyWith(
+                        color: LearningColors
+                            .darkBlue, // Text color matching border
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: LearningColors.darkBlue,
+                      padding: EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 5,
+                    ),
+                    child: Text(
+                      LMSStrings.strSaveChanges,
+                      style: LMSStyles.tsWhiteNeutral50W60016,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          )
+        ],
+      );
+    });
   }
 
-  Widget _buildField(String title, TextEditingController controller, String hint) {
+  Widget _buildField(
+      String title, TextEditingController controller, String hint) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.only(bottom: 8),
       child: CustomTextFieldWidget(
         title: title,
         hintText: hint,

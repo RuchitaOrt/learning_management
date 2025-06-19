@@ -70,8 +70,14 @@ class Routers {
           builder: (_) => CourseDetailPage(),
         );
       case TabScreen.route:
+        final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => TabScreen(selectedPos: 0,),
+          builder: (_) => TabScreen(
+            selectedPos:
+                args?['selectedPos'] ?? -1, // Default to home instead of 0
+            isSignUp: args?['isSignUp'] ?? false,
+            selectedModule: args?['selectedModule'] ?? 0,
+          ),
         );
       case TrainingScreen.route:
         return MaterialPageRoute(
