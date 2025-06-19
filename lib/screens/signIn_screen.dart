@@ -36,10 +36,10 @@ class SignInScreen extends StatelessWidget {
   }) {
     return Container(
       width: SizeConfig.blockSizeHorizontal * 100,
-      height: SizeConfig.blockSizeVertical * 62.5,
+      // height: SizeConfig.blockSizeVertical * 62.5,
       decoration: AppDecorations.gradientBackground,
       child: Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 0),
+        padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 72),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,6 +52,7 @@ class SignInScreen extends StatelessWidget {
                   shrinkWrap: true,
                   physics: ScrollPhysics(),*/
                 Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: SizeConfig.blockSizeHorizontal * 1),
@@ -558,27 +559,33 @@ class SignInScreen extends StatelessWidget {
     return Scaffold(
       body: ChangeNotifierProvider(
         create: (_) => SignInProvider(),
-        child: ListView(
-          shrinkWrap: true,
-          physics: ClampingScrollPhysics(),
-          children: [
-            Image.asset(
-              LMSImagePath.coverbg,
-              width: SizeConfig.blockSizeHorizontal * 100,
-              height: SizeConfig.blockSizeVertical * 30,
-              fit: BoxFit.cover,
-            ),
-            SizedBox(
-              height: SizeConfig.blockSizeVertical * 2,
-            ),
-            buildMostInterestedCard(
-              title: LMSStrings.strSignIn,
-              subtitle: LMSStrings.strAccountDetail,
-              color: LearningColors.white,
-              titleStyle: LMSStyles.tsblackTileBold,
-              subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
-            ),
-          ],
+        child: SafeArea(
+          child: SingleChildScrollView(
+            // shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+            child:
+              Column(
+                children: [
+                  Image.asset(
+                    LMSImagePath.coverbg,
+                    width: SizeConfig.blockSizeHorizontal * 100,
+                    height: SizeConfig.blockSizeVertical * 30,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(
+                    height: SizeConfig.blockSizeVertical * 2,
+                  ),
+                  buildMostInterestedCard(
+                    title: LMSStrings.strSignIn,
+                    subtitle: LMSStrings.strAccountDetail,
+                    color: LearningColors.white,
+                    titleStyle: LMSStyles.tsblackTileBold,
+                    subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
+                  ),
+                ],
+              ),
+            
+          ),
         ),
       ),
     );
