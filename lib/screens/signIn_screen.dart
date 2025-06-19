@@ -422,6 +422,7 @@ class SignInScreen extends StatelessWidget {
                 SizedBox(height: SizeConfig.blockSizeHorizontal * 10),
                 GestureDetector(
                   onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     Navigator.of(routeGlobalKey.currentContext!)
                         .pushNamed(VerificationScreen.route)
                         .then((value) {});

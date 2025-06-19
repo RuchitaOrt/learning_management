@@ -30,23 +30,81 @@ class SearchScreen extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    final provider = Provider.of<SearchProvider>(context, listen: false);
+  // PreferredSizeWidget _buildAppBar(BuildContext context) {
+  //   final provider = Provider.of<SearchProvider>(context, listen: false);
 
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back_ios, color: LearningColors.darkBlue),
-        onPressed: onCloseSearch,
-      ),
-      title: Consumer<SearchProvider>(
-        builder: (context, provider, child) {
-          return Focus(
-            onFocusChange: (hasFocus) {
-              // This will trigger a rebuild when focus changes
-              provider.setSearchFocus(hasFocus);
-            },
+  //   return AppBar(
+  //     backgroundColor: Colors.transparent,
+  //     elevation: 0,
+  //     leading: IconButton(
+  //       icon: const Icon(Icons.arrow_back_ios, color: LearningColors.darkBlue),
+  //       onPressed: onCloseSearch,
+  //     ),
+  //     title: Consumer<SearchProvider>(
+  //       builder: (context, provider, child) {
+  //         return Focus(
+  //           onFocusChange: (hasFocus) {
+  //             // This will trigger a rebuild when focus changes
+  //             provider.setSearchFocus(hasFocus);
+  //           },
+  //           child: Container(
+  //             height: 48,
+  //             decoration: BoxDecoration(
+  //               color: Colors.white.withOpacity(0.9),
+  //               borderRadius: BorderRadius.circular(12),
+  //               border: Border.all(
+  //                 color: provider.isSearchFocused
+  //                     ? LearningColors.darkBlue
+  //                     : LearningColors.lightBlue,
+  //                 width: 2.0,
+  //               ),
+  //             ),
+  //             child: TextField(
+  //               controller: provider.searchController,
+  //               focusNode: provider.searchFocusNode,
+  //               decoration: InputDecoration(
+  //                 hintText: 'Search courses, institutes...',
+  //                 hintStyle: TextStyle(color: Colors.grey[600]),
+  //                 border: InputBorder.none,
+  //                 prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+  //                 suffixIcon: provider.searchController.text.isNotEmpty
+  //                     ? IconButton(
+  //                   icon: Icon(Icons.clear, color: Colors.grey[600]),
+  //                   onPressed: provider.clearSearch,
+  //                 )
+  //                     : null,
+  //                 contentPadding: const EdgeInsets.symmetric(vertical: 12),
+  //               ),
+  //               onChanged: (value) {
+  //                 provider.notifyListeners();
+  //               },
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  final provider = Provider.of<SearchProvider>(context, listen: false);
+
+  return AppBar(
+    backgroundColor: Colors.transparent,
+    elevation: 0,
+    titleSpacing: -8, // Add this line - reduces space between leading and title
+    leading: IconButton(
+      icon: const Icon(Icons.arrow_back_ios, color: LearningColors.darkBlue),padding: EdgeInsets.zero,
+      onPressed: onCloseSearch,
+    ),
+    title: Consumer<SearchProvider>(
+      builder: (context, provider, child) {
+        return Focus(
+          onFocusChange: (hasFocus) {
+            provider.setSearchFocus(hasFocus);
+          },
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(0,0,16,0),
             child: Container(
               height: 48,
               decoration: BoxDecoration(
@@ -80,11 +138,12 @@ class SearchScreen extends StatelessWidget {
                 },
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+          ),
+        );
+      },
+    ),
+  );
+}
 
   Widget _buildBody(BuildContext context) {
     return Consumer<SearchProvider>(
