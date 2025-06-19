@@ -24,7 +24,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
 
   @override
   void initState() {
-    _tabController = TabController(length: 5, vsync: this);
+    _tabController = TabController(length: 6, vsync: this);
     super.initState();
   }
 
@@ -230,7 +230,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         ),
       ),
       endDrawer: CustomDrawer(),
-      backgroundColor: LearningColors.white,
+      // backgroundColor: LearningColors.white,
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: EdgeInsets.all(12),
@@ -368,7 +368,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               Tab(text: "About"),
               Tab(text: "Institute"),
               Tab(text: "Modules"),
-              // Tab(text: "Resources"),
+              Tab(text: "Resources"),
               Tab(text: "FAQs"),
               Tab(text: "Reviews"),
             ],
@@ -383,7 +383,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                 _buildAboutTab(),
                 _buildInstituteTab(),
                 _buildModulesTab(),
-                // _buildModulesTab(),
+                _buildResourcesTab(),
                 _buildFAQsTab(),
                 _buildReviewsTab()
               ],
@@ -827,13 +827,8 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       itemBuilder: (context, index) {
         final institute = institutes[index];
         return Card(
-<<<<<<< HEAD
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-=======
           color: LearningColors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
->>>>>>> 9be207df9109c68a79807449d7826715d804191b
           margin: const EdgeInsets.only(bottom: 16),
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -988,6 +983,166 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       ),
     );
   }
+
+  Widget _buildResourcesTab() {
+  final resources = [
+    {
+      'module': 'Module 01',
+      'title': 'Chapter 03: Introduction to Basics',
+      'description': 'Duration: 15 min. Learn the fundamentals.',
+      'type': 'video',
+      'action': 'Watch Video'
+    },
+    {
+      'module': 'Module 03',
+      'title': 'Chapter 04: Additional Reading',
+      'description': 'External link for detailed study.',
+      'type': 'link',
+      'action': 'Open Link'
+    },
+    {
+      'module': 'Module 05',
+      'title': 'Chapter 06: Study Guide',
+      'description': 'Comprehensive guide for beginners.',
+      'type': 'pdf',
+      'action': 'Download PDF'
+    },
+    {
+      'module': 'Module 08',
+      'title': 'Chapter 05: Feedback Survey Form',
+      'description': 'Give us your valuable feedback for betterment.',
+      'type': 'zip',
+      'action': 'Download ZIP'
+    },
+  ];
+
+  return ListView.builder(
+    padding: const EdgeInsets.fromLTRB(8,8,8,0),
+    itemCount: resources.length,
+    itemBuilder: (context, index) {
+      final resource = resources[index];
+      return Container(
+        width: double.infinity, 
+        margin: const EdgeInsets.only(bottom: 8),
+        child: Card(
+          color: LearningColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade100,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    resource['module']!,
+                    style: TextStyle(
+                      color: Colors.orange.shade800,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                
+                Text(
+                  resource['title']!,
+                  style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                
+                Text(
+                  resource['description']!,
+                  style: LMSStyles.tsWhiteNeutral300W500,
+                ),
+                const SizedBox(height: 16),
+                
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _handleResourceAction(resource['type']!, resource);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: LearningColors.darkBlue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          _getResourceIcon(resource['type']!),
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          resource['action']!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+IconData _getResourceIcon(String type) {
+  switch (type) {
+    case 'video':
+      return Icons.play_circle_outline;
+    case 'link':
+      return Icons.open_in_new;
+    case 'pdf':
+      return Icons.picture_as_pdf;
+    case 'zip':
+      return Icons.archive;
+    default:
+      return Icons.description;
+  }
+}
+
+void _handleResourceAction(String type, Map<String, String> resource) {
+  switch (type) {
+    case 'video':
+      // Navigate to video screen
+      print('Playing video: ${resource['title']}');
+      break;
+    case 'link':
+      // Open external link
+      print('Opening link: ${resource['title']}');
+      break;
+    case 'pdf':
+      // Download PDF
+      print('Downloading PDF: ${resource['title']}');
+      break;
+    case 'zip':
+      // Download ZIP
+      print('Downloading ZIP: ${resource['title']}');
+      break;
+  }
+}
+
 
   Widget _buildFAQsTab() {
     final faqs = [
