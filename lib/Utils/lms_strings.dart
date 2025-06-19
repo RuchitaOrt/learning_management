@@ -26,7 +26,7 @@ class LMSStrings {
   static const String strForgetPassword = "Forgot password?";
   static const String strForgetYourPassword = "Forgot your password?";
   static const String strForgetPasswordDetail =
-      "Enter the email address associated with your \naccount, and we'll send you a link to reset your \npassword.";
+      "Enter the email address associated with your account, and we'll send you a link to reset your password.";
   static const String strResetLink = "Send Reset OTP";
   static const String strResetLinkSent = "Reset Link Sent!";
   static const String strResetLinkDetail =
