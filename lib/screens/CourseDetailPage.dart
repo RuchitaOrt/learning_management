@@ -430,7 +430,20 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Video navigation logic
+                      Navigator.of(context).pushNamed(
+                        VideoScreen.route,
+                        arguments: {
+                          'video':
+                              'your_video_url_here',
+                          'videoTopicSlug': 'demo-topic',
+                          'videoCourseSlug': 'demo-course',
+                          'videoWatchTime': '0', 
+                          'isTrailer': true,
+                          'courseID': 'your_course_id',
+                          'topicID': 'your_topic_id',
+                          'videoCategory': 'demo',
+                        },
+                      );
                     },
                     child: Center(
                       child: Column(
@@ -491,7 +504,8 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                         color: LearningColors.neutral300,
                       ),
                       SizedBox(width: 4),
-                      Text("45 Lectures", style: LMSStyles.tsWhiteNeutral300W300),
+                      Text("45 Lectures",
+                          style: LMSStyles.tsWhiteNeutral300W300),
                       SizedBox(width: 16),
                       Icon(
                         Icons.access_time,
@@ -779,14 +793,20 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     final List<Map<String, dynamic>> institutes = [
       {
         'logo': 'assets/images/aims.png',
-        'name': 'AIMS Institute of Maritime Studies (Sucursal De Seafarers Training Center, Inc. - PANAMÁ)',
-        'address': '216–B wing, Plot No–44, Sai Chambers, Sector 11, Opp Railway Station, C.B.D. Belapur (East), Navi Mumbai 400 614, India.',
+        'name':
+            'AIMS Institute of Maritime Studies (Sucursal De Seafarers Training Center, Inc. - PANAMÁ)',
+        'address':
+            '216–B wing, Plot No–44, Sai Chambers, Sector 11, Opp Railway Station, C.B.D. Belapur (East), Navi Mumbai 400 614, India.',
         'phone': '+91-(0)22–41277001 / +91-(0)22–65263121',
         'email': 'training@aimsmaritime.com',
         'start_date': '12-06-2023',
         'end_date': '12-12-2023',
         'duration': '6 Months',
-        'daily_timings': ['09:00 AM - 11:00 AM', '11:30 AM - 01:30 PM', '02:30 PM - 04:30 PM'],
+        'daily_timings': [
+          '09:00 AM - 11:00 AM',
+          '11:30 AM - 01:30 PM',
+          '02:30 PM - 04:30 PM'
+        ],
       },
       {
         'logo': 'assets/images/maritime.png',
@@ -797,7 +817,11 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         'start_date': '01-08-2023',
         'end_date': '01-11-2023',
         'duration': '3 Months',
-        'daily_timings': ['08:00 AM - 10:00 AM', '10:30 AM - 12:30 PM', '01:30 PM - 03:30 PM'],
+        'daily_timings': [
+          '08:00 AM - 10:00 AM',
+          '10:30 AM - 12:30 PM',
+          '01:30 PM - 03:30 PM'
+        ],
       },
     ];
 
@@ -841,7 +865,8 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                       children: [
                         Text(
                           institute['name'] as String,
-                          style: LMSStyles.tsblackTileBold2.copyWith(fontSize: 15),
+                          style:
+                              LMSStyles.tsblackTileBold2.copyWith(fontSize: 15),
                         ),
                         const SizedBox(height: 8),
 
@@ -849,7 +874,8 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.location_on, color: Colors.orange, size: 16),
+                            Icon(Icons.location_on,
+                                color: Colors.orange, size: 16),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -894,18 +920,21 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                         // Start Date & Duration
                         Row(
                           children: [
-                            Icon(Icons.calendar_today, color: Colors.orange, size: 16),
+                            Icon(Icons.calendar_today,
+                                color: Colors.orange, size: 16),
                             const SizedBox(width: 8),
                             Text(
                               'Start: ${institute['start_date'] as String}',
-                              style: LMSStyles.tsWhiteNeutral300W500.copyWith(fontWeight: FontWeight.bold),
+                              style: LMSStyles.tsWhiteNeutral300W500
+                                  .copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(width: 8),
                             Icon(Icons.timer, color: Colors.orange, size: 16),
                             const SizedBox(width: 8),
                             Text(
                               institute['duration'] as String,
-                              style: LMSStyles.tsWhiteNeutral300W500.copyWith(fontWeight: FontWeight.bold),
+                              style: LMSStyles.tsWhiteNeutral300W500
+                                  .copyWith(fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -928,9 +957,11 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                     child: Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: (institute['daily_timings'] as List<String>).map((timing) {
+                      children: (institute['daily_timings'] as List<String>)
+                          .map((timing) {
                         return SizedBox(
-                          width: (MediaQuery.of(context).size.width - 120) / 2, // Calculate half width minus padding
+                          width: (MediaQuery.of(context).size.width - 120) /
+                              2, // Calculate half width minus padding
                           child: Chip(
                             label: Text(timing),
                             backgroundColor: Colors.orange.withOpacity(0.2),
@@ -1544,22 +1575,24 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               child: Column(
                 children: List.generate(
                   (module['lectures'] as List<String>).length * 2 - 1,
-                      (i) {
+                  (i) {
                     final isDivider = i.isOdd;
                     if (isDivider) return Divider(color: Colors.grey.shade300);
                     final index = i ~/ 2;
                     final lecture = (module['lectures'] as List<String>)[index];
                     return ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.play_circle_fill, color: LearningColors.darkBlue),
-                      title: Text(lecture, style: LMSStyles.tsWhiteNeutral300W500),
-                      trailing: Text("4:24", style: LMSStyles.tsWhiteNeutral300W500),
+                      leading: Icon(Icons.play_circle_fill,
+                          color: LearningColors.darkBlue),
+                      title:
+                          Text(lecture, style: LMSStyles.tsWhiteNeutral300W500),
+                      trailing:
+                          Text("4:24", style: LMSStyles.tsWhiteNeutral300W500),
                     );
                   },
                 ),
               ),
             ),
-
           );
         }).toList(),
       ),
@@ -1567,164 +1600,161 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   }
 
   Widget _buildResourcesTab() {
-  final resources = [
-    {
-      'module': 'Module 01',
-      'title': 'Chapter 03: Introduction to Basics',
-      'description': 'Duration: 15 min. Learn the fundamentals.',
-      'type': 'video',
-      'action': 'Watch Video'
-    },
-    {
-      'module': 'Module 03',
-      'title': 'Chapter 04: Additional Reading',
-      'description': 'External link for detailed study.',
-      'type': 'link',
-      'action': 'Open Link'
-    },
-    {
-      'module': 'Module 05',
-      'title': 'Chapter 06: Study Guide',
-      'description': 'Comprehensive guide for beginners.',
-      'type': 'pdf',
-      'action': 'Download PDF'
-    },
-    {
-      'module': 'Module 08',
-      'title': 'Chapter 05: Feedback Survey Form',
-      'description': 'Give us your valuable feedback for betterment.',
-      'type': 'zip',
-      'action': 'Download ZIP'
-    },
-  ];
+    final resources = [
+      {
+        'module': 'Module 01',
+        'title': 'Chapter 03: Introduction to Basics',
+        'description': 'Duration: 15 min. Learn the fundamentals.',
+        'type': 'video',
+        'action': 'Watch Video'
+      },
+      {
+        'module': 'Module 03',
+        'title': 'Chapter 04: Additional Reading',
+        'description': 'External link for detailed study.',
+        'type': 'link',
+        'action': 'Open Link'
+      },
+      {
+        'module': 'Module 05',
+        'title': 'Chapter 06: Study Guide',
+        'description': 'Comprehensive guide for beginners.',
+        'type': 'pdf',
+        'action': 'Download PDF'
+      },
+      {
+        'module': 'Module 08',
+        'title': 'Chapter 05: Feedback Survey Form',
+        'description': 'Give us your valuable feedback for betterment.',
+        'type': 'zip',
+        'action': 'Download ZIP'
+      },
+    ];
 
-  return ListView.builder(
-    padding: const EdgeInsets.fromLTRB(8,8,8,0),
-    itemCount: resources.length,
-    itemBuilder: (context, index) {
-      final resource = resources[index];
-      return Container(
-        width: double.infinity, 
-        margin: const EdgeInsets.only(bottom: 8),
-        child: Card(
-          color: LearningColors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade100,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    resource['module']!,
-                    style: TextStyle(
-                      color: Colors.orange.shade800,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+    return ListView.builder(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+      itemCount: resources.length,
+      itemBuilder: (context, index) {
+        final resource = resources[index];
+        return Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: 8),
+          child: Card(
+            color: LearningColors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade100,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                
-                Text(
-                  resource['title']!,
-                  style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                
-                Text(
-                  resource['description']!,
-                  style: LMSStyles.tsWhiteNeutral300W500,
-                ),
-                const SizedBox(height: 16),
-                
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _handleResourceAction(resource['type']!, resource);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: LearningColors.darkBlue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    child: Text(
+                      resource['module']!,
+                      style: TextStyle(
+                        color: Colors.orange.shade800,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
                       ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          _getResourceIcon(resource['type']!),
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          resource['action']!,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
                     ),
                   ),
-                ),
-              ],
+                  const SizedBox(height: 12),
+                  Text(
+                    resource['title']!,
+                    style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    resource['description']!,
+                    style: LMSStyles.tsWhiteNeutral300W500,
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _handleResourceAction(resource['type']!, resource);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: LearningColors.darkBlue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            _getResourceIcon(resource['type']!),
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            resource['action']!,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
-
-IconData _getResourceIcon(String type) {
-  switch (type) {
-    case 'video':
-      return Icons.play_circle_outline;
-    case 'link':
-      return Icons.open_in_new;
-    case 'pdf':
-      return Icons.picture_as_pdf;
-    case 'zip':
-      return Icons.archive;
-    default:
-      return Icons.description;
+        );
+      },
+    );
   }
-}
 
-void _handleResourceAction(String type, Map<String, String> resource) {
-  switch (type) {
-    case 'video':
-      // Navigate to video screen
-      print('Playing video: ${resource['title']}');
-      break;
-    case 'link':
-      // Open external link
-      print('Opening link: ${resource['title']}');
-      break;
-    case 'pdf':
-      // Download PDF
-      print('Downloading PDF: ${resource['title']}');
-      break;
-    case 'zip':
-      // Download ZIP
-      print('Downloading ZIP: ${resource['title']}');
-      break;
+  IconData _getResourceIcon(String type) {
+    switch (type) {
+      case 'video':
+        return Icons.play_circle_outline;
+      case 'link':
+        return Icons.open_in_new;
+      case 'pdf':
+        return Icons.picture_as_pdf;
+      case 'zip':
+        return Icons.archive;
+      default:
+        return Icons.description;
+    }
   }
-}
 
+  void _handleResourceAction(String type, Map<String, String> resource) {
+    switch (type) {
+      case 'video':
+        // Navigate to video screen
+        print('Playing video: ${resource['title']}');
+        break;
+      case 'link':
+        // Open external link
+        print('Opening link: ${resource['title']}');
+        break;
+      case 'pdf':
+        // Download PDF
+        print('Downloading PDF: ${resource['title']}');
+        break;
+      case 'zip':
+        // Download ZIP
+        print('Downloading ZIP: ${resource['title']}');
+        break;
+    }
+  }
 
   Widget _buildFAQsTab() {
     final faqs = [
@@ -1768,7 +1798,8 @@ void _handleResourceAction(String type, Map<String, String> resource) {
               value: index,
               headerBuilder: (context, isExpanded) {
                 return ListTile(
-                  title: Text('$index. ${item['question']!}', style: LMSStyles.tsSubHeadingBold.copyWith(fontSize: 15)),
+                  title: Text('$index. ${item['question']!}',
+                      style: LMSStyles.tsSubHeadingBold.copyWith(fontSize: 15)),
                 );
               },
               body: Container(
@@ -1898,7 +1929,8 @@ class _StickyTabBarDelegate extends SliverPersistentHeaderDelegate {
   _StickyTabBarDelegate({required this.child});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: LearningColors.white,
       child: child,

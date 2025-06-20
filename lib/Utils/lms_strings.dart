@@ -92,4 +92,13 @@ class LMSStrings {
   static const String strNoCompetent = "Not Yet Competent";
   static const String strCompetent = "Competent";
   static const String strInreview = "In Review";
+
+  static const String strTicketSubject = "Ticket Subject";
+  static const String strTicketSubjectHint = "Enter a brief summary of the issue";
+  static const String strTicketPriority = "Priority";
+  static const String strTicketPriorityHint = "Select Priority";
+  static const String strTicketCategory = "Category";
+  static const String strTicketCategoryHint = "Select Category";
+  static const String strTicketDescription = "Enter Description";
+  static const String strTicketDescriptionHint = "Enter Ticket Description";
 }

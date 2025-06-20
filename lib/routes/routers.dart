@@ -6,7 +6,9 @@ import 'package:learning_mgt/screens/CoursePage.dart';
 import 'package:learning_mgt/screens/Recommendation.dart';
 import 'package:learning_mgt/screens/ResultScreen.dart';
 import 'package:learning_mgt/screens/FeedbackScreen.dart';
-
+import 'package:learning_mgt/screens/SavedCoursesScreen.dart';
+import 'package:learning_mgt/screens/SupportCenterScreen.dart';
+import 'package:learning_mgt/screens/Videoscreen.dart';
 import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/screens/TrainingScreen.dart';
 import 'package:learning_mgt/screens/VerificationScreen.dart';
@@ -91,6 +93,10 @@ class Routers {
         return MaterialPageRoute(
           builder: (_) => Ceritification(),
         );
+      case SavedCoursesScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => SavedCoursesScreen(),
+        );
       case ResultScreen.route:
         return MaterialPageRoute(
           builder: (_) => ResultScreen(),
@@ -111,6 +117,25 @@ class Routers {
         return MaterialPageRoute(
           builder: (_) => FeedbackScreen(),
         );
+      case SupportCenterScreen.route:
+        return MaterialPageRoute(
+          builder: (_) => SupportCenterScreen(),
+        );
+      case VideoScreen.route:
+        final args = settings.arguments as Map<String, dynamic>;
+        return MaterialPageRoute(
+          builder: (_) => VideoScreen(
+            video: args['video'] ?? '',
+            videoTopicSlug: args['videoTopicSlug'] ?? '',
+            videoCourseSlug: args['videoCourseSlug'] ?? '',
+            videoWatchTime: args['videoWatchTime'] ?? '0',
+            isTrailer: args['isTrailer'] ?? false,
+            courseID: args['courseID'] ?? '',
+            topicID: args['topicID'] ?? '',
+            videoCategory: args['videoCategory'] ?? '',
+          ),
+        );
+
       default:
         return MaterialPageRoute(builder: (_) => SplashScreen());
     }

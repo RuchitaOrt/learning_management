@@ -833,51 +833,54 @@ class DetailFormWidget extends StatelessWidget {
             validator: signUpProvider.validateCountry,
           ),
           CustomTextFieldWidget(
-  title: LMSStrings.strDOB,
-  hintText: LMSStrings.strDOBHint,
-  textEditingController: signUpProvider.dobController,
-  isFieldReadOnly: true,
-  autovalidateMode: AutovalidateMode.disabled,
-  validator: signUpProvider.validateDOB,
-  onTap: () async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: LearningColors.darkBlue, // Header background and selected date circle
-              onPrimary: Colors.white, // Text color on primary (header text)
-              onSurface: Colors.black, // Default text color for dates
-              surface: Colors.white, // Background color of the picker
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: LearningColors.darkBlue, // OK/Cancel button text color
-                textStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            dialogBackgroundColor: Colors.white, // Overall background
+            title: LMSStrings.strDOB,
+            hintText: LMSStrings.strDOBHint,
+            textEditingController: signUpProvider.dobController,
+            isFieldReadOnly: true,
+            autovalidateMode: AutovalidateMode.disabled,
+            validator: signUpProvider.validateDOB,
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                builder: (BuildContext context, Widget? child) {
+                  return Theme(
+                    data: ThemeData.light().copyWith(
+                      colorScheme: ColorScheme.light(
+                        primary: LearningColors
+                            .darkBlue, // Header background and selected date circle
+                        onPrimary:
+                            Colors.white, // Text color on primary (header text)
+                        onSurface: Colors.black, // Default text color for dates
+                        surface: Colors.white, // Background color of the picker
+                      ),
+                      textButtonTheme: TextButtonThemeData(
+                        style: TextButton.styleFrom(
+                          foregroundColor: LearningColors
+                              .darkBlue, // OK/Cancel button text color
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      dialogBackgroundColor: Colors.white, // Overall background
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+
+              if (pickedDate != null) {
+                String formattedDate =
+                    DateFormat('dd-MM-yyyy').format(pickedDate);
+                signUpProvider.dobController.text = formattedDate;
+              }
+            },
+            onChange: (val) {},
           ),
-          child: child!,
-        );
-      },
-    );
-
-    if (pickedDate != null) {
-      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-      signUpProvider.dobController.text = formattedDate;
-    }
-  },
-  onChange: (val) {},
-),
-
           CustomTextFieldWidget(
             title: LMSStrings.strPincode,
             hintText: LMSStrings.strPincodeHint,
