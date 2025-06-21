@@ -751,14 +751,14 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                   body: Container(
                     color: Colors.blue.shade50,
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                     child: Column(
                       children: List.generate(
                         (module['lectures'] as List<String>).length * 2 - 1,
                         (i) {
                           final isDivider = i.isOdd;
                           if (isDivider)
-                            return Divider(color: Colors.grey.shade300);
+                            return Divider(color: Colors.grey.shade300, height: 1,);
 
                           final lectureIndex = i ~/ 2;
                           final lecture = (module['lectures']
@@ -810,7 +810,6 @@ class _VideoScreenState extends State<VideoScreen> with WidgetsBindingObserver {
                               style: LMSStyles.tsWhiteNeutral300W500,
                             ),
                             onTap: () {
-                              // Handle lecture tap - play specific video
                               print('Playing lecture: $lecture');
                             },
                           );

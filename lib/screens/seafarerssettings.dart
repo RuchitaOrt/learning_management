@@ -229,7 +229,7 @@ class SeafarerSettings extends StatefulWidget {
 
 class _SeafarerSettingsState extends State<SeafarerSettings> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  
+
   @override
   Widget build(BuildContext context) {
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
@@ -244,7 +244,10 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
             child: CustomAppBar(
               isSearchClickVisible: () {},
               isSearchValueVisible: false,
-              onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+              onMenuPressed: () {
+                FocusManager.instance.primaryFocus?.unfocus();
+                scaffoldKey.currentState?.openEndDrawer();
+              },
             ),
           ),
           endDrawer: CustomDrawer(),
@@ -435,144 +438,151 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
   // }
 
   Widget _buildForm(BuildContext context) {
-  return Consumer<PersonalAccountProvider>(
-      builder: (context, personalprovider, child) {
-    return Column(
-      children: [
-        // Scrollable content area
-        Expanded(
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              _buildField("Seafarers No.", personalprovider.seafarersNoController,
-                  "Enter Your Seafarers Number"),
-              _buildField("Passport No.", personalprovider.passportNoController,
-                  "Enter Your Passport Number"),
-              _buildField("Department", personalprovider.departmentController,
-                  "Enter Your Department"),
-              _buildField(
-                  "Rank", personalprovider.rankController, "Enter Your Rank"),
-              _buildField("Pin Code", personalprovider.pinCodeController,
-                  "Enter Your Pin Code"),
-              _buildField("Country", personalprovider.countryController,
-                  "Enter Your Country"),
-              _buildField(
-                  "City", personalprovider.cityController, "Enter Your City"),
-              _buildField(
-                  "State", personalprovider.stateController, "Enter Your State"),
+    return Consumer<PersonalAccountProvider>(
+        builder: (context, personalprovider, child) {
+      return Column(
+        children: [
+          // Scrollable content area
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildField(
+                    "Seafarers No.",
+                    personalprovider.seafarersNoController,
+                    "Enter Your Seafarers Number"),
+                _buildField(
+                    "Passport No.",
+                    personalprovider.passportNoController,
+                    "Enter Your Passport Number"),
+                _buildField("Department", personalprovider.departmentController,
+                    "Enter Your Department"),
+                _buildField(
+                    "Rank", personalprovider.rankController, "Enter Your Rank"),
+                _buildField("Pin Code", personalprovider.pinCodeController,
+                    "Enter Your Pin Code"),
+                _buildField("Country", personalprovider.countryController,
+                    "Enter Your Country"),
+                _buildField(
+                    "City", personalprovider.cityController, "Enter Your City"),
+                _buildField("State", personalprovider.stateController,
+                    "Enter Your State"),
 
-              Text("COC", style: LMSStyles.tsHintstyle.copyWith(fontSize: 14)),
+                Text("COC",
+                    style: LMSStyles.tsHintstyle.copyWith(fontSize: 14)),
 
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: personalprovider.COCController,
-                      decoration: InputDecoration(
-                        hintText: "Enter Your COC",
-                        hintStyle: LMSStyles.tsHintstyle.copyWith(
-                          fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                              color: LearningColors.neutral300, width: 1.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: LearningColors.neutral300, width: 1.0),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
-                        suffixIcon: TextButton(
-                          onPressed: () {
-                            // Add logic to send OTP to email
-                          },
-                          child: Text(
-                            "Verify",
-                            style: TextStyle(
-                                color: LearningColors.darkBlue,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: personalprovider.COCController,
+                        decoration: InputDecoration(
+                          hintText: "Enter Your COC",
+                          hintStyle: LMSStyles.tsHintstyle.copyWith(
+                            fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: LearningColors.neutral300, width: 1.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                                color: LearningColors.neutral300, width: 1.0),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          suffixIcon: TextButton(
+                            onPressed: () {
+                              // Add logic to send OTP to email
+                            },
+                            child: Text(
+                              "Verify",
+                              style: TextStyle(
+                                  color: LearningColors.darkBlue,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Padding(
-                padding: const EdgeInsets.only(left: 4),
-                child: Text(
-                  "${_calculateYearsLeft()} years left from now",
-                  style: LMSStyles.tsWhiteNeutral300W300.copyWith(fontSize: 14),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 20), // Extra spacing at bottom
-            ],
+                const SizedBox(height: 6),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4),
+                  child: Text(
+                    "${_calculateYearsLeft()} years left from now",
+                    style:
+                        LMSStyles.tsWhiteNeutral300W300.copyWith(fontSize: 14),
+                  ),
+                ),
+                const SizedBox(height: 20), // Extra spacing at bottom
+              ],
+            ),
           ),
-        ),
-        // Sticky bottom buttons
-        Container(
-          padding: const EdgeInsets.all(0),
-          child: Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: LearningColors.darkBlue,
-                        width: 0.5,
+          // Sticky bottom buttons
+          Container(
+            padding: const EdgeInsets.all(0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(
+                          color: LearningColors.darkBlue,
+                          width: 0.5,
+                        ),
+                        backgroundColor: Colors.transparent,
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
-                      backgroundColor: Colors.transparent,
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                      child: Text(
+                        'Cancel',
+                        style: LMSStyles.tsblackNeutralbold.copyWith(
+                          color: LearningColors.darkBlue,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      'Cancel',
-                      style: LMSStyles.tsblackNeutralbold.copyWith(
-                        color: LearningColors.darkBlue,
+                  ),
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 0.0),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: LearningColors.darkBlue,
+                        padding: EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 5,
+                      ),
+                      child: Text(
+                        LMSStrings.strSaveChanges,
+                        style: LMSStyles.tsWhiteNeutral50W60016,
                       ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(width: 8,),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: LearningColors.darkBlue,
-                      padding: EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 5,
-                    ),
-                    child: Text(
-                      LMSStrings.strSaveChanges,
-                      style: LMSStyles.tsWhiteNeutral50W60016,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
-    );
-  });
-}
-
+        ],
+      );
+    });
+  }
 
   Widget _buildField(
       String title, TextEditingController controller, String hint) {

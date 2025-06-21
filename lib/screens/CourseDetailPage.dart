@@ -433,11 +433,10 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                       Navigator.of(context).pushNamed(
                         VideoScreen.route,
                         arguments: {
-                          'video':
-                              'your_video_url_here',
+                          'video': 'your_video_url_here',
                           'videoTopicSlug': 'demo-topic',
                           'videoCourseSlug': 'demo-course',
-                          'videoWatchTime': '0', 
+                          'videoWatchTime': '0',
                           'isTrailer': true,
                           'courseID': 'your_course_id',
                           'topicID': 'your_topic_id',
@@ -928,7 +927,11 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                               style: LMSStyles.tsWhiteNeutral300W500
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
-                            const SizedBox(width: 8),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
                             Icon(Icons.timer, color: Colors.orange, size: 16),
                             const SizedBox(width: 8),
                             Text(
@@ -1571,13 +1574,17 @@ class _CourseDetailPageState extends State<CourseDetailPage>
             },
             body: Container(
               color: Colors.blue.shade50,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
               child: Column(
                 children: List.generate(
                   (module['lectures'] as List<String>).length * 2 - 1,
                   (i) {
                     final isDivider = i.isOdd;
-                    if (isDivider) return Divider(color: Colors.grey.shade300);
+                    if (isDivider)
+                      return Divider(
+                        color: Colors.grey.shade300,
+                        height: 1,
+                      );
                     final index = i ~/ 2;
                     final lecture = (module['lectures'] as List<String>)[index];
                     return ListTile(

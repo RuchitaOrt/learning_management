@@ -39,10 +39,12 @@ class _SupportCenterScreenState extends State<SupportCenterScreen> {
             appBar: PreferredSize(
               preferredSize: const Size.fromHeight(kToolbarHeight),
               child: CustomAppBar(
-                isSearchClickVisible: () {},
-                isSearchValueVisible: false,
-                onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
-              ),
+                  isSearchClickVisible: () {},
+                  isSearchValueVisible: false,
+                  onMenuPressed: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    scaffoldKey.currentState?.openEndDrawer();
+                  }),
             ),
             endDrawer: CustomDrawer(),
             body: Container(
@@ -72,32 +74,33 @@ class _SupportCenterScreenState extends State<SupportCenterScreen> {
                             onTap: () => _showHistoryBottomSheet(context),
                             child: Container(
                               padding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
+                                  horizontal: 8, vertical: 8),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(8),
                                 border: Border.all(color: Colors.grey.shade300),
                               ),
-                              child: Text(
-                                "Ticket History",
-                                style: LMSStyles.tsblackNeutralbold
-                                    .copyWith(fontSize: 12),
-                              ),
+                              child: Icon(Icons.history),
+                              // Text(
+                              //   "Ticket History",
+                              //   style: LMSStyles.tsblackNeutralbold
+                              //       .copyWith(fontSize: 12),
+                              // ),
                             ),
                           ),
                         ],
                       ),
                       SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Raise Ticket",
-                            style:
-                                LMSStyles.tsHeadingbold.copyWith(fontSize: 16),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Text(
+                      //       "Raise Ticket",
+                      //       style:
+                      //           LMSStyles.tsHeadingbold.copyWith(fontSize: 16),
+                      //     ),
+                      //   ],
+                      // ),
                       Expanded(
                         child: _buildForm(context),
                       ),
@@ -233,7 +236,7 @@ class _SupportCenterScreenState extends State<SupportCenterScreen> {
                                 ),
                               )
                             : Text(
-                                "Submit",
+                                "Raise Ticket",
                                 style: LMSStyles.tsWhiteNeutral50W60016,
                               ),
                       ),
@@ -314,168 +317,167 @@ class _SupportCenterScreenState extends State<SupportCenterScreen> {
     }
   }
 
-void _showHistoryBottomSheet(BuildContext context) {
-  final List<Map<String, dynamic>> ticketHistory = [
-    {
-      'subject': 'Login Issue',
-      'priority': 'High',
-      'category': 'Technical',
-      'description': 'User unable to login due to password reset failure.',
-      'date': '26 Jan, 2023 • 3:30 pm',
-    },
-    {
-      'subject': 'Payment Problem',
-      'priority': 'Medium',
-      'category': 'Billing',
-      'description': 'Payment gateway timeout during transaction.',
-      'date': '25 Jan, 2023 • 1:15 pm',
-    },
-    {
-      'subject': 'Course Access',
-      'priority': 'Low',
-      'category': 'General',
-      'description': 'Unable to access purchased course content.',
-      'date': '24 Jan, 2023 • 11:00 am',
-    },
-  ];
+  void _showHistoryBottomSheet(BuildContext context) {
+    final List<Map<String, dynamic>> ticketHistory = [
+      {
+        'subject': 'Login Issue',
+        'priority': 'High',
+        'category': 'Technical',
+        'description': 'User unable to login due to password reset failure.',
+        'date': '26 Jan, 2023 • 3:30 pm',
+      },
+      {
+        'subject': 'Payment Problem',
+        'priority': 'Medium',
+        'category': 'Billing',
+        'description': 'Payment gateway timeout during transaction.',
+        'date': '25 Jan, 2023 • 1:15 pm',
+      },
+      {
+        'subject': 'Course Access',
+        'priority': 'Low',
+        'category': 'General',
+        'description': 'Unable to access purchased course content.',
+        'date': '24 Jan, 2023 • 11:00 am',
+      },
+    ];
 
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
-    isDismissible: false,
-    builder: (context) => TapRegion(
-      onTapOutside: (_) => Navigator.of(context).pop(),
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.7, // Fixed height
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFF8F9FA),
-              Color(0xFFE9ECEF),
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      isDismissible: false,
+      builder: (context) => TapRegion(
+        onTapOutside: (_) => Navigator.of(context).pop(),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.7, // Fixed height
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Color(0xFFF8F9FA),
+                Color(0xFFE9ECEF),
+              ],
+            ),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.symmetric(vertical: 8),
+                height: 4,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    Text(
+                      "Ticket History",
+                      style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  itemCount: ticketHistory.length,
+                  itemBuilder: (context, index) {
+                    final item = ticketHistory[index];
+                    return Container(
+                      margin: EdgeInsets.only(bottom: 16),
+                      padding: EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade200),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.1),
+                            spreadRadius: 1,
+                            blurRadius: 4,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            item['subject'],
+                            style:
+                                LMSStyles.tsSubHeading.copyWith(fontSize: 14),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Text(
+                                "Priority: ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                item['priority'],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              Text(
+                                "Category: ",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                              Text(
+                                item['category'],
+                                style: TextStyle(
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            item['description'],
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            item['date'],
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 8),
-              height: 4,
-              width: 40,
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Row(
-                children: [
-                  Text(
-                    "Ticket History",
-                    style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                itemCount: ticketHistory.length,
-                itemBuilder: (context, index) {
-                  final item = ticketHistory[index];
-                  return Container(
-                    margin: EdgeInsets.only(bottom: 16),
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade200),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          item['subject'],
-                          style: LMSStyles.tsSubHeading.copyWith(fontSize: 14),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Text(
-                              "Priority: ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                            Text(
-                              item['priority'],
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Text(
-                              "Category: ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12,
-                              ),
-                            ),
-                            Text(
-                              item['category'],
-                              style: TextStyle(
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          item['description'],
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          item['date'],
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
         ),
       ),
-    ),
-  );
-}
-
-
+    );
+  }
 
   // Future<void> _submitForm(BuildContext context, SupportCenterProvider provider) async {
   //   final success = await provider.submitTicket();

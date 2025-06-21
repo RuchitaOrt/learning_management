@@ -62,7 +62,8 @@ class _HomePageState extends State<HomePage> {
                   ],
                 ),*/
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   //margin: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -118,11 +119,13 @@ class _HomePageState extends State<HomePage> {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Colors.blueAccent,
-                                border: Border.all(color: Colors.white, width: 2),
+                                border:
+                                    Border.all(color: Colors.white, width: 2),
                               ),
                               padding: const EdgeInsets.all(3),
                               child: const Icon(
-                                Icons.verified, // You can also use Icons.shield or Icons.verified_user
+                                Icons
+                                    .verified, // You can also use Icons.shield or Icons.verified_user
                                 color: Colors.white,
                                 size: 16,
                               ),
@@ -133,7 +136,6 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-
 
                 const SizedBox(height: 12),
 
@@ -185,44 +187,45 @@ class _HomePageState extends State<HomePage> {
                 ),*/
 
                 GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
-                  childAspectRatio: 1.1,
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  children: [
-                    CourseCard(
-                      title: "Result Percentile",
-                      count: 87, // example: 87 percentile
-                      total: 100,
-                      icon: Icons.bar_chart_rounded,
-                      color: Colors.deepPurple,
-                      suffix: "%",
-                    ),
-                    CourseCard(
-                      title: "Certificates Earned",
-                      count: 4,
-                      total: 10,
-                      icon: Icons.verified_rounded,
-                      color: Colors.green,
-                    ),
-                    CourseCard(
-                      title: "Total Score",
-                      count: 268,
-                      total: 300,
-                      icon: Icons.score,
-                      color: Colors.blueAccent,
-                    ),
-                    CourseCard(
-                      title: "Completed Courses",
-                      count: 6,
-                      total: 10,
-                      icon: Icons.check_circle_outline,
-                      color: Colors.orange,
-                    ),
-                  ],
-                ),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: 1,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    children: [
+                      CourseCard(
+                        title: "Result Percentile",
+                        count: 87, // example: 87 percentile
+                        total: 100,
+                        icon: Icons.bar_chart_rounded,
+                        color: Colors.deepPurple,
+                        suffix: "%",
+                      ),
+                      CourseCard(
+                        title: "Certificates Earned",
+                        count: 4,
+                        total: 10,
+                        icon: Icons.verified_rounded,
+                        color: Colors.green,
+                      ),
+                      CourseCard(
+                        title: "Total Score",
+                        count: 268,
+                        total: 300,
+                        icon: Icons.score,
+                        color: Colors.blueAccent,
+                      ),
+                      CourseCard(
+                        title: "Completed Courses",
+                        count: 6,
+                        total: 10,
+                        icon: Icons.check_circle_outline,
+                        color: Colors.orange,
+                      ),
+                    ],
+                  ),
+                
 
                 // Ongoing Courses Section
                 const SizedBox(height: 12),
@@ -264,7 +267,9 @@ class _HomePageState extends State<HomePage> {
                 ),
                 const SizedBox(height: 12),
                 SizedBox(
-                  height:Platform.isIOS?SizeConfig.blockSizeVertical * 35.5:SizeConfig.blockSizeVertical * 39,
+                  height: Platform.isIOS
+                      ? SizeConfig.blockSizeVertical * 35.5
+                      : SizeConfig.blockSizeVertical * 39,
                   // Platform.isIOS?MediaQuery.of(context).size.height * 0.36: MediaQuery.of(context).size.height * 0.39,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
@@ -272,27 +277,32 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (context, index) {
                       final courses = [
                         {
-                          'title': 'Advanced Navigation Navigation Navigation Navigation Navigation Navigation',
+                          'title':
+                              'Advanced Navigation Navigation Navigation Navigation Navigation Navigation',
                           'content': '6 Modules · 2 Projects',
-                          'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlbIDRuVn3XZxVDRbpIMoYUUx-hS9v63awWLH97LbfhPw4VkQUK8iquu2LDFpaazgfSHM&usqp=CAU',
+                          'image':
+                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlbIDRuVn3XZxVDRbpIMoYUUx-hS9v63awWLH97LbfhPw4VkQUK8iquu2LDFpaazgfSHM&usqp=CAU',
                           'duration': '8h 45m · 1.5L+ Learners',
                         },
                         {
                           'title': 'Marine Safety',
                           'content': '6 Modules · 2 Projects',
-                          'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy5J_LGg_5D-OkkskgbBnZXbdFq9Kuovbvew&s',
+                          'image':
+                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQy5J_LGg_5D-OkkskgbBnZXbdFq9Kuovbvew&s',
                           'duration': '6h 30m · 1.2L+ Learners',
                         },
                         {
                           'title': 'Engine Maintenance',
                           'content': '6 Modules · 2 Projects',
-                          'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPVDI288Kwzhlmxzvyx6b9RbA0i5qgRcI7UA&s',
+                          'image':
+                              'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQPVDI288Kwzhlmxzvyx6b9RbA0i5qgRcI7UA&s',
                           'duration': '10h 15m · 1L+ Learners',
                         },
                         {
                           'title': 'Cargo Operations',
                           'content': '6 Modules · 2 Projects',
-                          'image': 'https://source.unsplash.com/featured/?cargo,ship',
+                          'image':
+                              'https://source.unsplash.com/featured/?cargo,ship',
                           'duration': '7h 20m · 1L+ Learners',
                         },
                       ];
@@ -311,11 +321,10 @@ class _HomePageState extends State<HomePage> {
                 // Progress Graph
                 Text(
                   "Progress Graph",
-                  style:LMSStyles.tsblackTileBold,
+                  style: LMSStyles.tsblackTileBold,
                 ),
                 const SizedBox(height: 12),
-             GraphCard()
-
+                GraphCard()
               ],
             ),
           ),
@@ -505,7 +514,8 @@ class CurrentCourseCard extends StatelessWidget {
 
                     if (index < currentIndex) {
                       textColor = LearningColors.darkBlue;
-                      trailingIcon = const Icon(Icons.check_circle, color: LearningColors.darkBlue);
+                      trailingIcon = const Icon(Icons.check_circle,
+                          color: LearningColors.darkBlue);
                     } else if (index == currentIndex) {
                       textColor = LearningColors.darkBlue;
                       trailingIcon = null;
@@ -519,7 +529,9 @@ class CurrentCourseCard extends StatelessWidget {
                         module,
                         style: TextStyle(
                           color: textColor,
-                          fontWeight: index == currentIndex ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: index == currentIndex
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                         ),
                       ),
                       trailing: trailingIcon,
@@ -698,6 +710,7 @@ class CourseCard extends StatelessWidget {
         border: Border.all(color: color.withOpacity(0.05)),
       ),
       child: Column(
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Icon top-right
@@ -706,6 +719,7 @@ class CourseCard extends StatelessWidget {
             child: Icon(icon, color: color, size: 28),
           ),
           const Spacer(),
+          // SizedBox(height: 16,),
           Text(
             "$count$suffix",
             style: TextStyle(
@@ -716,16 +730,17 @@ class CourseCard extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            title,
-            maxLines: 2,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w400,
-              
-              color: Colors.black87,
+              title,
+              maxLines: 2,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+                color: Colors.black87,
+              ),
             ),
-          ),
+          
           const Spacer(),
+          // SizedBox(height: 16,),
           // Progress bar
           LinearProgressIndicator(
             value: percent.clamp(0.0, 1.0),
@@ -823,13 +838,15 @@ class RecommendedCourseItem extends StatelessWidget {
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           /// Image with "Recommended" tag
           Stack(
             children: [
               ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.network(
                   image,
                   height: MediaQuery.of(context).size.height * 0.18,
@@ -841,7 +858,8 @@ class RecommendedCourseItem extends StatelessWidget {
                 top: 10,
                 left: 10,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -869,11 +887,13 @@ class RecommendedCourseItem extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
+              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   content,
-                  style: LMSStyles.tsWhiteNeutral300W3002.copyWith(fontSize: 14),
+                  style:
+                      LMSStyles.tsWhiteNeutral300W3002.copyWith(fontSize: 14),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -886,15 +906,18 @@ class RecommendedCourseItem extends StatelessWidget {
                 const SizedBox(height: 8),
                 Row(
                   children: [
-                    const Icon(Icons.schedule, size: 14, color: LearningColors.neutral500),
+                    const Icon(Icons.schedule,
+                        size: 14, color: LearningColors.neutral500),
                     const SizedBox(width: 4),
                     Text(
                       duration,
-                      style: LMSStyles.tsWhiteNeutral300W3002.copyWith(fontSize: 12),
+                      style: LMSStyles.tsWhiteNeutral300W3002
+                          .copyWith(fontSize: 12),
                     ),
                   ],
                 ),
                 const SizedBox(height: 12),
+                // Spacer(),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
@@ -910,7 +933,8 @@ class RecommendedCourseItem extends StatelessWidget {
                     ),
                     child: const Text(
                       'View Course',
-                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+                      style:
+                          TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),

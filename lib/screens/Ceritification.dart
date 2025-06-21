@@ -166,14 +166,18 @@ class _CeritificationState extends State<Ceritification> {
               SizedBox(height: 12),
               Row(
                 children: [
-                  _buildInfoItem(
-                    icon: Icons.numbers,
-                    label: "ID: #ACDS1102999",
-                  ),
-                  SizedBox(width: 16),
-                  _buildInfoItem(
-                    icon: Icons.schedule,
-                    label: "Duration: 25.5 hrs",
+                  Column(
+                    children: [
+                      _buildInfoItem(
+                        icon: Icons.numbers,
+                        label: "ID: #ACDS1102999",
+                      ),
+                      SizedBox(height: 12),
+                      _buildInfoItem(
+                        icon: Icons.schedule,
+                        label: "Duration: 25.5 hrs",
+                      ),
+                    ],
                   ),
                 ],
               ),

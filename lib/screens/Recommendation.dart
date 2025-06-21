@@ -743,13 +743,16 @@ class _RecommendationState extends State<Recommendation> {
                     SizedBox(
                       width: SizeConfig.blockSizeHorizontal * 1,
                     ),
-                    Container(
-                      width: SizeConfig.blockSizeHorizontal * 75,
-                      child: Text(
-                        course.institue,
-                        style: LMSStyles.tsHeadingbold,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                    Flexible(
+                      flex: 2,
+                      child: Container(
+                        width: SizeConfig.blockSizeHorizontal * 75,
+                        child: Text(
+                          course.institue,
+                          style: LMSStyles.tsHeadingbold,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ]),

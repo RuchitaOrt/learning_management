@@ -540,9 +540,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             });
           },
           child: Container(
-            margin: EdgeInsets.only(right: 16),
-            width: 50,
-            height: 50,
+            margin: EdgeInsets.only(right: 8),
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: isSelected ? Colors.orange : Colors.grey[200],
               shape: BoxShape.circle,
@@ -580,9 +580,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
             });
           },
           child: Container(
-            margin: EdgeInsets.only(right: 16),
-            width: 50,
-            height: 50,
+            margin: EdgeInsets.only(right: 8),
+            width: 40,
+            height: 40,
             decoration: BoxDecoration(
               color: isSelected ? Colors.orange.withOpacity(0.2) : Colors.transparent,
               shape: BoxShape.circle,

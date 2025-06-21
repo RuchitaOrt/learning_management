@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
@@ -24,6 +26,7 @@ class _GraphCardState extends State<GraphCard> {
 
   @override
   Widget build(BuildContext context) {
+    // log(MediaQuery.of(context).size.width.toString());
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -43,63 +46,71 @@ class _GraphCardState extends State<GraphCard> {
         children: [
           /// Top row with dropdown aligned right
           Row(
+            mainAxisAlignment:MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                "Performance Overview",
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-              ),
-              const Spacer(),
-              Container(
-                height: 36,
-                padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: LearningColors.darkBlue.withOpacity(0.2), width: 1.2),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      offset: Offset(0, 3),
-                    ),
-                  ],
+              Flexible(
+                flex: 2,
+                child: const Text(
+                  "Performance Overview",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
-                child: DropdownButtonHideUnderline(
-                  
-                  child: DropdownButton<String>(
-                    
-                    value: selectedRange,
-                    dropdownColor: Colors.white,
-                    icon: const Icon(Icons.keyboard_arrow_down, color: LearningColors.darkBlue),
-                    style: const TextStyle(
-                      
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 14,
-                    ),
+              ),
+              // const Spacer(),
+              Flexible(
+                flex: 2,
+                child: Container(
+                  height: 36,
+                  // width: 50,
+                  padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
-                    items: filterOptions.map((String value) {
-                      return DropdownMenuItem<String>(
+                    border: Border.all(color: LearningColors.darkBlue.withOpacity(0.2), width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 8,
+                        offset: Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    
+                    child: DropdownButton<String>(
+                      
+                      value: selectedRange,
+                      dropdownColor: Colors.white,
+                      icon: const Icon(Icons.keyboard_arrow_down, color: LearningColors.darkBlue),
+                      style: const TextStyle(
                         
-                        value: value,
-                        child: Text(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 14,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      items: filterOptions.map((String value) {
+                        return DropdownMenuItem<String>(
                           
-                          value,
-                          textAlign: TextAlign.center,
-                          style:  TextStyle(
-                        
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
+                          value: value,
+                          child: Text(
+                            
+                            value,
+                            textAlign: TextAlign.center,
+                            style:  TextStyle(
+                          
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedRange = newValue!;
-                      });
-                    },
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedRange = newValue!;
+                        });
+                      },
+                    ),
                   ),
                 ),
               ),

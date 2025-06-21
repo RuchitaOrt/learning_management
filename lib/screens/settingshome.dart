@@ -194,7 +194,8 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
                             SizedBox(
                               height: 8,
                             ),
-                            Text('@amalvedant@gmail.com'),
+                            Text('@amalvedant@gmail.com', style: LMSStyles.tsSubHeading
+                                  .copyWith(fontSize: 12),),
                           ],
                         ),
                       ],
