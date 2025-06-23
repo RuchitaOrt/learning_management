@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:learning_mgt/Utils/UtilityFile.dart';
 import 'package:learning_mgt/Utils/VersionInfo.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
@@ -31,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
      
     WidgetsBinding.instance.addObserver(this);
    
-
+ Utility().loadAPIConfig(context);
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,

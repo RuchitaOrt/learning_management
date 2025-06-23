@@ -1,6 +1,12 @@
 
 import 'package:flutter/material.dart';
+import 'package:learning_mgt/Utils/APIManager.dart';
+import 'package:learning_mgt/Utils/internetConnection.dart';
 import 'package:learning_mgt/Utils/regex_helper.dart';
+import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/model/LoginResponse.dart';
+import 'package:learning_mgt/screens/TabScreen.dart';
+import 'package:learning_mgt/widgets/ShowDialog.dart';
 
 class SignInProvider with ChangeNotifier {
   TextEditingController emailController = TextEditingController();
@@ -95,10 +101,51 @@ class SignInProvider with ChangeNotifier {
    
     notifyListeners();
   }
-
+ 
   void validateTermsAcceptance() {
     _showTermsError = !_isCheckedTerms;
     notifyListeners();
   }
+Map<String, String> createRequestBody() {
+  return {
+    "email": emailController.text.trim(),
+    "password": passwordController.text,
+  };
+}
 
+ createSignIn() async {
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+    Map<String, String> jsonbody = createRequestBody();
+      print(jsonbody);
+
+      APIManager().apiRequest(routeGlobalKey.currentContext!, API.login,
+          (response) async {
+        LoginResponse resp = response;
+
+        if (resp.status == true) {
+          ShowDialogs.showToast(resp.message);
+         
+
+          Navigator.of(
+            routeGlobalKey.currentContext!,
+          ).pushNamed(
+            TabScreen.route,
+            arguments: {
+              'selectedPos': -1,
+              'isSignUp': false,
+            },
+          );
+        }
+      }, (error) {
+        print('ERR msg is $error');
+
+        ShowDialogs.showToast("Server Not Responding");
+      }, parameter: jsonbody);
+    } else {
+      /// Navigator.of(_keyLoader.currentContext).pop();
+      ShowDialogs.showToast("Please check internet connection");
+    }
+  }
 }

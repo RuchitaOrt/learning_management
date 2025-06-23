@@ -1,8 +1,12 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:learning_mgt/Utils/APIManager.dart';
+import 'package:learning_mgt/Utils/internetConnection.dart';
 
 import 'package:learning_mgt/Utils/regex_helper.dart';
 import 'package:learning_mgt/dto/DocumentField.dart';
+import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/widgets/ShowDialog.dart';
 
 class SignUpProvider with ChangeNotifier {
   TextEditingController firstNameController = TextEditingController();
@@ -369,6 +373,102 @@ Future<void> pickFile(String docName) async {
   void disposeAll() {
     for (var controller in controllers.values) {
       controller.dispose();
+    }
+  }
+
+
+   Future<void> getCountryListAPI() async {
+    
+
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      dynamic jsonbody = "";
+      
+      return APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.countrylist,
+        (response) async {
+         
+        },
+        (error) {
+          // Handle error case
+          print('ERR msg is $error');
+          ShowDialogs.showToast("Server Not Responding");
+
+          
+        },
+        jsonval: jsonbody,
+      );
+    } else {
+      // No internet connection
+      ShowDialogs.showToast("Please check internet connection");
+
+     
+      return Future.error("No Internet Connection");
+    }
+  }
+
+   Future<void> getDepartmentListAPI() async {
+    
+
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      dynamic jsonbody = "";
+      
+      return APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.departmentlist,
+        (response) async {
+         
+        },
+        (error) {
+          // Handle error case
+          print('ERR msg is $error');
+          ShowDialogs.showToast("Server Not Responding");
+
+          
+        },
+        jsonval: jsonbody,
+      );
+    } else {
+      // No internet connection
+      ShowDialogs.showToast("Please check internet connection");
+
+     
+      return Future.error("No Internet Connection");
+    }
+  }
+   Future<void> getQualificationListAPI() async {
+    
+
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      dynamic jsonbody = "";
+      
+      return APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getqualifications,
+        (response) async {
+         
+        },
+        (error) {
+          // Handle error case
+          print('ERR msg is $error');
+          ShowDialogs.showToast("Server Not Responding");
+
+          
+        },
+        jsonval: jsonbody,
+      );
+    } else {
+      // No internet connection
+      ShowDialogs.showToast("Please check internet connection");
+
+     
+      return Future.error("No Internet Connection");
     }
   }
 }

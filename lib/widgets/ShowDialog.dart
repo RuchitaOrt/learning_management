@@ -9,7 +9,37 @@ import 'package:learning_mgt/main.dart';
 
 class ShowDialogs {
  
+ unAthorizedTokenErrorDialog(BuildContext context, {String? message}) {
 
+    
+    // set up the button
+
+    Widget okButton = ElevatedButton(
+        child: Text("OK"),
+        onPressed: () {
+
+          // Navigator.pushReplacement(
+          //     context, MaterialPageRoute(builder: (context) => SignInScreen()));
+        });
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("LMS"),
+      content: Text(message!),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
   static Future<void> showLoadingDialog(BuildContext context, GlobalKey key,
       {String message = "Loading..", bool setForLightScreen = false}) async {
     Future.delayed(
