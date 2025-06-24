@@ -19,7 +19,9 @@ enum API {
   emailOTP,
   verifyEmailOTP,
   registerCandidate,
-  candidateDetails
+  candidateDetails,
+  getDocuments,
+
   
 }
 
@@ -97,6 +99,9 @@ class APIManager {
         case API.candidateDetails:
         apiPathString = "/api/candidate/candidate-details";
         break;
+        case API.getDocuments:
+        apiPathString = "/api/candidate/get-enrollment-documents";
+        break;
 
       default:
         apiPathString = "/Login";
@@ -139,7 +144,7 @@ class APIManager {
         className = "DepartmentListResponse";
         break;
         case API.getqualifications:
-        className = "LoginResponse";
+        className = "QualificationListResponse";
         break;
 
         case API.getdeptwiseranklist:
@@ -152,6 +157,9 @@ class APIManager {
 
       case API.verifyEmailOTP:
         className = "CommonResponse";
+        break;
+      case API.getDocuments:
+        className = "DocumentListResponse";
         break;
 
       default:
@@ -172,10 +180,14 @@ class APIManager {
       responseObj = CountryListResponse.fromJson(json);
     } else if (className == 'RankListResponse') {
       responseObj = RankListResponse.fromJson(json);
+    } else if (className == 'QualificationListResponse') {
+      responseObj = QualificationListResponse.fromJson(json);
     } else if (className == 'OtpResponse') {
       responseObj = CommonResponse.fromJson(json);
     } else if (className == 'CommonResponse') {
       responseObj = CommonResponse.fromJson(json);
+    } else if (className == 'DocumentListResponse') {
+      responseObj = DocumentListResponse.fromJson(json);
     }
    
     

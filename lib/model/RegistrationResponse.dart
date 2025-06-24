@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class DepartmentListResponse {
   final int n;
   final String msg;
@@ -191,26 +193,140 @@ class Candidate {
     );
   }
 }
-/*
-class CommonResponse {
-  final int n; // <-- Changed from bool to int
-  final String message;
-  final String? otp;
 
-  CommonResponse({
-    required this.n,
-    required this.message,
-    this.otp,
+class Qualification {
+  final int id;
+  final String qualificationName;
+  final bool isActive;
+
+  Qualification({
+    required this.id,
+    required this.qualificationName,
+    required this.isActive,
   });
 
-  factory CommonResponse.fromJson(Map<String, dynamic> json) {
-    return CommonResponse(
-      n: json['n'] ?? 0,
-      message: json['msg'] ?? '',
-      otp: json['otp'],
+  factory Qualification.fromJson(Map<String, dynamic> json) {
+    try {
+      return Qualification(
+        id: json['id'] as int? ?? -1,
+        qualificationName: json['qualification_name'] as String? ?? 'Unknown',
+        isActive: json['isActive'] as bool? ?? false,
+      );
+    } catch (e) {
+      print('Error creating Qualification: $e');
+      return Qualification(
+        id: -1,
+        qualificationName: 'Invalid',
+        isActive: false,
+      );
+    }
+  }
+}
+
+class QualificationListResponse {
+  final int n;
+  final String msg;
+  final List<Qualification> data;
+
+  QualificationListResponse({
+    required this.n,
+    required this.msg,
+    required this.data,
+  });
+
+  factory QualificationListResponse.fromJson(Map<String, dynamic> json) {
+    try {
+      // Safely handle null or missing data
+      final dataList = json['data'] as List? ?? [];
+
+      List<Qualification> qualifications = dataList.map((item) {
+        try {
+          return Qualification.fromJson(item as Map<String, dynamic>);
+        } catch (e) {
+          print('Error parsing qualification item: $e');
+          return Qualification(
+            id: -1,
+            qualificationName: 'Invalid',
+            isActive: false,
+          );
+        }
+      }).where((q) => q.id != -1).toList(); // Filter out invalid entries
+
+      return QualificationListResponse(
+        n: json['n'] ?? 0,
+        msg: json['msg'] ?? '',
+        data: qualifications,
+      );
+    } catch (e) {
+      print('Error parsing QualificationListResponse: $e');
+      return QualificationListResponse(
+        n: 0,
+        msg: 'Parse error',
+        data: [],
+      );
+    }
+  }
+}
+
+class Document {
+  final int id;
+  final String documentName;
+  final String? description;
+  final bool isActive;
+  final String? uploadedProof;
+
+  Document({
+    required this.id,
+    required this.documentName,
+    this.description,
+    required this.isActive,
+    this.uploadedProof,
+  });
+
+  /*factory Document.fromJson(Map<String, dynamic> json) {
+    return Document(
+      id: json['id'],
+      documentName: json['document_name'],
+      description: json['description'],
+      isActive: json['isActive'] ?? false,
+      uploadedProof: json['uploaded_proof'],
+    );
+  }*/
+  factory Document.fromJson(Map<String, dynamic> json) {
+    try {
+      return Document(
+        id: json['id'] as int? ?? 0,
+        documentName: (json['document_name'] as String?)?.trim() ?? 'Unnamed Document',
+        description: json['description'] as String?,
+        isActive: json['isActive'] as bool? ?? false,
+        uploadedProof: json['uploaded_proof'] as String?,
+      );
+    } catch (e) {
+      debugPrint('Document parsing error for JSON: $json');
+      rethrow;
+    }
+  }
+}
+
+class DocumentListResponse {
+  final int n;
+  final String msg;
+  final List<Document> data;
+
+  DocumentListResponse({
+    required this.n,
+    required this.msg,
+    required this.data,
+  });
+
+  factory DocumentListResponse.fromJson(Map<String, dynamic> json) {
+    var list = json['data'] as List;
+    List<Document> documents = list.map((i) => Document.fromJson(i)).toList();
+
+    return DocumentListResponse(
+      n: json['n'],
+      msg: json['msg'],
+      data: documents,
     );
   }
-
-  // Optional helper
-  bool get isSuccess => n == 1;
-}*/
+}
