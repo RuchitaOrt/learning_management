@@ -15,6 +15,9 @@ import 'package:learning_mgt/screens/FeedbackScreen.dart';
 import 'package:learning_mgt/screens/settingshome.dart';
 import 'package:learning_mgt/screens/signIn_screen.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
+import 'package:provider/provider.dart';
+
+import '../provider/LandingScreenProvider.dart';
 
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
@@ -203,94 +206,41 @@ class CustomDrawer extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    barrierDismissible: false, // Prevent dismissing by tapping outside
-    builder: (BuildContext context) {
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: Row(
-          children: [
-            Icon(
-              Icons.logout,
-              color: LearningColors.darkBlue,
-              size: 24,
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Icon(Icons.logout, color: LearningColors.darkBlue, size: 24),
+              SizedBox(width: 8),
+              Text('Confirm Logout'),
+            ],
+          ),
+          content: Text('Are you sure you want to logout from your account?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: Text('Cancel'),
             ),
-            SizedBox(width: 8),
-            Text(
-              'Confirm Logout',
-              style: TextStyle(
-                color: LearningColors.darkBlue,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext); // Close dialog
+                final provider = Provider.of<LandingScreenProvider>(
+                    context, // Use original context here
+                    listen: false
+                );
+                await provider.logout(context);
+              },
+              child: Text('Logout'),
             ),
           ],
-        ),
-        content: Text(
-          'Are you sure you want to logout from your account?',
-          style: TextStyle(
-            fontSize: 14,
-            color: Colors.grey.shade700,
-          ),
-        ),
-        actions: [
-          // Cancel button
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.grey.shade600,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(routeGlobalKey.currentContext!).pushNamedAndRemoveUntil(
-                SignInScreen.route,
-                (route) => false, 
-                arguments: {
-                  'selectedPos': -1,
-                  'isSignUp': false,
-                },
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: LearningColors.darkBlue,
-              foregroundColor: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              elevation: 2,
-            ),
-            child: Text(
-              'Logout',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
-
+        );
+      },
+    );
+  }
 }

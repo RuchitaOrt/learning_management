@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
@@ -8,7 +6,8 @@ import 'package:learning_mgt/Utils/SPManager.dart';
 import 'package:learning_mgt/model/GetCourseCategory.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
-import 'package:provider/provider.dart';
+
+import '../model/RegistrationResponse.dart';
 
 enum API {
   login,
@@ -16,6 +15,11 @@ enum API {
   countrylist,
   departmentlist,
   getqualifications,
+  getdeptwiseranklist,
+  emailOTP,
+  verifyEmailOTP,
+  registerCandidate,
+  candidateDetails,
   getcoursecategorylist
 }
 
@@ -77,9 +81,25 @@ class APIManager {
       case API.getqualifications:
         apiPathString = "/api/master/get-qualifications";
         break;
+      case API.getdeptwiseranklist:
+        apiPathString = "/api/course/getdeptwiseranklist";
+        break;
+      case API.emailOTP:
+        apiPathString = "/api/candidate/sendemail-otp";
+        break;
+      case API.verifyEmailOTP:
+        apiPathString = "/api/candidate/verify-otp";
+        break;
+      case API.registerCandidate:
+        apiPathString = "/api/candidate/register-candidate";
+        break;
+      case API.candidateDetails:
+        apiPathString = "/api/candidate/candidate-details";
+        break;
       case API.getcoursecategorylist:
         apiPathString = "/api/course/get-course-category-list";
         break;
+
       default:
         apiPathString = "/Login";
     }
@@ -94,7 +114,7 @@ class APIManager {
       case API.countrylist:
       case API.departmentlist:
       case API.getqualifications:
-       case API.getcoursecategorylist:
+      case API.getcoursecategorylist:
         method = HTTPMethod.GET;
         break;
 
@@ -111,16 +131,28 @@ class APIManager {
         className = "LoginResponse";
         break;
       case API.logout:
-        className = "LoginResponse";
+        className = "CommonResponse";
         break;
       case API.countrylist:
-        className = "LoginResponse";
+        className = "CountryListResponse";
         break;
       case API.departmentlist:
-        className = "LoginResponse";
+        className = "DepartmentListResponse";
         break;
       case API.getqualifications:
         className = "LoginResponse";
+        break;
+
+      case API.getdeptwiseranklist:
+        className = "RankListResponse";
+        break;
+
+      case API.emailOTP:
+        className = "OtpResponse";
+        break;
+
+      case API.verifyEmailOTP:
+        className = "CommonResponse";
         break;
       case API.getcoursecategorylist:
         className = "CategoryResponse";
@@ -134,8 +166,22 @@ class APIManager {
   dynamic parseResponse(String className, var json) {
     dynamic responseObj;
 
-    if (className == 'CategoryResponse') {
+    if (className == 'LoginResponse') {
+      responseObj = LoginResponse.fromJson(json);
+    } else if (className == 'DepartmentListResponse') {
+      responseObj = DepartmentListResponse.fromJson(json);
+    } else if (className == 'CountryListResponse') {
+      responseObj = CountryListResponse.fromJson(json);
+    } else if (className == 'RankListResponse') {
+      responseObj = RankListResponse.fromJson(json);
+    } else if (className == 'OtpResponse') {
+      responseObj = CommonResponse.fromJson(json);
+    } 
+    
+    else if (className == 'CategoryResponse') {
       responseObj = CategoryResponse.fromJson(json);
+    } else if (className == 'CommonResponse') {
+      responseObj = CommonResponse.fromJson(json);
     }
 
     return responseObj;
@@ -218,14 +264,26 @@ class APIManager {
       if (response.statusCode == 200) {
         //logout appi response is not json
 
+        // In apiRequest method:
+        if (response.statusCode == 200) {
+          try {
+            var jsonResponse = json.decode(response.body);
+            onSuccess(parseResponse(classNameForAPI(api), jsonResponse));
+          } catch (e) {
+            var appError =
+                parseError("Failed to parse response" as http.Response);
+            onFailure(appError);
+          }
+        }
         jsonResponse = json.decode(response.body);
 
-        if (jsonResponse["status"] == true ||
-            jsonResponse["status"] == "success") {
+        if (response.statusCode == 200) {
           onSuccess(
               this.parseResponse(this.classNameForAPI(api), jsonResponse));
         } else {
           print("status");
+          print("status: ${jsonResponse["status"]}");
+          print("msg: ${jsonResponse["msg"]}");
           print("api $api");
           String message = jsonResponse['message'] ?? 'Unknown Error';
           ShowDialogs.showToast(message);

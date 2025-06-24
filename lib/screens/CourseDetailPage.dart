@@ -921,18 +921,18 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(width: 12),
+                  //const SizedBox(width: 12),
 
                   // Timings chips (2 per row)
                   Expanded(
                     child: Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
+                      spacing: 0,
+                      runSpacing: 0,
                       children: (institute['daily_timings'] as List<String>).map((timing) {
                         return SizedBox(
-                          width: (MediaQuery.of(context).size.width - 120) / 2, // Calculate half width minus padding
+                          width: (MediaQuery.of(context).size.width - 65) / 2, // Calculate half width minus padding
                           child: Chip(
-                            label: Text(timing),
+                            label: Text(timing,   style: LMSStyles.tsWhiteNeutral300W500.copyWith(fontSize: 13),),
                             backgroundColor: Colors.orange.withOpacity(0.2),
                             labelStyle: TextStyle(color: Colors.orange),
                           ),
@@ -1527,6 +1527,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
           final module = entry.value;
 
           return ExpansionPanelRadio(
+            backgroundColor: LearningColors.white,
             value: index,
             headerBuilder: (context, isExpanded) {
               return ListTile(
@@ -1765,6 +1766,7 @@ void _handleResourceAction(String type, Map<String, String> resource) {
             final item = entry.value;
 
             return ExpansionPanelRadio(
+              backgroundColor: LearningColors.white,
               value: index,
               headerBuilder: (context, isExpanded) {
                 return ListTile(
@@ -1818,6 +1820,7 @@ void _handleResourceAction(String type, Map<String, String> resource) {
       itemBuilder: (context, index) {
         final item = reviews[index];
         return Card(
+          color: LearningColors.white,
           margin: EdgeInsets.only(bottom: 16),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

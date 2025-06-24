@@ -105,20 +105,12 @@ class SignInScreen extends StatelessWidget {
                                 SizedBox(
                                     height: SizeConfig.blockSizeVertical * 1),
                                 // Password Field with Validation
-                                /*CustomTextFieldWidget(
-                                  title: LMSStrings.strpassword,
-                                  hintText: LMSStrings.strEnterpassword,
-                                  onChange: (val) {},
-                                  textEditingController: signInProvider.passwordController,
-                                  autovalidateMode: AutovalidateMode.disabled,
-                                  validator: signInProvider.validatePassword,
-                                ),*/
                                 TextFormField(
                                   style: LMSStyles.tsWhiteNeutral300W50012,
                                   obscureText:
                                       signInProvider.isPasswordObscured,
                                   controller: signInProvider.passwordController,
-                                  validator: signInProvider.validatePassword,
+                                  // validator: signInProvider.validatePassword,
                                   decoration: CommonInputDecoration(
                                     hint: LMSStrings.strEnterpassword,
                                     label: LMSStrings.strpassword,
@@ -163,58 +155,6 @@ class SignInScreen extends StatelessWidget {
                                 ),
                                 SizedBox(
                                     height: SizeConfig.blockSizeVertical * 2),
-                                /*Text(
-                                  LMSStrings.strpassword,
-                                  style: LMSStyles.tsblackNeutralbold,
-                                ),*/
-                                /*SizedBox(height: SizeConfig.blockSizeHorizontal * 2),
-                                TextFormField(
-                                  style: LMSStyles.tsWhiteNeutral300W50012,
-                                  obscureText: signInProvider.isPasswordObscured,
-                                  controller: signInProvider.passwordController,
-                                  validator: signInProvider.validatePassword,
-                                  autovalidateMode: AutovalidateMode.disabled,
-                                  decoration: InputDecoration(
-                                    errorMaxLines: 3,
-                                    suffixIcon: IconButton(
-                                      onPressed: signInProvider
-                                          .togglePasswordVisibility,
-                                      icon: Icon(
-                                        signInProvider.isPasswordObscured
-                                            ? Icons.visibility_off
-                                            : Icons.visibility,
-                                        color: LearningColors.neutral50,
-                                      ),
-                                    ),
-                                    hintText: LMSStrings.strEnterpassword,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 16.0),
-                                    border: OutlineInputBorder(
-                                        borderRadius: borderRadius,
-                                        borderSide: enableBorder),
-                                    focusedBorder: OutlineInputBorder(
-                                        borderRadius: borderRadius,
-                                        borderSide: focusedBorder),
-                                    enabledBorder: OutlineInputBorder(
-                                        borderRadius: borderRadius,
-                                        borderSide: enableBorder),
-                                    disabledBorder: OutlineInputBorder(
-                                        borderRadius: borderRadius,
-                                        borderSide: enableBorder),
-                                    errorBorder: OutlineInputBorder(
-                                        borderRadius: borderRadius,
-                                        borderSide: enableBorder),
-                                    focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: borderRadius,
-                                        borderSide: focusedBorder),
-                                    filled: true,
-                                    fillColor: LearningColors.white,
-                                    hintStyle: LMSStyles.tsHintstyle,
-                                    errorStyle:
-                                        LMSStyles.tsWhiteNeutral300W50012,
-                                    counterText: "",
-                                  ),
-                                ),*/
                                 // SizedBox(height: SizeConfig.blockSizeVertical * 2),
                                 Row(
                                   //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -246,112 +186,6 @@ class SignInScreen extends StatelessWidget {
                                         maxLines: 2,
                                       ),
                                     ),
-
-                                    // Center(
-                                    //   child: Column(
-                                    //     children: [
-                                    //       ElevatedButton.icon(
-                                    //         onPressed: () {
-                                    //           /*Navigator.of(
-                                    //             routeGlobalKey.currentContext!,
-                                    //           ).pushNamed(
-                                    //             TabScreen.route,
-                                    //             arguments: {
-                                    //               'selectedPos': -1,
-                                    //               'isSignUp': false,
-                                    //             },
-                                    //           );*/
-                                    //           Navigator.pushReplacement(
-                                    //             context,
-                                    //             MaterialPageRoute(builder: (context) => TabScreen(selectedPos: -1,)),
-                                    //           );
-                                    //         },
-                                    //         label: Text(
-                                    //           'Go to Home',
-                                    //           style: TextStyle(color: LearningColors.neutral100),
-                                    //         ),
-                                    //         style: ElevatedButton.styleFrom(
-                                    //             backgroundColor: LearningColors.primaryBlue500),
-                                    //       ),
-                                    //       SizedBox(height: 8),
-                                    //       ElevatedButton.icon(
-                                    //         onPressed: () {
-                                    //           Navigator.of(
-                                    //             routeGlobalKey.currentContext!,
-                                    //           ).pushNamed(
-                                    //             TabScreen.route,
-                                    //             arguments: {
-                                    //               'selectedPos': 0,
-                                    //               'isSignUp': false,
-                                    //             },
-                                    //           );
-                                    //         },
-                                    //         label: Text(
-                                    //           'Browse Courses',
-                                    //           style: TextStyle(color: LearningColors.black18),
-                                    //         ),
-                                    //         style: ElevatedButton.styleFrom(
-                                    //           backgroundColor: Colors.transparent,
-                                    //           side: BorderSide(color: Colors.black, width: 1.5),
-                                    //           elevation: 0,
-                                    //         ),
-                                    //       ),
-                                    //     ],
-                                    //   ),
-                                    // )
-
-                                    /*Flexible(
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Checkbox(
-                                            value: signInProvider.isCheckedTerms,
-                                            onChanged: (val) {
-                                              signInProvider.toggleTermsCheckbox(val);
-                                            },
-                                          ),
-                                          Flexible(
-                                            child: RichText(
-                                              text: TextSpan(
-                                                text: 'I accept the terms and privacy policy',
-                                                style: TextStyle(
-                                                    color: Colors.black,
-                                                    fontSize: 14),
-                                              ),
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),*/
-
-                                    /*/// Forget Password Text
-                                    GestureDetector(
-                                      onTap: () {
-                                        // Handle forget password
-                                      },
-                                      child: Stack(
-                                        alignment: Alignment.bottomCenter,
-                                        children: [
-                                          Text(
-                                            LMSStrings.strForgetPassword,
-                                            style: LMSStyles
-                                                .tsPrimaryblue500300W500,
-                                          ),
-                                          Positioned(
-                                            bottom: 0,
-                                            left: 0,
-                                            right: 0,
-                                            child: Container(
-                                              height: 0.6,
-                                              color:
-                                                  LearningColors.primaryBlue500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),*/
                                   ],
                                 ),
                                 if (signInProvider.showTermsError)
@@ -385,11 +219,13 @@ class SignInScreen extends StatelessWidget {
                       left: 10, top: 16, right: 10), // only side padding
                   child: Consumer<SignInProvider>(
                     builder: (context, signInProvider, _) {
-                      return SizedBox(
+                      return signInProvider.isLoading
+                          ? CircularProgressIndicator()
+                        : SizedBox(
                         width: double.infinity, // full width
                         child: ElevatedButton(
                           onPressed: () {
-                            if (signInProvider.validateForm()) {
+                            /*if (signInProvider.validateForm()) {
                               Navigator.of(
                                 routeGlobalKey.currentContext!,
                               ).pushNamed(
@@ -399,7 +235,9 @@ class SignInScreen extends StatelessWidget {
                                   'isSignUp': false,
                                 },
                               );
-                            }
+                            }*/
+                            FocusManager.instance.primaryFocus?.unfocus(); // Hide keyboard
+                            Provider.of<SignInProvider>(context, listen: false).createSignIn();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: LearningColors.darkBlue,
@@ -450,108 +288,11 @@ class SignInScreen extends StatelessWidget {
                 SizedBox(height: SizeConfig.blockSizeHorizontal * 2),
               ],
             ),
-            /*Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 10, top: 16, right: 20),
-                  child: Consumer<SignInProvider>(
-                    builder: (context, signInProvider, _) {
-                      return ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(
-                            routeGlobalKey.currentContext!,
-                          ).pushNamed(
-                            TabScreen.route,
-                            arguments: {
-                              'selectedPos': -1,
-                              'isSignUp': false,
-                            },
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(SizeConfig.blockSizeHorizontal * 25,
-                              SizeConfig.blockSizeVertical * 5),
-                          backgroundColor: LearningColors.darkBlue,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 5,
-                        ),
-                        child: Text(
-                          LMSStrings.strSignIn,
-                          style: LMSStyles.tsWhiteNeutral50W600162,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                SizedBox(height: SizeConfig.blockSizeHorizontal * 4),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.of(routeGlobalKey.currentContext!)
-                        .pushNamed(VerificationScreen.route)
-                        .then((value) {});
-                  },
-                  child: Center(
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: LMSStrings.strHaveAnAccount,
-                            style: LMSStyles.tsWhiteNeutral300W300,
-                          ),
-                          TextSpan(
-                            text: LMSStrings.strCreateAnAccount,
-                            style: LMSStyles.tsOrange50W60016
-                                .copyWith(decoration: TextDecoration.underline),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(height: SizeConfig.blockSizeHorizontal * 2),
-              ],
-            ),*/
           ],
         ),
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   SizeConfig().init(context);
-
-  //   return Scaffold(
-  //     body: ChangeNotifierProvider(
-  //       create: (_) => SignInProvider(),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Image.asset(
-  //             LMSImagePath.coverbg,
-  //             width: SizeConfig.blockSizeHorizontal * 100,
-  //             height: SizeConfig.blockSizeVertical * 30,
-  //             fit: BoxFit.cover,
-  //           ),
-  //           SizedBox(height: SizeConfig.blockSizeVertical * 2),
-  //           buildMostInterestedCard(
-  //             title: LMSStrings.strSignIn,
-  //             subtitle: LMSStrings.strAccountDetail,
-  //             color: LearningColors.white,
-  //             titleStyle: LMSStyles.tsblackTileBold,
-  //             subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 
 @override
   Widget build(BuildContext context) {

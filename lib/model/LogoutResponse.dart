@@ -5,21 +5,27 @@ CommonResponse logoutResponseFromJson(String str) => CommonResponse.fromJson(jso
 String logoutResponseToJson(CommonResponse data) => json.encode(data.toJson());
 
 class CommonResponse {
-  bool status;
-  String message;
+  final int n;
+  final String msg;
+  final List<dynamic> data;
 
   CommonResponse({
-    required this.status,
-    required this.message,
+    required this.n,
+    required this.msg,
+    required this.data,
   });
 
-  factory CommonResponse.fromJson(Map<String, dynamic> json) => CommonResponse(
-    status: json["status"] ?? false,
-    message: json["message"] ?? "",
-  );
+  factory CommonResponse.fromJson(Map<String, dynamic> json) {
+    return CommonResponse(
+      n: json['n'] ?? 0,
+      msg: json['msg'] ?? '',
+      data: json['data'] is List ? json['data'] : [],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
+    'n': n,
+    'msg': msg,
+    'data': data,
   };
 }
