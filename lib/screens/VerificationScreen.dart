@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -15,6 +16,11 @@ import 'package:learning_mgt/provider/sign_up_provider.dart';
 import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
+
+import '../Utils/APIManager.dart';
+import '../model/LoginResponse.dart';
+import '../model/RegistrationResponse.dart';
+import '../widgets/ShowDialog.dart';
 
 final BorderRadius borderRadius = const BorderRadius.all(
   Radius.circular(12),
@@ -352,82 +358,104 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     // Next/Submit Button (50% width)
                     Expanded(
                       flex: 1,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          /*backgroundColor: LearningColors.darkBlue,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),*/
-                          backgroundColor: LearningColors.darkBlue,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(
-                              vertical: 16), // internal padding
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 5,
-                        ),
-                        onPressed: () {
-                          final signUpProvider = Provider.of<SignUpProvider>(
-                              context,
-                              listen: false);
-                          final formKey = current == 0
-                              ? signUpProvider.formKeyBasic
-                              : current == 1
-                                  ? signUpProvider.formKeyDetail
-                                  : signUpProvider.formKeyUpload;
+                      child: Consumer<SignUpProvider>(
+                        builder: (context, signUpProvider, _) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: signUpProvider.isEmailVerified &&
+                                  !signUpProvider.isRegistering &&
+                                  !signUpProvider.isSavingDetails
+                                  ? LearningColors.darkBlue
+                                  : Colors.grey,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 5,
+                            ),
+                            onPressed: () async {
+                              if (!signUpProvider.isEmailVerified) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Please verify your email first')));
+                                return;
+                              }
 
-                          if (formKey.currentState?.validate() ?? false) {
-                            if (current == 2) {
-                              stepProvider.submit();
-                            } else {
-                              stepProvider.nextStep();
-                            }
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: Text(
-                                    'Please fix errors before proceeding')));
-                          }
+                              final formKey = current == 0
+                                  ? signUpProvider.formKeyBasic
+                                  : signUpProvider.formKeyDetail;
+
+                              if (formKey.currentState?.validate() ?? false) {
+                                try {
+                                  if (current == 0) {
+                                    await signUpProvider.registerCandidate(context);
+                                  } else if (current == 1) {
+                                    await signUpProvider.saveCandidateDetails(context);
+                                  }
+
+                                  // Only proceed if API call succeeds
+                                  Provider.of<StepProvider>(context, listen: false).nextStep();
+                                } catch (e) {
+                                  // Error is already shown by the provider methods
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Please fix errors before proceeding')));
+                              }
+                            },
+                            child: signUpProvider.isRegistering || signUpProvider.isSavingDetails
+                                ? CircularProgressIndicator(color: Colors.white)
+                                : Text(current == 2 ? 'Submit' : 'Next'),
+                          );
                         },
-                        child: Text(current == 2 ? 'Submit' : 'Next'),
                       ),
                     ),
+                    /*Expanded(
+                      flex: 1,
+                      child: Consumer<SignUpProvider>(
+                        builder: (context, signUpProvider, _) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: signUpProvider.isEmailVerified && !signUpProvider.isRegistering
+                                  ? LearningColors.darkBlue
+                                  : Colors.grey,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 5,
+                            ),
+                            onPressed: () async {
+                              if (!signUpProvider.isEmailVerified) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Please verify your email first')));
+                                return;
+                              }
+
+                              final formKey = signUpProvider.formKeyBasic;
+                              if (formKey.currentState?.validate() ?? false) {
+                                try {
+                                  await signUpProvider.registerCandidate(context);
+                                  // Only proceed to next step if registration succeeds
+                                  Provider.of<StepProvider>(context, listen: false).nextStep();
+                                } catch (e) {
+                                  // Error is already shown by registerCandidate
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Please fix errors before proceeding')));
+                              }
+                            },
+                            child: signUpProvider.isRegistering
+                                ? CircularProgressIndicator(color: Colors.white)
+                                : Text('Next'),
+                          );
+                        },
+                      ),
+                    ),*/
                   ],
                 ),
-              /*Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    ElevatedButton(
-                      onPressed: current > 0 ? stepProvider.previousStep : null,
-                      child: Text('Back'),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        final signUpProvider =
-                            Provider.of<SignUpProvider>(context, listen: false);
-                        // Validate current step form before moving forward
-                        final formKey = current == 0
-                            ? signUpProvider.formKeyBasic
-                            : current == 1
-                                ? signUpProvider.formKeyDetail
-                                : signUpProvider.formKeyUpload;
-
-                        if (formKey.currentState?.validate() ?? false) {
-                          if (current == 2) {
-                            stepProvider.submit();
-                          } else {
-                            stepProvider.nextStep();
-                          }
-                        } else {
-                          // Optionally show error message or scroll to first error
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                              content:
-                                  Text('Please fix errors before proceeding')));
-                        }
-                      },
-                      child: Text(current == 2 ? 'Submit' : 'Next'),
-                    ),
-                  ],
-                ),*/
             ],
           ),
         ),
@@ -435,36 +463,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
     );
   }
 }
-
-/*InputDecoration CommonInputDecoration(
-    {required String hint,
-    required bool isObscured,
-    required VoidCallback toggle}) {
-  return InputDecoration(
-    hintText: hint,
-    errorStyle: LMSStyles.tsWhiteNeutral300W50012,
-    border: OutlineInputBorder(
-        borderRadius: borderRadius, borderSide: enableBorder),
-    focusedBorder: OutlineInputBorder(
-        borderRadius: borderRadius, borderSide: focusedBorder),
-    enabledBorder: OutlineInputBorder(
-        borderRadius: borderRadius, borderSide: enableBorder),
-    disabledBorder: OutlineInputBorder(
-        borderRadius: borderRadius, borderSide: enableBorder),
-    errorBorder: OutlineInputBorder(
-        borderRadius: borderRadius, borderSide: enableBorder),
-    focusedErrorBorder: OutlineInputBorder(
-        borderRadius: borderRadius, borderSide: focusedBorder),
-    suffixIcon: IconButton(
-      color: LearningColors.neutral300,
-      onPressed: toggle,
-      icon: Icon(isObscured ? Icons.visibility_off : Icons.visibility),
-    ),
-    filled: true,
-    fillColor: LearningColors.white,
-    hintStyle: LMSStyles.tsHintstyle,
-  );
-}*/
 
 InputDecoration CommonInputDecoration({
   required String hint,
@@ -585,19 +583,78 @@ class BasicFormWidget extends StatelessWidget {
             textEditingController: signUpProvider.emailController,
             autovalidateMode: AutovalidateMode.disabled,
             validator: signUpProvider.validateEmailField,
-            suffixIcon: TextButton(
-              onPressed: () {
-                // Add logic to send OTP to email
+            suffixIcon: Consumer<SignUpProvider>(
+              builder: (context, provider, _) {
+                return TextButton(
+                  onPressed: provider.isOtpCooldownActive
+                      ? null
+                      : () {
+                    final email = provider.emailController.text.trim();
+                    if (email.isNotEmpty) {
+                      provider.sendEmailOtp(context, email);
+                    }
+                  },
+                  child: Text(
+                    provider.isOtpCooldownActive
+                        ? 'Resend OTP (${provider.otpCountdown})'
+                        : 'Send OTP',
+                    style: TextStyle(
+                      color: provider.isOtpCooldownActive
+                          ? Colors.grey
+                          : LearningColors.darkBlue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
               },
-              child: Text(
-                "Send OTP",
-                style: TextStyle(
+            ),
+
+          ),
+
+          SizedBox(height: 0),
+          // otp verification field
+          if (signUpProvider.isOtpSent) ...[
+            CustomTextFieldWidget(
+              title: 'OTP',
+              hintText: 'Enter 4-digit OTP',
+              textEditingController: signUpProvider.otpController,
+              autovalidateMode: AutovalidateMode.disabled,
+              validator: (value) {
+                if (!signUpProvider.isEmailVerified) {
+                  return 'Please verify your email';
+                }
+                return signUpProvider.validateOtp(value);
+              },
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(6),
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              textInputType: TextInputType.number,
+              suffixIcon: signUpProvider.isEmailVerified
+                  ? Icon(Icons.verified, color: Colors.green)
+                  : TextButton(
+                onPressed: () {
+                  final email = signUpProvider.emailController.text.trim();
+                  if (email.isNotEmpty &&
+                      signUpProvider.validateEmailField(email) == null &&
+                      signUpProvider.otpController.text.isNotEmpty) {
+                    signUpProvider.verifyEmailOtp(context, email);
+                  }
+                },
+                child: Text(
+                  'Verify OTP',
+                  style: TextStyle(
                     color: LearningColors.darkBlue,
                     fontWeight: FontWeight.bold,
-                    fontSize: 12),
+                    fontSize: 12,
+                  ),
+                ),
               ),
             ),
-          ),
+            SizedBox(height: 0),
+          ],
+
           SizedBox(height: 0),
 
           // Phone Number (full width)
@@ -651,7 +708,7 @@ class BasicFormWidget extends StatelessWidget {
 }
 
 // DetailFormWidget: Step 2
-class DetailFormWidget extends StatelessWidget {
+/*class DetailFormWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final signUpProvider = Provider.of<SignUpProvider>(context);
@@ -902,6 +959,797 @@ class DetailFormWidget extends StatelessWidget {
       ),
     );
   }
+}*/
+
+class DetailFormWidget extends StatefulWidget {
+  @override
+  _DetailFormWidgetState createState() => _DetailFormWidgetState();
+}
+
+class _DetailFormWidgetState extends State<DetailFormWidget> {
+  List<Department> departments = [];
+  bool isLoading = false;
+  String? errorMessage;
+  List<Country> countries = [];
+  bool isLoadingDepartments = false;
+  bool isLoadingCountries = false;
+  String? departmentErrorMessage;
+  String? countryErrorMessage;
+  List<Rank> ranks = [];
+  bool isLoadingRanks = false;
+  String? rankErrorMessage;
+  int? selectedDepartmentId;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchDepartments();
+    fetchCountries();
+  }
+
+  Future<void> fetchDepartments() async {
+    if (mounted) setState(() {
+      isLoading = true;
+      errorMessage = null;
+    });
+
+    try {
+      await APIManager().apiRequest(
+        context,
+        API.departmentlist,
+            (response) {
+          print('Department list response: $response');
+
+          if (response is DepartmentListResponse) {
+            if (mounted) setState(() {
+              departments = response.data;
+              print('Loaded ${departments.length} departments: ${departments.map((d) => d.departmentName).toList()}');
+            });
+          } else {
+            print('Unexpected response type: ${response.runtimeType}');
+            if (mounted) setState(() {
+              errorMessage = 'Unexpected response format';
+            });
+          }
+        },
+            (error) {
+          print('Department list error: $error');
+          if (mounted) setState(() {
+            errorMessage = 'Failed to load departments: ${error.toString()}';
+          });
+        },
+      );
+    } catch (e) {
+      print('Exception in fetchDepartments: $e');
+      if (mounted) setState(() {
+        errorMessage = 'Failed to load departments';
+      });
+    } finally {
+      if (mounted) setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> fetchCountries() async {
+    if (mounted) setState(() {
+      isLoadingCountries = true;
+      countryErrorMessage = null;
+    });
+
+    try {
+      await APIManager().apiRequest(
+        context,
+        API.countrylist,
+            (response) {
+          print('Country list response: $response');
+
+          if (response is CountryListResponse) {
+            if (mounted) setState(() {
+              countries = response.data.where((c) => c.isActive).toList();
+              print('Loaded ${countries.length} countries: ${countries.map((c) => c.name).toList()}');
+            });
+          } else {
+            print('Unexpected country response type: ${response.runtimeType}');
+            if (mounted) setState(() {
+              countryErrorMessage = 'Unexpected country response format';
+            });
+          }
+        },
+            (error) {
+          print('Country list error: $error');
+          if (mounted) setState(() {
+            countryErrorMessage = 'Failed to load countries: ${error.toString()}';
+          });
+        },
+      );
+    } catch (e) {
+      print('Exception in fetchCountries: $e');
+      if (mounted) setState(() {
+        countryErrorMessage = 'Failed to load countries';
+      });
+    } finally {
+      if (mounted) setState(() {
+        isLoadingCountries = false;
+      });
+    }
+  }
+
+  Future<void> fetchRanks(int departmentId) async {
+    if (mounted) setState(() {
+      isLoadingRanks = true;
+      rankErrorMessage = null;
+      ranks.clear();
+    });
+
+    try {
+      final requestBody = json.encode({"departmentid": departmentId.toString()});
+
+      await APIManager().apiRequest(
+        context,
+        API.getdeptwiseranklist,
+            (response) {
+          print('Raw rank response: ${response.toString()}'); // Debug print
+
+          if (response is RankListResponse) {
+            print('Parsed ranks: ${response.data.length} items'); // Debug print
+            if (mounted) setState(() {
+              ranks = response.data.where((r) => r.isActive).toList();
+              print('Filtered active ranks: ${ranks.length}'); // Debug print
+            });
+          }
+        },
+            (error) {
+          print('Rank list error: $error');
+          if (mounted) setState(() {
+            rankErrorMessage = 'Failed to load ranks. Please try again.';
+          });
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      print('Exception in fetchRanks: $e');
+      if (mounted) setState(() {
+        rankErrorMessage = 'Failed to load ranks. Please try again later.';
+      });
+    } finally {
+      if (mounted) setState(() {
+        isLoadingRanks = false;
+      });
+    }
+  }
+
+  /*Future<void> fetchRanks(int departmentId) async {
+    if (mounted) setState(() {
+      isLoadingRanks = true;
+      rankErrorMessage = null;
+      ranks.clear();
+    });
+
+    try {
+      // Try both formats - one of these should work
+      final requestBody = json.encode({
+        // "department": {"id": departmentId}
+        "departmentid": departmentId.toString()
+        // OR
+        // "department_id": departmentId.toString()  // String format
+      });
+
+      print('Requesting ranks with body: $requestBody');
+
+      await APIManager().apiRequest(
+        context,
+        API.getdeptwiseranklist,
+            (response) {
+          // Handle response
+        },
+            (error) {
+          print('Full error details: $error');
+          if (mounted) setState(() {
+            rankErrorMessage = 'Failed to load ranks. Please try again.';
+          });
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      print('Complete exception: $e');
+      if (mounted) setState(() {
+        rankErrorMessage = 'Service unavailable. Please try later.';
+      });
+    } finally {
+      if (mounted) setState(() {
+        isLoadingRanks = false;
+      });
+    }
+  }*/
+
+  @override
+  Widget build(BuildContext context) {
+    final signUpProvider = Provider.of<SignUpProvider>(context);
+
+    return Form(
+      key: signUpProvider.formKeyDetail,
+      child: ListView(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
+        children: [
+          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: CustomTextFieldWidget(
+                  title: LMSStrings.strSeafarerNo,
+                  hintText: LMSStrings.strSeafarerNoHint,
+                  onChange: (val) {},
+                  textEditingController: signUpProvider.seafarerController,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  validator: signUpProvider.validateSeafaer,
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: CustomTextFieldWidget(
+                  title: LMSStrings.strPassportNo,
+                  hintText: LMSStrings.strPassportNoHint,
+                  onChange: (val) {},
+                  textEditingController: signUpProvider.passportController,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  validator: signUpProvider.validatePassport,
+                ),
+              ),
+            ],
+          ),
+          /*isLoading
+              ? Center(child: CircularProgressIndicator())
+              : CustomTextFieldWidget(
+            textEditingController: signUpProvider.departmentController,
+            title: LMSStrings.strDepartment,
+            hintText: LMSStrings.strSelectDepartment,
+            autovalidateMode: AutovalidateMode.disabled,
+            isFieldReadOnly: true,
+            onTap: () async {
+              if (departments.isEmpty) {
+                await fetchDepartments();
+                if (departments.isEmpty) {
+                  ShowDialogs.showToast('No departments available');
+                  return;
+                }
+              }
+
+              final selected = await showDialog<String>(
+                context: context,
+                builder: (context) {
+                  String? tempSelected =
+                      signUpProvider.departmentController.text;
+
+                  return AlertDialog(
+                    title: Text('Select Department'),
+                    content: StatefulBuilder(
+                      builder: (context, setState) {
+                        return SingleChildScrollView(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: departments.map((dept) {
+                              return RadioListTile<String>(
+                                title: Text(dept.departmentName),
+                                value: dept.departmentName,
+                                groupValue: tempSelected,
+                                onChanged: (value) {
+                                  Navigator.pop(context, value);
+                                },
+                              );
+                            }).toList(),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+
+              if (selected != null && selected.isNotEmpty) {
+                signUpProvider.departmentController.text = selected;
+              }
+            },
+            validator: signUpProvider.validateDepartment,
+          ),*/
+
+          _buildDepartmentField(signUpProvider),
+
+          /*CustomTextFieldWidget(
+            textEditingController: signUpProvider.rankController,
+            title: LMSStrings.strRank,
+            hintText: LMSStrings.strRankHint,
+            autovalidateMode: AutovalidateMode.disabled,
+            isFieldReadOnly: true,
+            onTap: () async {
+              final selected = await showDialog<String>(
+                context: context,
+                builder: (context) {
+                  String? tempSelected = signUpProvider.rankController.text;
+                  final departments = ['One', 'Two', 'Three'];
+
+                  return AlertDialog(
+                    title: Text('Select Rank'),
+                    content: StatefulBuilder(
+                      builder: (context, setState) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: departments.map((dept) {
+                            return RadioListTile<String>(
+                              title: Text(dept),
+                              value: dept,
+                              groupValue: tempSelected,
+                              onChanged: (value) {
+                                Navigator.pop(context, value);
+                              },
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+
+              if (selected != null && selected.isNotEmpty) {
+                signUpProvider.rankController.text = selected;
+              }
+            },
+            validator: signUpProvider.validateRank,
+          ),*/
+          _buildRankField(signUpProvider),
+          /*CustomTextFieldWidget(
+            textEditingController: signUpProvider.countryController,
+            title: LMSStrings.strCountry,
+            autovalidateMode: AutovalidateMode.disabled,
+            hintText: LMSStrings.strCountryHint,
+            isFieldReadOnly: true,
+            onTap: () async {
+              final selected = await showDialog<String>(
+                context: context,
+                builder: (context) {
+                  String? tempSelected = signUpProvider.countryController.text;
+                  final departments = ['India', 'USA', 'England'];
+
+                  return AlertDialog(
+                    title: Text('Select Country'),
+                    content: StatefulBuilder(
+                      builder: (context, setState) {
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: departments.map((dept) {
+                            return RadioListTile<String>(
+                              title: Text(dept),
+                              value: dept,
+                              groupValue: tempSelected,
+                              onChanged: (value) {
+                                Navigator.pop(context, value);
+                              },
+                            );
+                          }).toList(),
+                        );
+                      },
+                    ),
+                  );
+                },
+              );
+
+              if (selected != null && selected.isNotEmpty) {
+                signUpProvider.countryController.text = selected;
+              }
+            },
+            validator: signUpProvider.validateCountry,
+          ),*/
+
+          _buildCountryField(signUpProvider),
+          CustomTextFieldWidget(
+            title: LMSStrings.strDOB,
+            hintText: LMSStrings.strDOBHint,
+            textEditingController: signUpProvider.dobController,
+            isFieldReadOnly: true,
+            autovalidateMode: AutovalidateMode.disabled,
+            validator: signUpProvider.validateDOB,
+            onTap: () async {
+              DateTime? pickedDate = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime(1900),
+                lastDate: DateTime.now(),
+                builder: (BuildContext context, Widget? child) {
+                  return Theme(
+                    data: ThemeData.light().copyWith(
+                      colorScheme: ColorScheme.light(
+                        primary: LearningColors.darkBlue,
+                        onPrimary: Colors.white,
+                        onSurface: Colors.black,
+                        surface: Colors.white,
+                      ),
+                      textButtonTheme: TextButtonThemeData(
+                        style: TextButton.styleFrom(
+                          foregroundColor: LearningColors.darkBlue,
+                          textStyle: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      dialogBackgroundColor: Colors.white,
+                    ),
+                    child: child!,
+                  );
+                },
+              );
+
+              if (pickedDate != null) {
+                String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+                signUpProvider.dobController.text = formattedDate;
+              }
+            },
+            onChange: (val) {},
+          ),
+          CustomTextFieldWidget(
+            title: LMSStrings.strPincode,
+            hintText: LMSStrings.strPincodeHint,
+            onChange: (val) {},
+            textEditingController: signUpProvider.pincodeController,
+            suffixIcon: TextButton(
+              onPressed: () {
+                // Add logic to send OTP to email
+              },
+              child: Text(
+                "Locate Me",
+                style: TextStyle(
+                    color: LearningColors.darkBlue,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDepartmentField(SignUpProvider signUpProvider) {
+    if (isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (errorMessage != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          errorMessage!,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    if (departments.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text('No departments available'),
+      );
+    }
+
+    return CustomTextFieldWidget(
+      textEditingController: signUpProvider.departmentController,
+      title: LMSStrings.strDepartment,
+      hintText: LMSStrings.strSelectDepartment,
+      autovalidateMode: AutovalidateMode.disabled,
+      isFieldReadOnly: true,
+      // onTap: () => _showDepartmentDialog(signUpProvider),
+      onTap: () => _showDepartmentDialog(signUpProvider),
+      validator: signUpProvider.validateDepartment,
+    );
+  }
+
+  Future<void> _showDepartmentDialog(SignUpProvider signUpProvider) async {
+    final selected = await showDialog<Department>(
+      context: context,
+      builder: (context) {
+        String? currentSelection = signUpProvider.departmentController.text;
+
+        return AlertDialog(
+          title: Text('Select Department'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: departments.map((dept) {
+                return RadioListTile<Department>(
+                  title: Text(dept.departmentName),
+                  value: dept,
+                  /*groupValue: departments.firstWhere(
+                        (d) => d.departmentName == currentSelection,
+                    orElse: () => Department(id: -1, departmentName: '', status: false),
+                  ),*/
+                  groupValue: departments.firstWhere(
+                        (d) => d.id == Provider.of<SignUpProvider>(context, listen: false).selectedDepartmentId,
+                    orElse: () => Department(id: -1, departmentName: '', status: false),
+                  ),
+                  onChanged: (value) {
+                    Navigator.pop(context, value);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+
+    /*if (selected != null) {
+      signUpProvider.clearTagSelection(); // Clear previous tag selection
+      signUpProvider.departmentController.text = selected.departmentName;
+      setState(() {
+        selectedDepartmentId = selected.id;
+      });
+      fetchRanks(selected.id);
+    }*/
+    if (selected != null) {
+      Provider.of<SignUpProvider>(context, listen: false).setSelectedDepartment(selected);
+      fetchRanks(selected.id);
+    }
+  }
+
+  /*Future<void> _showDepartmentDialog() async {
+    final selected = await showDialog<Department>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Select Department'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: departments.map((dept) {
+              return RadioListTile<Department>(
+                title: Text(dept.departmentName),
+                value: dept,
+                groupValue: departments.firstWhere(
+                      (d) => d.id == Provider.of<SignUpProvider>(context, listen: false).selectedDepartmentId,
+                  orElse: () => Department(id: -1, departmentName: '', status: false),
+                ),
+                onChanged: (value) {
+                  Navigator.pop(context, value);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (selected != null) {
+      Provider.of<SignUpProvider>(context, listen: false).setSelectedDepartment(selected);
+      fetchRanks(selected.id);
+    }
+  }*/
+
+  Widget _buildCountryField(SignUpProvider signUpProvider) {
+    if (isLoadingCountries) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (countryErrorMessage != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          countryErrorMessage!,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    if (countries.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text('No countries available'),
+      );
+    }
+
+    return CustomTextFieldWidget(
+      textEditingController: signUpProvider.countryController,
+      title: LMSStrings.strCountry,
+      hintText: LMSStrings.strCountryHint,
+      autovalidateMode: AutovalidateMode.disabled,
+      isFieldReadOnly: true,
+      // onTap: () => _showCountryDialog(signUpProvider),
+      onTap: () => _showCountryDialog(),
+      validator: signUpProvider.validateCountry,
+    );
+  }
+
+  /*Future<void> _showCountryDialog(SignUpProvider signUpProvider) async {
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        String? currentSelection = signUpProvider.countryController.text;
+
+        return AlertDialog(
+          title: Text('Select Country'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: countries.map((country) {
+                return RadioListTile<String>(
+                  title: Text(country.name),
+                  value: country.name,
+                  groupValue: currentSelection,
+                  onChanged: (value) {
+                    Navigator.pop(context, value);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selected != null) {
+      signUpProvider.countryController.text = selected;
+    }
+  }*/
+
+  Future<void> _showCountryDialog() async {
+    final selected = await showDialog<Country>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Select Country'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: countries.map((country) {
+              return RadioListTile<Country>(
+                title: Text(country.name),
+                value: country,
+                groupValue: countries.firstWhere(
+                      (c) => c.id == Provider.of<SignUpProvider>(context, listen: false).selectedCountryId,
+                  orElse: () => Country(id: -1, name: '', isActive: false),
+                ),
+                onChanged: (value) {
+                  Navigator.pop(context, value);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (selected != null) {
+      Provider.of<SignUpProvider>(context, listen: false).setSelectedCountry(selected);
+    }
+  }
+
+  Widget _buildRankField(SignUpProvider signUpProvider) {
+    // Show loading indicator
+    if (isLoadingRanks) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    // Show error message if exists
+    if (rankErrorMessage != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          rankErrorMessage!,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    // Check if department is selected first
+    if (selectedDepartmentId == null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'Please select a department first',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    // Check if ranks are empty after all conditions
+    if (ranks.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'No tags available for selected department',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    return CustomTextFieldWidget(
+      textEditingController: signUpProvider.rankController,
+      title: LMSStrings.strRank,
+      hintText: LMSStrings.strRank, // Changed hint text
+      autovalidateMode: AutovalidateMode.disabled,
+      isFieldReadOnly: true,
+      // onTap: () => _showTagRank(signUpProvider),
+      onTap: () => _showRankDialog(),
+      validator: signUpProvider.validateRank,
+    );
+  }
+
+  Future<void> _showRankDialog() async {
+    final selected = await showDialog<Rank>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Select Rank'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: ranks.map((rank) {
+              return RadioListTile<Rank>(
+                title: Text(rank.rank),
+                value: rank,
+                groupValue: ranks.firstWhere(
+                      (r) => r.id == Provider.of<SignUpProvider>(context, listen: false).selectedRankId,
+                  orElse: () => Rank(id: -1, rank: '', tags: '', isActive: false),
+                ),
+                onChanged: (value) {
+                  Navigator.pop(context, value);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (selected != null) {
+      Provider.of<SignUpProvider>(context, listen: false).setSelectedRank(selected);
+    }
+  }
+
+  /*Future<void> _showTagRank(SignUpProvider signUpProvider) async {
+    // Get all unique tags from all ranks
+    final allTags = ranks
+        .expand((rank) => rank.tags.split(',').map((t) => t.trim()))
+        .where((tag) => tag.isNotEmpty)
+        .toSet()
+        .toList();
+
+    final selectedTag = await showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        String? currentSelection = signUpProvider.selectedTag;
+
+        return AlertDialog(
+          title: Text('Select Tag'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: allTags.map((tag) {
+                return RadioListTile<String>(
+                  title: Text(tag),
+                  value: tag,
+                  groupValue: currentSelection,
+                  onChanged: (value) {
+                    Navigator.pop(context, value);
+                  },
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+
+    if (selectedTag != null) {
+      setState(() {
+        signUpProvider.selectedTag = selectedTag;
+        // Find the first rank that contains this tag and update the controller
+        final selectedRank = ranks.firstWhere(
+              (r) => r.tags.split(',').map((t) => t.trim()).contains(selectedTag),
+          orElse: () => ranks.first,
+        );
+        signUpProvider.rankController.text = selectedRank.rank;
+      });
+    }
+  }*/
 }
 
 class UploadFormWidget extends StatelessWidget {

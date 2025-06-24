@@ -3,7 +3,7 @@
     "version": "1",
     "development": {
       
-        "hostUrl":"https://uatcandidate.lms.onerooftechnologiesllp.com/",
+        "hostUrl":"https://uatadmin.lms.onerooftechnologiesllp.com",
         "timeout": 120,
         "retry": 3
     },

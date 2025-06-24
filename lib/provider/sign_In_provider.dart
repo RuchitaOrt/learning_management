@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/APIManager.dart';
 import 'package:learning_mgt/Utils/internetConnection.dart';
@@ -7,6 +9,8 @@ import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/screens/TabScreen.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
+
+import '../Utils/SPManager.dart';
 
 class SignInProvider with ChangeNotifier {
   TextEditingController emailController = TextEditingController();
@@ -29,6 +33,8 @@ class SignInProvider with ChangeNotifier {
   bool _showTermsError = false;
   
   bool get showTermsError => _showTermsError;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   void toggleTermsCheckbox(bool? value) {
     _isCheckedTerms = value ?? false;
@@ -60,7 +66,7 @@ class SignInProvider with ChangeNotifier {
     return null;
   }
 
-  String? validatePassword(String? value) {
+  /*String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password cannot be empty';
     }
@@ -70,7 +76,7 @@ class SignInProvider with ChangeNotifier {
       return 'Password must include At least 8 characters long, uppercase, lowercase, a digit, and a special character';
     }
     return null;
-  }
+  }*/
 
   String? validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
@@ -113,7 +119,61 @@ Map<String, String> createRequestBody() {
   };
 }
 
- createSignIn() async {
+  Future<void> createSignIn() async {
+    if (!validateForm()) {
+      ShowDialogs.showToast("Please fill all fields correctly");
+      return;
+    }
+
+    var status1 = await ConnectionDetector.checkInternetConnection();
+    if (!status1) {
+      ShowDialogs.showToast("Please check internet connection");
+      return;
+    }
+
+    try {
+      final requestBody = {
+        "email": emailController.text.trim(),
+        "password": passwordController.text,
+      };
+
+      print('Login request body: $requestBody');
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.login,
+            (response) async {
+          if (response is LoginResponse) {
+            // Store token
+            await SPManager().setAuthToken(response.token);
+
+            // Store user data if needed
+            await SPManager().setUserData(json.encode(response.data));
+
+            ShowDialogs.showToast(response.msg);
+
+            Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+              TabScreen.route,
+              arguments: {
+                'selectedPos': -1,
+                'isSignUp': false,
+              },
+            );
+          }
+        },
+            (error) {
+          print('Login error: $error');
+          ShowDialogs.showToast("Login failed. Please try again.");
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      print('Login exception: $e');
+      ShowDialogs.showToast("An error occurred during login");
+    }
+  }
+
+ /*createSignIn() async {
     var status1 = await ConnectionDetector.checkInternetConnection();
 
     if (status1) {
@@ -147,5 +207,5 @@ Map<String, String> createRequestBody() {
       /// Navigator.of(_keyLoader.currentContext).pop();
       ShowDialogs.showToast("Please check internet connection");
     }
-  }
+  }*/
 }

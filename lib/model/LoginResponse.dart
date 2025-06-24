@@ -5,30 +5,32 @@ LoginResponse loginResponseFromJson(String str) => LoginResponse.fromJson(json.d
 String loginResponseToJson(LoginResponse data) => json.encode(data.toJson());
 
 class LoginResponse {
-  bool status;
-  String message;
-  List<Datum> data;
-  List<PlanInfo> planInfo;
+  final int n;
+  final String msg;
+  final String token;
+  final Map<String, dynamic> data;
 
   LoginResponse({
-    required this.status,
-    required this.message,
+    required this.n,
+    required this.msg,
+    required this.token,
     required this.data,
-    required this.planInfo,
   });
 
-  factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-    status: json["status"] ?? false,
-    message: json["message"] ?? '',
-    data: json["data"] != null ? List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))) : [],
-    planInfo: json["planInfo"] != null ? List<PlanInfo>.from(json["planInfo"].map((x) => PlanInfo.fromJson(x))) : [],
-  );
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    return LoginResponse(
+      n: json['n'] ?? 0,
+      msg: json['msg'] ?? '',
+      token: json['token'] ?? '',
+      data: json['data'] is Map ? json['data'] as Map<String, dynamic> : {},
+    );
+  }
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "message": message,
-    "data": List<dynamic>.from(data.map((x) => x.toJson())),
-    "planInfo": List<dynamic>.from(planInfo.map((x) => x.toJson())),
+    'n': n,
+    'msg': msg,
+    'token': token,
+    'data': data,
   };
 }
 

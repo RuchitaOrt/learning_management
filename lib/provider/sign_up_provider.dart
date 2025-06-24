@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/APIManager.dart';
@@ -7,6 +10,9 @@ import 'package:learning_mgt/Utils/regex_helper.dart';
 import 'package:learning_mgt/dto/DocumentField.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
+import 'package:provider/provider.dart';
+
+import '../model/RegistrationResponse.dart';
 
 class SignUpProvider with ChangeNotifier {
   TextEditingController firstNameController = TextEditingController();
@@ -40,6 +46,30 @@ class SignUpProvider with ChangeNotifier {
   String? selectedCDC;
   String? selectedCompletionCertificate;
   String? selectedCOC;
+  String? selectedTag;
+  int _otpCountdown = 0;
+  Timer? _otpTimer;
+
+  int get otpCountdown => _otpCountdown;
+  bool get isOtpCooldownActive => _otpCountdown > 0;
+
+  int get cooldownSeconds => _otpCountdown;
+  bool _isOtpSent = false;
+  bool get isOtpSent => _isOtpSent;
+  bool isEmailVerified = false;
+
+  bool _isRegistering = false;
+  bool get isRegistering => _isRegistering;
+
+  Candidate? _registeredCandidate;
+  Candidate? get registeredCandidate => _registeredCandidate;
+
+  int? selectedDepartmentId;
+  int? selectedCountryId;
+  int? selectedRankId;
+  bool _isSavingDetails = false;
+  bool get isSavingDetails => _isSavingDetails;
+
   // Validator example
   String? validateBirthCertificate(String? value) {
     if (value == null || value.isEmpty) {
@@ -280,6 +310,11 @@ class SignUpProvider with ChangeNotifier {
     return null;
   }
 
+  void clearTagSelection() {
+    selectedTag = null;
+    notifyListeners();
+  }
+
   String? validateEmailField(String? value) {
     if (value == null || value.isEmpty) {
       return 'Email cannot be empty';
@@ -370,6 +405,44 @@ Future<void> pickFile(String docName) async {
     return val == null || val.isEmpty ? "Required" : null;
   }
 
+  String? validateOtp(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'OTP cannot be empty';
+    } else if (value.length != 4) {
+      return 'OTP must be 4 digits';
+    }
+    return null;
+  }
+
+  void startOtpTimer() {
+    _otpCountdown = 30;
+    _otpTimer?.cancel();
+    _otpTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      _otpCountdown--;
+      if (_otpCountdown <= 0) {
+        _otpTimer?.cancel();
+      }
+      notifyListeners();
+    });
+  }
+
+  void markOtpSent(bool value) {
+    _isOtpSent = value;
+    notifyListeners();
+  }
+
+  bool get isFormValid {
+    return (
+        firstNameController.text.isNotEmpty &&
+            lastNameController.text.isNotEmpty &&
+            validateEmailField(emailController.text) == null &&
+            isEmailVerified && // OTP must be verified
+            validatePhoneNumber(phoneNumberController.text) == null &&
+            validatePassword(passwordController.text) == null &&
+            validateConfirmPassword(confirmpasswordController.text) == null
+    );
+  }
+
   void disposeAll() {
     for (var controller in controllers.values) {
       controller.dispose();
@@ -377,7 +450,228 @@ Future<void> pickFile(String docName) async {
   }
 
 
-   Future<void> getCountryListAPI() async {
+  void sendEmailOtp(BuildContext context, String email) async {
+    // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
+
+    final body = {'email': email};
+
+    try {
+      await APIManager().apiRequest(
+        context,
+        API.emailOTP,
+            (response) {
+          // Navigator.pop(context);
+
+          if (response is CommonResponse && response.n == 1) {
+            markOtpSent(true);
+            startOtpTimer();
+            ShowDialogs.showToast(response.message);
+          } else {
+            ShowDialogs.showToast('Failed to send OTP');
+          }
+        },
+            (error) {
+          // Navigator.pop(context);
+          ShowDialogs.showToast('Error sending OTP: $error');
+        },
+        jsonval: jsonEncode(body),
+      );
+    } catch (e) {
+      Navigator.pop(context);
+      ShowDialogs.showToast('Unexpected error: $e');
+    }
+  }
+
+  Future<void> verifyEmailOtp(BuildContext context, String email) async {
+    try {
+      final requestBody = {
+        "email": email,
+        "otp": otpController.text,
+      };
+
+      await APIManager().apiRequest(
+        context,
+        API.verifyEmailOTP,
+            (response) {
+          if (response is CommonResponse) {
+            if (response.n == 1) {  // Success case
+              ShowDialogs.showToast(response.msg);
+              isEmailVerified = true;
+              notifyListeners();
+            } else {
+              print('message: ${response.msg}');
+              ShowDialogs.showToast(response.msg);
+            }
+          } else {
+            ShowDialogs.showToast('Unexpected response format');
+          }
+        },
+            (error) {
+          print('Error: ${error.toString()}');
+          ShowDialogs.showToast('OTP verification failed: ${error.toString()}');
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      ShowDialogs.showToast('Error verifying OTP: ${e.toString()}');
+    }
+  }
+
+  void handleVerificationResponse(CommonResponse response) {
+    if (response.status) {  // Success case
+      ShowDialogs.showToast(response.message);
+      isEmailVerified = true;
+      notifyListeners();
+    } else {
+      print('message: ${response.message}');
+      ShowDialogs.showToast(response.message);
+    }
+  }
+
+  Future<void> registerCandidate(BuildContext context) async {
+    try {
+      _isRegistering = true;
+      notifyListeners();
+
+      final requestBody = {
+        "first_name": firstNameController.text.trim(),
+        "middle_name": "",
+        "last_name": lastNameController.text.trim(),
+        "country_code": "+91",
+        "mobilenumber": phoneNumberController.text.trim(),
+        "email": emailController.text.trim(),
+        "password": passwordController.text.trim(),
+      };
+
+      await APIManager().apiRequest(
+        context,
+        API.registerCandidate, // Make sure this is defined in your API class
+            (response) {
+          if (response is CommonResponse) {
+            if (response.n == 1) {
+              ShowDialogs.showToast(response.msg);
+              _registeredCandidate = Candidate.fromJson(response.data);
+            } else {
+              ShowDialogs.showToast(response.msg);
+              throw Exception(response.msg);
+            }
+          } else {
+            throw Exception('Unexpected response format');
+          }
+        },
+            (error) {
+          throw Exception('Registration failed: ${error.toString()}');
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      ShowDialogs.showToast(e.toString());
+      rethrow; // Re-throw to handle in the calling function
+    } finally {
+      _isRegistering = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> saveCandidateDetails(BuildContext context) async {
+    try {
+      _isSavingDetails = true;
+      notifyListeners();
+
+      if (_registeredCandidate?.id == null) {
+        throw Exception('Candidate ID not found');
+      }
+
+      final requestBody = {
+        "id": _registeredCandidate!.id,
+        "passport_number": passportController.text.trim(),
+        "department": selectedDepartmentId?.toString(),
+        "rank": selectedRankId?.toString(),
+        "dob": dobController.text.trim(),
+        "country": selectedCountryId?.toString(),
+        "pincode": pincodeController.text.trim(),
+        "highest_qualification": "1", // Update if you have this field
+        "seafearers_number": seafarerController.text.trim(),
+      };
+      print('Request body for candidate detail: $requestBody');
+
+      await APIManager().apiRequest(
+        context,
+        API.candidateDetails,
+            (response) {
+          if (response is CommonResponse) {
+            if (response.n == 1) {
+              ShowDialogs.showToast(response.msg);
+              // Update candidate data with new details if needed
+              if (response.data != null) {
+                _registeredCandidate = Candidate.fromJson(response.data);
+              }
+            } else {
+              throw Exception(response.msg);
+            }
+          }
+        },
+            (error) {
+          throw Exception('Failed to save details: ${error.toString()}');
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      ShowDialogs.showToast(e.toString());
+      rethrow;
+    } finally {
+      _isSavingDetails = false;
+      notifyListeners();
+    }
+  }
+
+  // Add methods to handle department/country selection
+  void setSelectedDepartment(Department department) {
+    selectedDepartmentId = department.id;
+    departmentController.text = department.departmentName;
+    notifyListeners();
+  }
+
+  void setSelectedCountry(Country country) {
+    selectedCountryId = country.id;
+    countryController.text = country.name;
+    notifyListeners();
+  }
+
+  void setSelectedRank(Rank rank) {
+    selectedRankId = rank.id;
+    rankController.text = rank.rank;
+    notifyListeners();
+  }
+
+
+  /*Future<void> verifyEmailOtp(BuildContext context, String email) async {
+    try {
+      final requestBody = {
+        "email": email,
+        "otp": otpController.text,
+      };
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.verifyEmailOTP,
+            (response) {
+          if (response is CommonResponse && response.status == true) {
+            ShowDialogs.showToast(response.message);
+          }
+        },
+            (error) {
+          ShowDialogs.showToast('OTP verification failed: ${error.toString()}');
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      print('Error verifying OTP: ${e.toString()}');
+      ShowDialogs.showToast('Error verifying OTP: ${e.toString()}');
+    }
+  }*/
+
+  Future<void> getCountryListAPI() async {
     
 
     var status1 = await ConnectionDetector.checkInternetConnection();

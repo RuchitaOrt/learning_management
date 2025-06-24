@@ -1,5 +1,7 @@
 
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/APIManager.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
@@ -24,7 +26,52 @@ class LandingScreenProvider with ChangeNotifier {
       
     };
   }
- Future<void> logoutAPI(String token) async {
+
+  Future<void> logout(BuildContext context) async {
+    // Use the root context instead of dialog context
+    final rootContext = routeGlobalKey.currentContext;
+    if (rootContext == null) return;
+
+    ShowDialogs.showLoadingDialog(rootContext, routeGlobalKey, message: 'Logging out...');
+
+    try {
+      final token = await SPManager().getAuthToken();
+      if (token == null || token.isEmpty) {
+        Navigator.pop(rootContext);
+        ShowDialogs.showToast('No active session found');
+        return;
+      }
+
+      final requestBody = {"token": token};
+
+      await APIManager().apiRequest(
+        rootContext,
+        API.logout,
+            (response) async {
+          Navigator.pop(rootContext); // Close loading dialog
+          if (response is CommonResponse) {
+            await SPManager().clearAuthData();
+            ShowDialogs.showToast(response.msg);
+            Navigator.of(rootContext).pushNamedAndRemoveUntil(
+              SignInScreen.route,
+                  (route) => false,
+            );
+          }
+        },
+            (error) {
+          Navigator.pop(rootContext); // Close loading dialog
+          ShowDialogs.showToast('Logout failed: ${error.toString()}');
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      if (rootContext.mounted) {
+        Navigator.pop(rootContext);
+        ShowDialogs.showToast('Error during logout: ${e.toString()}');
+      }
+    }
+  }
+ /*Future<void> logoutAPI(String token) async {
     var status1 = await ConnectionDetector.checkInternetConnection();
 
     if (status1) {
@@ -68,7 +115,7 @@ print(token);
       /// Navigator.of(_keyLoader.currentContext).pop();
       ShowDialogs.showToast("Please check internet connection");
     }
-  }
+  }*/
 }
 
 
