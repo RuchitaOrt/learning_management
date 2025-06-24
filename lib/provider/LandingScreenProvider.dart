@@ -69,6 +69,40 @@ print(token);
       ShowDialogs.showToast("Please check internet connection");
     }
   }
+
+
+
+   Future<void> getCategoryListAPI() async {
+    
+
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      dynamic jsonbody = "";
+      
+      return APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getcoursecategorylist,
+        (response) async {
+         
+        },
+        (error) {
+          // Handle error case
+          print('ERR msg is $error');
+          ShowDialogs.showToast("Server Not Responding");
+
+          
+        },
+        jsonval: jsonbody,
+      );
+    } else {
+      // No internet connection
+      ShowDialogs.showToast("Please check internet connection");
+
+     
+      return Future.error("No Internet Connection");
+    }
+  }
 }
 
 

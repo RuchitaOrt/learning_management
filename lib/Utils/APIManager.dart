@@ -5,18 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
+import 'package:learning_mgt/model/GetCourseCategory.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
 enum API {
- 
   login,
   logout,
   countrylist,
   departmentlist,
-  getqualifications
-  
+  getqualifications,
+  getcoursecategorylist
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -38,7 +38,7 @@ class APIManager {
   factory APIManager() {
     return _instance;
   }
-  
+
   var url;
   void loadConfiguration(String configString) {
     Map config = jsonDecode(configString);
@@ -61,24 +61,25 @@ class APIManager {
     var apiPathString = "";
 
     switch (api) {
-      
       case API.login:
         apiPathString = "/api/candidate/candidate-login";
         break;
-      
+
       case API.logout:
         apiPathString = "/api/candidate/candidate-logout";
         break;
-        case API.countrylist:
+      case API.countrylist:
         apiPathString = "/api/candidate/country-list";
         break;
-        case API.departmentlist:
+      case API.departmentlist:
         apiPathString = "/api/master/department-list";
         break;
-        case API.getqualifications:
+      case API.getqualifications:
         apiPathString = "/api/master/get-qualifications";
         break;
-
+      case API.getcoursecategorylist:
+        apiPathString = "/api/course/get-course-category-list";
+        break;
       default:
         apiPathString = "/Login";
     }
@@ -90,10 +91,10 @@ class APIManager {
   HTTPMethod apiHTTPMethod(API api) {
     HTTPMethod method;
     switch (api) {
-      
       case API.countrylist:
       case API.departmentlist:
       case API.getqualifications:
+       case API.getcoursecategorylist:
         method = HTTPMethod.GET;
         break;
 
@@ -106,23 +107,24 @@ class APIManager {
   String classNameForAPI(API api) {
     String className;
     switch (api) {
-      
       case API.login:
         className = "LoginResponse";
         break;
-     case API.logout:
+      case API.logout:
         className = "LoginResponse";
         break;
-        case API.countrylist:
+      case API.countrylist:
         className = "LoginResponse";
         break;
-        case API.departmentlist:
+      case API.departmentlist:
         className = "LoginResponse";
         break;
-        case API.getqualifications:
+      case API.getqualifications:
         className = "LoginResponse";
         break;
-
+      case API.getcoursecategorylist:
+        className = "CategoryResponse";
+        break;
       default:
         className = 'CommonResponse';
     }
@@ -132,12 +134,10 @@ class APIManager {
   dynamic parseResponse(String className, var json) {
     dynamic responseObj;
 
-   
-    if (className == 'LoginResponse') {
-      responseObj = LoginResponse.fromJson(json);
+    if (className == 'CategoryResponse') {
+      responseObj = CategoryResponse.fromJson(json);
     }
-   
-    
+
     return responseObj;
   }
 
@@ -168,14 +168,12 @@ class APIManager {
       headers = {
         "Accept": 'application/json',
         "Content-Type": "application/json",
-        
         "Authorization": "Bearer ${token}"
       };
       print("header is $headers");
     } else {
       headers = {
         "Accept": 'application/json',
-       
         "Content-Type": "application/json",
       };
       // }
@@ -231,7 +229,7 @@ class APIManager {
           print("api $api");
           String message = jsonResponse['message'] ?? 'Unknown Error';
           ShowDialogs.showToast(message);
-          
+
           if (jsonResponse['errors'] != null) {
             // Assuming 'errors' contains dynamic fields, you can handle them like this:
             Map<String, dynamic> errors = jsonResponse['errors'];
@@ -262,7 +260,6 @@ class APIManager {
       onFailure(appError);
     }
   }
-
 
   dynamic parseUploadError(String response, int statusCode) {
     var jsonResponse;
