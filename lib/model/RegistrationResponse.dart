@@ -274,6 +274,7 @@ class Document {
   final String? description;
   final bool isActive;
   final String? uploadedProof;
+  final bool isEducationDocument;
 
   Document({
     required this.id,
@@ -281,31 +282,42 @@ class Document {
     this.description,
     required this.isActive,
     this.uploadedProof,
+    this.isEducationDocument = false,
   });
 
-  /*factory Document.fromJson(Map<String, dynamic> json) {
+  factory Document.fromJson(Map<String, dynamic> json, {bool isEducation = false}) {
     return Document(
-      id: json['id'],
-      documentName: json['document_name'],
-      description: json['description'],
-      isActive: json['isActive'] ?? false,
-      uploadedProof: json['uploaded_proof'],
+      id: json['id'] is int ? json['id'] : int.tryParse(json['id'].toString()) ?? 0,
+      documentName: isEducation
+          ? (json['qualification_name'] ?? 'Education Certificate')
+          : (json['document_name'] ?? 'Document'),
+      description: isEducation
+          ? 'Education Certificate'
+          : (json['description'] ?? ''),
+      isActive: json['isActive'] ?? true,
+      uploadedProof: isEducation
+          ? json['uploaded_certificate']
+          : json['uploaded_proof'],
+      isEducationDocument: isEducation,
+    );
+  }
+
+/*factory Document.fromJson(Map<String, dynamic> json, {bool isEducation = false}) {
+    return Document(
+      id: json['id'] ?? 0,
+      documentName: isEducation
+          ? (json['qualification_name'] ?? 'Education Certificate')
+          : (json['document_name'] ?? 'Document'),
+      description: isEducation
+          ? 'Education Certificate'
+          : json['description'],
+      isActive: json['isActive'] ?? true,
+      uploadedProof: isEducation
+          ? json['uploaded_certificate']
+          : json['uploaded_proof'],
+      isEducationDocument: isEducation,
     );
   }*/
-  factory Document.fromJson(Map<String, dynamic> json) {
-    try {
-      return Document(
-        id: json['id'] as int? ?? 0,
-        documentName: (json['document_name'] as String?)?.trim() ?? 'Unnamed Document',
-        description: json['description'] as String?,
-        isActive: json['isActive'] as bool? ?? false,
-        uploadedProof: json['uploaded_proof'] as String?,
-      );
-    } catch (e) {
-      debugPrint('Document parsing error for JSON: $json');
-      rethrow;
-    }
-  }
 }
 
 class DocumentListResponse {
@@ -320,13 +332,52 @@ class DocumentListResponse {
   });
 
   factory DocumentListResponse.fromJson(Map<String, dynamic> json) {
-    var list = json['data'] as List;
-    List<Document> documents = list.map((i) => Document.fromJson(i)).toList();
+    List<Document> documents = [];
+
+    // proof_data (List)
+    if (json['data']?['proof_data'] is List) {
+      documents.addAll(
+        (json['data']['proof_data'] as List)
+            .map((docJson) => Document.fromJson(docJson))
+            .toList(),
+      );
+    }
+
+    // education_document_data (Map)
+    if (json['data']?['education_document_data'] is Map) {
+      final eduDoc = json['data']['education_document_data'];
+      documents.add(Document.fromJson(eduDoc, isEducation: true));
+    }
 
     return DocumentListResponse(
-      n: json['n'],
-      msg: json['msg'],
+      n: json['n'] ?? 1,
+      msg: json['msg'] ?? '',
       data: documents,
     );
   }
+
+/*factory DocumentListResponse.fromJson(Map<String, dynamic> json) {
+    List<Document> documents = [];
+
+    // Process proof_data
+    if (json['data']?['proof_data'] is List) {
+      documents.addAll(
+          (json['data']['proof_data'] as List)
+              .map((docJson) => Document.fromJson(docJson))
+              .toList()
+      );
+    }
+
+    // Process education_document_data
+    if (json['data']?['education_document_data'] is Map) {
+      final eduDoc = json['data']['education_document_data'];
+      documents.add(Document.fromJson(eduDoc, isEducation: true));
+    }
+
+    return DocumentListResponse(
+      n: json['n'] ?? 1,
+      msg: json['msg'] ?? '',
+      data: documents,
+    );
+  }*/
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
@@ -12,7 +13,7 @@ import 'package:learning_mgt/widgets/ShowDialog.dart';
 import '../model/RegistrationResponse.dart';
 
 enum API {
- 
+
   login,
   logout,
   countrylist,
@@ -23,11 +24,11 @@ enum API {
   verifyEmailOTP,
   registerCandidate,
   candidateDetails,
+  getDocuments,
   getcoursecategorylist,
   getallcoursesbycategory,
-  getcoursedetailsbyid
-  candidateDetails,
-  getDocuments,
+  getcoursedetailsbyid,
+  documentsUpload
 
 
 }
@@ -51,7 +52,7 @@ class APIManager {
   factory APIManager() {
     return _instance;
   }
-  
+
   var url;
   void loadConfiguration(String configString) {
     Map config = jsonDecode(configString);
@@ -74,11 +75,11 @@ class APIManager {
     var apiPathString = "";
 
     switch (api) {
-      
+
       case API.login:
         apiPathString = "/api/candidate/candidate-login";
         break;
-      
+
       case API.logout:
         apiPathString = "/api/candidate/candidate-logout";
         break;
@@ -118,6 +119,9 @@ class APIManager {
 case API.getcoursedetailsbyid:
         apiPathString = "/api/course/get-course-detailsbyid";
         break;
+        case API.documentsUpload:
+        apiPathString = "/api/candidate/candidate-documents-submit";
+        break;
 
 
       default:
@@ -131,7 +135,7 @@ case API.getcoursedetailsbyid:
   HTTPMethod apiHTTPMethod(API api) {
     HTTPMethod method;
     switch (api) {
-      
+
       case API.countrylist:
       case API.departmentlist:
       case API.getqualifications:
@@ -148,7 +152,7 @@ case API.getcoursedetailsbyid:
   String classNameForAPI(API api) {
     String className;
     switch (api) {
-      
+
       case API.login:
         className = "LoginResponse";
         break;
@@ -197,7 +201,7 @@ case API.getcoursedetailsbyid:
   dynamic parseResponse(String className, var json) {
     dynamic responseObj;
 
-   
+
     if (className == 'LoginResponse') {
       responseObj = LoginResponse.fromJson(json);
     } else if (className == 'DepartmentListResponse') {
@@ -227,8 +231,8 @@ case API.getcoursedetailsbyid:
     } else if (className == 'DocumentListResponse') {
       responseObj = DocumentListResponse.fromJson(json);
     }
-   
-    
+
+
     return responseObj;
   }
 
@@ -259,14 +263,14 @@ case API.getcoursedetailsbyid:
       headers = {
         "Accept": 'application/json',
         "Content-Type": "application/json",
-        
+
         "Authorization": "Bearer ${token}"
       };
       print("header is $headers");
     } else {
       headers = {
         "Accept": 'application/json',
-       
+
         "Content-Type": "application/json",
       };
       // }
@@ -282,7 +286,15 @@ case API.getcoursedetailsbyid:
         response =
             await http.post(Uri.parse(url), body: body, headers: headers);
         // .timeout(timeout!);
-        print(response.body);
+        if (kDebugMode) {
+          final body = response.body;
+          const chunkSize = 800;
+
+          for (var i = 0; i < body.length; i += chunkSize) {
+            print(body.substring(i, i + chunkSize > body.length ? body.length : i + chunkSize));
+          }
+        }
+        // print(response.body);
       } else if (this.apiHTTPMethod(api) == HTTPMethod.GET) {
         //   print(url);
         response =
@@ -333,7 +345,7 @@ case API.getcoursedetailsbyid:
           print("api $api");
           String message = jsonResponse['message'] ?? 'Unknown Error';
           ShowDialogs.showToast(message);
-          
+
           if (jsonResponse['errors'] != null) {
             // Assuming 'errors' contains dynamic fields, you can handle them like this:
             Map<String, dynamic> errors = jsonResponse['errors'];

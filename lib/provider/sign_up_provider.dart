@@ -13,7 +13,9 @@ import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
+import '../Utils/SPManager.dart';
 import '../model/RegistrationResponse.dart';
+import 'package:http/http.dart' as http;
 
 class SignUpProvider with ChangeNotifier {
   TextEditingController firstNameController = TextEditingController();
@@ -950,49 +952,176 @@ Future<void> pickFile(String docName) async {
   }
 
   Future<void> fetchDocuments() async {
-      if (_registeredCandidate?.id == null) {
-        documentError = 'Candidate ID not available';
-        notifyListeners();
-        return;
-      }
+    try {
+      isLoadingDocuments = true;
+      documentError = null;
+      notifyListeners();
 
-      try {
-        isLoadingDocuments = true;
-        documentError = null;
-        notifyListeners();
+      final requestBody = json.encode({
+        "candidateid": _registeredCandidate!.id,
+      });
 
-        final requestBody = json.encode({
-          "candidateid": _registeredCandidate!.id,
-        });
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getDocuments,
+            (response) {
+          try {
+            documents.clear();
 
-        print('documents request body: $requestBody');
-
-        await APIManager().apiRequest(
-          routeGlobalKey.currentContext!,
-          API.getDocuments,
-              (response) {
+            // Handle DocumentListResponse case
             if (response is DocumentListResponse) {
-              documents = response.data.where((d) => d.isActive).toList();
-              for (var doc in documents) {
-                controllers[doc.documentName] = TextEditingController();
-                selectedFilePaths[doc.documentName] = doc.uploadedProof;
-              }
-              documentError = null;
-              print('Documents data: $documents');
-            } else {
-              documentError = 'Unexpected response format';
+              documents.addAll(response.data);
+              print('Received ${documents.length} documents from DocumentListResponse');
             }
-          },
-              (error) {
-            documentError = 'Failed to load documents: ${error.toString()}';
-          },
-          jsonval: requestBody,
-        );
-      } catch (e) {
-        documentError = 'Failed to load documents: $e';
-      } finally {
-        isLoadingDocuments = false;
-        notifyListeners();
-      }
+            // Handle Map response
+            else if (response is Map<String, dynamic>) {
+              // Process proof_data
+              if (response['data']?['proof_data'] is List) {
+                documents.addAll(
+                    (response['data']['proof_data'] as List)
+                        .map((docJson) => Document.fromJson(docJson))
+                        .toList()
+                );
+              }
+
+              // Process education_document_data
+              if (response['data']?['education_document_data'] is Map) {
+                final eduDoc = response['data']['education_document_data'];
+                documents.add(Document.fromJson(eduDoc, isEducation: true));
+              }
+            }
+            // Handle String response
+            else if (response is String) {
+              final parsed = json.decode(response);
+              if (parsed['data']?['proof_data'] is List) {
+                documents.addAll(
+                    (parsed['data']['proof_data'] as List)
+                        .map((docJson) => Document.fromJson(docJson))
+                        .toList()
+                );
+              }
+              if (parsed['data']?['education_document_data'] is Map) {
+                final eduDoc = parsed['data']['education_document_data'];
+                documents.add(Document.fromJson(eduDoc, isEducation: true));
+              }
+            }
+
+            // Print debug info
+            print('Total documents found: ${documents.length}');
+            for (var doc in documents) {
+              print('Document: ${doc.documentName}, Uploaded: ${doc.uploadedProof ?? "Not uploaded"}');
+            }
+
+            // Initialize controllers
+            for (var doc in documents) {
+              controllers[doc.documentName] = TextEditingController();
+              selectedFilePaths[doc.documentName] = doc.uploadedProof;
+            }
+          } catch (e) {
+            print('Error processing documents: $e');
+            documentError = 'Failed to process documents: $e';
+          }
+        },
+            (error) {
+          print('API Error: $error');
+          documentError = 'Failed to load documents: ${error.toString()}';
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      print('Exception in fetchDocuments: $e');
+      documentError = 'Failed to load documents: $e';
+    } finally {
+      isLoadingDocuments = false;
+      notifyListeners();
     }
+  }
+
+  Future<void> uploadDocuments(BuildContext context) async {
+    try {
+      _isSavingDetails = true;
+      notifyListeners();
+
+      // Prepare the multipart request
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(await APIManager().apiEndPoint(API.documentsUpload))
+      );
+
+      // Add user ID and certificate name
+      request.fields['user_id'] = "['${_registeredCandidate!.id}']";
+      request.fields['certificate_name'] = 'PHD'; // Or dynamic from input
+
+      // Prepare doc_id and doc_name lists
+      List<String> docIds = [];
+      List<String> docNames = [];
+
+      for (var doc in documents) {
+        final filePath = selectedFilePaths[doc.documentName];
+        if (filePath != null && filePath.isNotEmpty) {
+          if (doc.isEducationDocument) {
+            request.files.add(await http.MultipartFile.fromPath(
+              'educational_certificate_upload',
+              filePath,
+            ));
+          } else {
+            request.fields['doc_id'] = '[\'${doc.id}\']';
+            request.fields['doc_name'] = '[\'${doc.documentName}\']';
+
+            request.files.add(await http.MultipartFile.fromPath(
+              'document_file_upload',
+              filePath,
+            ));
+          }
+        } else {
+          print('⚠️ No file selected for ${doc.documentName}');
+        }
+
+      }
+
+      // Add the collected doc_id and doc_name arrays
+      if (docIds.isNotEmpty && docNames.isNotEmpty) {
+        request.fields['doc_id'] = "['${docIds.join("','")}']";
+        request.fields['doc_name'] = "['${docNames.join("','")}']";
+      }
+
+      // Add auth token if needed
+      final token = await SPManager().getAuthToken();
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      print('📦 Multipart Request Fields:');
+      request.fields.forEach((key, value) {
+        print('$key: $value');
+      });
+
+      // Debug print the uploaded file names
+      print('📎 Multipart Files:');
+      for (var file in request.files) {
+        print('${file.field}: ${file.filename}');
+      }
+
+      // Send request and handle response
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(responseBody);
+        if (jsonResponse['n'] == 1) {
+          ShowDialogs.showToast(jsonResponse['msg']);
+        } else {
+          throw Exception(jsonResponse['msg'] ?? 'Failed to upload documents');
+        }
+      } else {
+        throw Exception('Upload failed: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      ShowDialogs.showToast('Error uploading documents: $e');
+      rethrow;
+    } finally {
+      _isSavingDetails = false;
+      notifyListeners();
+    }
+  }
 }

@@ -57,63 +57,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
     UploadFormWidget(),
   ];
 
-/*  Widget stepIndicator(
-      BuildContext context, int currentStep, bool isSubmitted) {
-    final steps = ['Basic', 'Detail', 'Upload'];
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(steps.length * 2 - 1, (index) {
-        if (index.isEven) {
-          final stepIndex = index ~/ 2;
-          final bool isCompleted = stepIndex < currentStep ||
-              (isSubmitted && stepIndex == currentStep);
-          final bool isCurrent = stepIndex == currentStep && !isSubmitted;
-
-          Color bgColor;
-          Widget childContent;
-
-          if (isCompleted) {
-            bgColor = Colors.green;
-            childContent = Icon(Icons.check, color: Colors.white, size: 20);
-          } else {
-            bgColor = Colors.grey.shade400;
-            childContent =
-                Text('${stepIndex + 1}', style: TextStyle(color: Colors.white));
-          }
-
-          return Column(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: bgColor,
-                child: childContent,
-              ),
-              SizedBox(height: 6),
-              Text(
-                steps[stepIndex],
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isCurrent ? Colors.black : Colors.grey.shade600,
-                ),
-              ),
-            ],
-          );
-        } else {
-          final lineIndex = (index - 1) ~/ 2;
-          final bool isLineActive = lineIndex < currentStep ||
-              (isSubmitted && lineIndex == currentStep - 1);
-          return Expanded(
-            child: Container(
-              height: 2,
-              color: isLineActive ? Colors.green : Colors.grey.shade300,
-            ),
-          );
-        }
-      }),
-    );
-  }*/
-
   Widget stepIndicator(
       BuildContext context, int currentStep, bool isSubmitted) {
     final steps = ['Basic', 'Detail', 'Upload'];
@@ -380,6 +323,66 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
                               final formKey = current == 0
                                   ? signUpProvider.formKeyBasic
+                                  : current == 1
+                                  ? signUpProvider.formKeyDetail
+                                  : signUpProvider.formKeyUpload;
+
+                              if (formKey.currentState?.validate() ?? false) {
+                                try {
+                                  if (current == 0) {
+                                    await signUpProvider.registerCandidate(context);
+                                  } else if (current == 1) {
+                                    await signUpProvider.saveCandidateDetails(context);
+                                    await signUpProvider.fetchDocuments();
+                                  } else if (current == 2) {
+                                    // This is the submit button for the upload step
+                                    await signUpProvider.uploadDocuments(context);
+                                  }
+
+                                  // Only proceed if API call succeeds
+                                  Provider.of<StepProvider>(context, listen: false).nextStep();
+                                } catch (e) {
+                                  // Error is already shown by the provider methods
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Please fix errors before proceeding')));
+                              }
+                            },
+                            child: signUpProvider.isRegistering || signUpProvider.isSavingDetails
+                                ? CircularProgressIndicator(color: Colors.white)
+                                : Text(current == 2 ? 'Submit' : 'Next'),
+                          );
+                        },
+                      ),
+                    ),
+                    /*Expanded(
+                      flex: 1,
+                      child: Consumer<SignUpProvider>(
+                        builder: (context, signUpProvider, _) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: signUpProvider.isEmailVerified &&
+                                  !signUpProvider.isRegistering &&
+                                  !signUpProvider.isSavingDetails
+                                  ? LearningColors.darkBlue
+                                  : Colors.grey,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 5,
+                            ),
+                            onPressed: () async {
+                              if (!signUpProvider.isEmailVerified) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Please verify your email first')));
+                                return;
+                              }
+
+                              final formKey = current == 0
+                                  ? signUpProvider.formKeyBasic
                                   : signUpProvider.formKeyDetail;
 
                               if (formKey.currentState?.validate() ?? false) {
@@ -407,7 +410,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                           );
                         },
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
             ],
@@ -1214,6 +1217,11 @@ class UploadFormWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<SignUpProvider>(context);
 
+    print('Current documents count: ${provider.documents.length}');
+    provider.documents.forEach((doc) {
+      print('Document: ${doc.documentName}, Uploaded: ${doc.uploadedProof ?? "Not uploaded"}');
+    });
+
     return Form(
       key: provider.formKeyUpload,
       child: provider.isLoadingDocuments
@@ -1222,7 +1230,7 @@ class UploadFormWidget extends StatelessWidget {
           ? Center(child: Text('No documents required'))
           : Column(
         children: [
-          Expanded(
+          /*Expanded(
             child: ListView.builder(
               padding: EdgeInsets.only(top: 8),
               itemCount: provider.documents.length,
@@ -1238,7 +1246,8 @@ class UploadFormWidget extends StatelessWidget {
                   onChange: (val) {}, // optional
                   suffixIcon: GestureDetector(
                     onTap: () {
-                      if (provider.selectedFilePaths[doc.documentName] == null) {
+                      if (provider.selectedFilePaths[doc.documentName] == null ||
+                          provider.selectedFilePaths[doc.documentName]!.isEmpty) {
                         provider.pickFile(doc.documentName);
                       } else {
                         showImageDialog(
@@ -1249,12 +1258,23 @@ class UploadFormWidget extends StatelessWidget {
                       }
                     },
                     child: Icon(
-                      provider.selectedFilePaths[doc.documentName] == null
+                      provider.selectedFilePaths[doc.documentName] == null ||
+                      provider.selectedFilePaths[doc.documentName]!.isEmpty
                           ? Icons.upload
                           : Icons.remove_red_eye,
                     ),
                   ),
                 );
+              },
+            ),
+          ),*/
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: provider.documents.length,
+              itemBuilder: (context, index) {
+                final doc = provider.documents[index];
+                return _buildDocumentField(provider, doc);
               },
             ),
           ),
@@ -1328,6 +1348,39 @@ class UploadFormWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildDocumentField(SignUpProvider provider, Document doc) {
+    return CustomTextFieldWidget(
+      title: doc.documentName,
+      isFieldReadOnly: true,
+      hintText: doc.isEducationDocument
+          ? 'Upload ${doc.documentName} Certificate'
+          : 'Upload ${doc.documentName}',
+      textEditingController: provider.controllers[doc.documentName] ?? TextEditingController(),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (_) => provider.validateFile(provider.selectedFilePaths[doc.documentName]),
+      suffixIcon: GestureDetector(
+        onTap: () {
+          if (provider.selectedFilePaths[doc.documentName] == null ||
+              provider.selectedFilePaths[doc.documentName]!.isEmpty) {
+            provider.pickFile(doc.documentName);
+          } else {
+            showImageDialog(
+              routeGlobalKey.currentContext!,
+              provider.selectedFilePaths[doc.documentName]!,
+              doc.documentName,
+            );
+          }
+        },
+        child: Icon(
+          provider.selectedFilePaths[doc.documentName] == null ||
+              provider.selectedFilePaths[doc.documentName]!.isEmpty
+              ? Icons.upload
+              : Icons.remove_red_eye,
+        ),
+      ),
+    );
+  }
+
   void showImageDialog(BuildContext context, String filePath, String docName) {
     showDialog(
       context: context,
@@ -1338,7 +1391,10 @@ class UploadFormWidget extends StatelessWidget {
             : Image.file(File(filePath)),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              print('doc name: ${File(filePath)}');
+              Navigator.pop(context);
+          },
             child: Text('Close'),
           ),
           TextButton(
@@ -1354,124 +1410,6 @@ class UploadFormWidget extends StatelessWidget {
     );
   }
 }
-
-/*class UploadFormWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final provider = Provider.of<SignUpProvider>(context);
-
-    return Form(
-      key: provider.formKeyUpload,
-      child: provider.documentFields.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(top: 8),
-                    itemCount: provider.documentFields.length,
-                    itemBuilder: (context, index) {
-                      final doc = provider.documentFields[index];
-                      return CustomTextFieldWidget(
-                        title: doc.name,
-                        isFieldReadOnly: true,
-                        hintText: doc.hint,
-                        textEditingController: provider.controllers[doc.name]!,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (_) => provider
-                            .validateFile(provider.selectedFilePaths[doc.name]),
-                        onChange: (val) {}, // optional
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            if (provider.selectedFilePaths[doc.name] == null) {
-                              provider.pickFile(doc.name);
-                            } else {
-                              showImageDialog(
-                                provider.selectedFilePaths[doc.name],
-                                doc.name,
-                              );
-                            }
-                          },
-                          child: Icon(
-                            provider.selectedFilePaths[doc.name] == null
-                                ? Icons.upload
-                                : Icons.remove_red_eye,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                // Note text after all fields
-                Padding(
-                  padding: const EdgeInsets.only(left: 12, top: 8, bottom: 16),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                        fontStyle: FontStyle.italic,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Note',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: ': Allowed file types: ',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: 'PDF',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: ', ',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: 'JPG',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: ', ',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: 'PNG',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: '. Maximum file size: ',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: '2 MB',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: ' per file.',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-    );
-  }
-}*/
 
 void showImageDialog(String? selectedPath, String pickedValue) {
   if (selectedPath == null) return;
