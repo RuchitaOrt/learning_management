@@ -120,7 +120,7 @@ setState(() {
         ChangeNotifierProvider<NotificationProvider>(
           create: (context) => NotificationProvider(),
         ),
-    
+     
       ],
       child: MaterialApp(
         title: 'LMS',

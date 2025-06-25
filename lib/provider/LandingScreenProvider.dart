@@ -75,21 +75,29 @@ class LandingScreenProvider with ChangeNotifier {
     
   }
 
-    List<CategoryData> _courseList = [];
+    List<CategoryData> _categoryList = [];
 
   // Getter for data
-  List<CategoryData> get courseList => _courseList;
-  set courseList(List<CategoryData> data) {
-    _courseList = data;
+  List<CategoryData> get categoryList => _categoryList;
+  set categoryList(List<CategoryData> data) {
+    _categoryList = data;
+    notifyListeners();
+  }
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
     notifyListeners();
   }
 
     Future<void> getCategoryList() async {
     
-
+ isLoading = true;
     var status1 = await ConnectionDetector.checkInternetConnection();
 
     if (status1) {
+      
       dynamic jsonbody = "";
       
       return APIManager().apiRequest(
@@ -97,12 +105,16 @@ class LandingScreenProvider with ChangeNotifier {
         API.getcoursecategorylist,
         (response) async {
             CategoryResponse resp = response;
-            _courseList=resp.data!;
+            _categoryList=resp.data!;
+             isLoading = false;
+            notifyListeners();
          print(response);
         },
         (error) {
           // Handle error case
           print('ERR msg is $error');
+          isLoading = false;
+          notifyListeners();
           ShowDialogs.showToast("Server Not Responding");
 
           
@@ -112,7 +124,8 @@ class LandingScreenProvider with ChangeNotifier {
     } else {
       // No internet connection
       ShowDialogs.showToast("Please check internet connection");
-
+isLoading = false;
+          notifyListeners();
      
       return Future.error("No Internet Connection");
     }

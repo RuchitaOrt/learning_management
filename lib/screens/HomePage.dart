@@ -26,23 +26,7 @@ class _HomePageState extends State<HomePage> {
   int completedCourses = 5;
   int pendingCourses = 2;
   String? selectedModule;
-@override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
 
-
-     WidgetsBinding.instance.addPostFrameCallback((_) {
-     
-      final provider =
-          Provider.of<LandingScreenProvider>(context, listen: false);
-
-      // if (!provider.isSubscriptionLoading) {
-        provider.getCategoryList();
-      // }
-
-    });
-  }
   @override
   Widget build(BuildContext context) {
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {

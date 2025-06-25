@@ -4,6 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
 import 'package:learning_mgt/model/GetCourseCategory.dart';
+import 'package:learning_mgt/model/GetCourseDetailListResponse.dart';
+import 'package:learning_mgt/model/GetCourseListResponse.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
@@ -20,7 +22,9 @@ enum API {
   verifyEmailOTP,
   registerCandidate,
   candidateDetails,
-  getcoursecategorylist
+  getcoursecategorylist,
+  getallcoursesbycategory,
+  getcoursedetailsbyid
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -99,6 +103,13 @@ class APIManager {
       case API.getcoursecategorylist:
         apiPathString = "/api/course/get-course-category-list";
         break;
+ case API.getallcoursesbycategory:
+        apiPathString = "/api/course/get-allcourses-bycategory";
+        break;
+case API.getcoursedetailsbyid:
+        apiPathString = "/api/course/get-course-detailsbyid";
+        break;
+  
 
       default:
         apiPathString = "/Login";
@@ -157,6 +168,12 @@ class APIManager {
       case API.getcoursecategorylist:
         className = "CategoryResponse";
         break;
+         case API.getallcoursesbycategory:
+        className = "GetCourseListResponse";
+        break;
+         case API.getcoursedetailsbyid:
+        className = "GetCourseDetailListResponse";
+        break;
       default:
         className = 'CommonResponse';
     }
@@ -180,7 +197,15 @@ class APIManager {
     
     else if (className == 'CategoryResponse') {
       responseObj = CategoryResponse.fromJson(json);
-    } else if (className == 'CommonResponse') {
+    } else if (className == 'GetCourseListResponse') {
+      responseObj = CourseListResponse.fromJson(json);
+    } 
+    else if (className == 'GetCourseDetailListResponse') {
+      responseObj = GetCourseDetailListResponse.fromJson(json);
+    } 
+    
+    
+    else if (className == 'CommonResponse') {
       responseObj = CommonResponse.fromJson(json);
     }
 
