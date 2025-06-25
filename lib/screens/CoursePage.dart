@@ -6,6 +6,7 @@ import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/model/GetCourseListResponse.dart';
 import 'package:learning_mgt/provider/CourseProvider.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/screens/CourseDetailPage.dart';
@@ -26,19 +27,36 @@ class _CoursePageState extends State<CoursePage> {
   String? selectedModule;
   bool isSelected = false;
 
+  // @override
+  // void initState() {
+  //   super.initState();
+
+  //   // Delay the initialization to avoid calling Provider before build
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final courseProvider =
+  //         Provider.of<CourseProvider>(context, listen: false);
+  //     if (courseProvider.coursesByCategory.isNotEmpty) {
+  //       setState(() {
+  //         selectedCategory = courseProvider.coursesByCategory.keys.first;
+  //       });
+  //     }
+  //   });
+  // }
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
 
-    // Delay the initialization to avoid calling Provider before build
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final courseProvider =
-          Provider.of<CourseProvider>(context, listen: false);
-      if (courseProvider.coursesByCategory.isNotEmpty) {
-        setState(() {
-          selectedCategory = courseProvider.coursesByCategory.keys.first;
-        });
-      }
+      final provider =
+          Provider.of<LandingScreenProvider>(context, listen: false);
+
+      // if (!provider.isSubscriptionLoading) {
+      provider.getCategoryList();
+
+       final courseProvider = Provider.of<CourseProvider>(context, listen: false);
+      courseProvider.courseListAPI("all");
+      // }
     });
   }
 
@@ -315,10 +333,8 @@ class _CoursePageState extends State<CoursePage> {
 
   @override
   Widget build(BuildContext context) {
-    final courseProvider = Provider.of<CourseProvider>(context);
-    final categories = courseProvider.coursesByCategory.keys.toList();
-
-    return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
+    // final courseProvider = Provider.of<CourseProvider>(context);
+    return Consumer<CourseProvider>(builder: (context, courseProvider, _) {
       // Show loading spinner while fetching data
 
       return WillPopScope(
@@ -371,8 +387,7 @@ class _CoursePageState extends State<CoursePage> {
                           padding: const EdgeInsets.only(left: 8),
                           child: Text(
                             "Explore Courses",
-                            style:
-                                LMSStyles.tsblackTileBold,
+                            style: LMSStyles.tsblackTileBold,
                           ),
                         ),
                         GestureDetector(
@@ -390,47 +405,14 @@ class _CoursePageState extends State<CoursePage> {
                     SizedBox(
                       height: SizeConfig.blockSizeVertical * 1,
                     ),
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Row(
-                          children: categories.map((category) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                  right: 8.0), // spacing between chips
-                              child: ChoiceChip(
-                                label: Text(category),
-                                selected: selectedCategory == category,
-                                showCheckmark: false,
-                                onSelected: (selected) {
-                                  setState(() {
-                                    selectedCategory =
-                                        selected ? category : null;
-                                  });
-                                },
-                                selectedColor: LearningColors.darkBlue,
-                                backgroundColor: Colors.grey.shade200,
-                                labelStyle: TextStyle(
-                                  color: selectedCategory == category
-                                      ? LearningColors.neutral100
-                                      : Colors.black,
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
+                  
+
+                    courseChips(),
                     SizedBox(height: 8),
-                    if (selectedCategory != null &&
-                        courseProvider.coursesByCategory[selectedCategory!] !=
-                            null) ...[
-                      ...courseProvider.coursesByCategory[selectedCategory!]!
-                          .map((course) => _buildVerticalCard(course,
-                              selectedCategory!)) // ✅ Pass selectedCategory
-                          .toList()
-                    ]
+
+                     listing(courseProvider)
+                      
+                    // ]
                   ],
                 ),
               ),
@@ -440,8 +422,103 @@ class _CoursePageState extends State<CoursePage> {
       );
     });
   }
+Widget listing(CourseProvider courseProvider)
+{
+      final courseProvider = Provider.of<CourseProvider>(context);
+   
+    if (courseProvider.isLoading) {
+      return Center(
+          child: CircularProgressIndicator(
+        color: LearningColors.darkBlue,
+      ));
+    }
+   return Column(
+      children: courseProvider.courseList
+          .map((course) => _buildVerticalCard(course))
+          .toList(),
+    );
+}
+  Widget courseChips() {
+    final landingProvider = Provider.of<LandingScreenProvider>(context);
+     final courseProvider = Provider.of<CourseProvider>(context);
+    // final categories = courseProvider.coursesByCategory.keys.toList();
+    final categories = landingProvider.categoryList;
 
-  Widget _buildVerticalCard(Course course, String currentCategory) {
+    if (landingProvider.isLoading) {
+      return Center(
+          child: CircularProgressIndicator(
+        color: LearningColors.darkBlue,
+      ));
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Row(
+          children: [
+            // Static 'ALL' chip
+            Padding(
+              padding: const EdgeInsets.only(right: 8.0),
+              child: ChoiceChip(
+                label: Text('ALL'),
+                selected: selectedCategory == "all",
+                showCheckmark: false,
+               onSelected: (selected) {
+                  courseProvider.selectCategory("all");
+                },
+                selectedColor: LearningColors.darkBlue,
+                backgroundColor: courseProvider.selectedCategory == "all"? LearningColors.darkBlue:Colors.grey.shade200,
+                labelStyle: TextStyle(
+                  color: courseProvider.selectedCategory == "all"
+                      ? LearningColors.neutral100
+                      : Colors.black
+                ),
+              ),
+            ),
+            // Dynamic chips from categories list
+            ...categories.map((category) {
+              final String categoryId = category.id.toString();
+         
+
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ChoiceChip(
+                  label: Text(category.categoryName!),
+                  selected: courseProvider.selectedCategory == categoryId,
+                  showCheckmark: false,
+                  onSelected: (selected) {
+                    courseProvider.selectCategory(
+                      selected ? category.id.toString() : "all",
+                    );
+                  },
+                  selectedColor: LearningColors.darkBlue,
+                  backgroundColor: Colors.grey.shade200,
+                  labelStyle: TextStyle(
+                    color:courseProvider.selectedCategory == categoryId
+                        ? LearningColors.neutral100
+                        : Colors.black,
+                  ),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVerticalCard(CourseData course,) {
+    //   final courseProvider = Provider.of<CourseProvider>(context);
+    // // final categories = courseProvider.coursesByCategory.keys.toList();
+    
+
+    // if (courseProvider.isLoading) {
+    //   return Center(
+    //       child: CircularProgressIndicator(
+    //     color: LearningColors.darkBlue,
+    //   ));
+    // }
     return GestureDetector(
       onTap: () {
         Navigator.of(routeGlobalKey.currentContext!)
@@ -487,28 +564,29 @@ class _CoursePageState extends State<CoursePage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: LearningColors.darkBlue.withOpacity(0.1),
-                          image: course.imageUrl != null
-                              ? DecorationImage(
-                                  image: NetworkImage(course.imageUrl!),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
+                          // image:
+                          //  course.imageUrl != null
+                          //     ? DecorationImage(
+                          //         image: NetworkImage(course.imageUrl!),
+                          //         fit: BoxFit.cover,
+                          //       )
+                          //     : null,
                         ),
-                        child: course.imageUrl == null
-                            ? Center(
-                                child: Icon(
-                                  Icons.school,
-                                  size: 40,
-                                  color: LearningColors.darkBlue,
-                                ),
-                              )
-                            : null,
+                        // child: course.imageUrl == null
+                        //     ? Center(
+                        //         child: Icon(
+                        //           Icons.school,
+                        //           size: 40,
+                        //           color: LearningColors.darkBlue,
+                        //         ),
+                        //       )
+                        //     : null,
                       ),
                       SizedBox(height: 12),
 
                       // Course title and institute
                       Text(
-                        course.institue.toUpperCase(),
+                        course.centerName!.toUpperCase(),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -518,7 +596,7 @@ class _CoursePageState extends State<CoursePage> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        course.title,
+                        course.courseName!,
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -531,7 +609,7 @@ class _CoursePageState extends State<CoursePage> {
 
                       // Course description
                       Text(
-                        course.description,
+                        course.description!,
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -555,7 +633,7 @@ class _CoursePageState extends State<CoursePage> {
                                 SvgPicture.asset(LMSImagePath.mode),
                                 SizedBox(
                                     width: SizeConfig.blockSizeHorizontal * 1),
-                                Text(course.mode, style: LMSStyles.tsHeading),
+                                Text(course.trainingMode!, style: LMSStyles.tsHeading),
                               ],
                             ),
                           ),
@@ -568,7 +646,7 @@ class _CoursePageState extends State<CoursePage> {
                                 SvgPicture.asset(LMSImagePath.time),
                                 SizedBox(
                                     width: SizeConfig.blockSizeHorizontal * 1),
-                                Text(course.courseDuration,
+                                Text(course.duration!,
                                     style: LMSStyles.tsHeading),
                               ],
                             ),
@@ -587,7 +665,7 @@ class _CoursePageState extends State<CoursePage> {
                                 SizedBox(
                                     width: SizeConfig.blockSizeHorizontal * 1),
                                 Text(
-                                  _getDisplayCategory(currentCategory),
+                                 "General",
                                   style: LMSStyles.tsHeading,
                                 ),
                               ],
@@ -607,7 +685,7 @@ class _CoursePageState extends State<CoursePage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'INR ${course.amount}',
+                                'INR ${course.pricing!}',
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,

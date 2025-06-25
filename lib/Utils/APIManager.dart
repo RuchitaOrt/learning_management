@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
+import 'package:learning_mgt/model/GetCourseCategory.dart';
+import 'package:learning_mgt/model/GetCourseDetailListResponse.dart';
+import 'package:learning_mgt/model/GetCourseListResponse.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
@@ -20,9 +23,13 @@ enum API {
   verifyEmailOTP,
   registerCandidate,
   candidateDetails,
+  getcoursecategorylist,
+  getallcoursesbycategory,
+  getcoursedetailsbyid
+  candidateDetails,
   getDocuments,
 
-  
+
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -102,6 +109,16 @@ class APIManager {
         case API.getDocuments:
         apiPathString = "/api/candidate/get-enrollment-documents";
         break;
+      case API.getcoursecategorylist:
+        apiPathString = "/api/course/get-course-category-list";
+        break;
+ case API.getallcoursesbycategory:
+        apiPathString = "/api/course/get-allcourses-bycategory";
+        break;
+case API.getcoursedetailsbyid:
+        apiPathString = "/api/course/get-course-detailsbyid";
+        break;
+
 
       default:
         apiPathString = "/Login";
@@ -118,6 +135,7 @@ class APIManager {
       case API.countrylist:
       case API.departmentlist:
       case API.getqualifications:
+      case API.getcoursecategorylist:
         method = HTTPMethod.GET;
         break;
 
@@ -137,17 +155,16 @@ class APIManager {
      case API.logout:
         className = "CommonResponse";
         break;
-        case API.countrylist:
+      case API.countrylist:
         className = "CountryListResponse";
         break;
-        case API.departmentlist:
+      case API.departmentlist:
         className = "DepartmentListResponse";
         break;
-        case API.getqualifications:
+      case API.getqualifications:
         className = "QualificationListResponse";
-        break;
 
-        case API.getdeptwiseranklist:
+      case API.getdeptwiseranklist:
         className = "RankListResponse";
         break;
 
@@ -162,6 +179,15 @@ class APIManager {
         className = "DocumentListResponse";
         break;
 
+      case API.getcoursecategorylist:
+        className = "CategoryResponse";
+        break;
+         case API.getallcoursesbycategory:
+        className = "GetCourseListResponse";
+        break;
+         case API.getcoursedetailsbyid:
+        className = "GetCourseDetailListResponse";
+        break;
       default:
         className = 'CommonResponse';
     }
@@ -184,7 +210,19 @@ class APIManager {
       responseObj = QualificationListResponse.fromJson(json);
     } else if (className == 'OtpResponse') {
       responseObj = CommonResponse.fromJson(json);
-    } else if (className == 'CommonResponse') {
+    }
+
+    else if (className == 'CategoryResponse') {
+      responseObj = CategoryResponse.fromJson(json);
+    } else if (className == 'GetCourseListResponse') {
+      responseObj = CourseListResponse.fromJson(json);
+    }
+    else if (className == 'GetCourseDetailListResponse') {
+      responseObj = GetCourseDetailListResponse.fromJson(json);
+    }
+
+
+    else if (className == 'CommonResponse') {
       responseObj = CommonResponse.fromJson(json);
     } else if (className == 'DocumentListResponse') {
       responseObj = DocumentListResponse.fromJson(json);

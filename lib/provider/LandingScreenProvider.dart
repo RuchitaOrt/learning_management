@@ -7,6 +7,7 @@ import 'package:learning_mgt/Utils/APIManager.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
 import 'package:learning_mgt/Utils/internetConnection.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/model/GetCourseCategory.dart';
 import 'package:learning_mgt/model/LogoutResponse.dart';
 import 'package:learning_mgt/screens/signIn_screen.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
@@ -70,7 +71,66 @@ class LandingScreenProvider with ChangeNotifier {
         ShowDialogs.showToast('Error during logout: ${e.toString()}');
       }
     }
+
+    
   }
+
+    List<CategoryData> _categoryList = [];
+
+  // Getter for data
+  List<CategoryData> get categoryList => _categoryList;
+  set categoryList(List<CategoryData> data) {
+    _categoryList = data;
+    notifyListeners();
+  }
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+    Future<void> getCategoryList() async {
+    
+ isLoading = true;
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      
+      dynamic jsonbody = "";
+      
+      return APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getcoursecategorylist,
+        (response) async {
+            CategoryResponse resp = response;
+            _categoryList=resp.data!;
+             isLoading = false;
+            notifyListeners();
+         print(response);
+        },
+        (error) {
+          // Handle error case
+          print('ERR msg is $error');
+          isLoading = false;
+          notifyListeners();
+          ShowDialogs.showToast("Server Not Responding");
+
+          
+        },
+        jsonval: jsonbody,
+      );
+    } else {
+      // No internet connection
+      ShowDialogs.showToast("Please check internet connection");
+isLoading = false;
+          notifyListeners();
+     
+      return Future.error("No Internet Connection");
+    }
+  }
+
  /*Future<void> logoutAPI(String token) async {
     var status1 = await ConnectionDetector.checkInternetConnection();
 
