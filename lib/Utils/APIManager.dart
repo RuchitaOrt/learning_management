@@ -6,14 +6,15 @@ import 'package:learning_mgt/Utils/AppEror.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
 import 'package:learning_mgt/model/GetCourseCategory.dart';
 import 'package:learning_mgt/model/GetCourseDetailListResponse.dart';
+import 'package:learning_mgt/model/GetCourseInstitueResponse.dart';
 import 'package:learning_mgt/model/GetCourseListResponse.dart';
+import 'package:learning_mgt/model/GetResourceResponse.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
 import '../model/RegistrationResponse.dart';
 
 enum API {
-
   login,
   logout,
   countrylist,
@@ -28,9 +29,10 @@ enum API {
   getcoursecategorylist,
   getallcoursesbycategory,
   getcoursedetailsbyid,
-  documentsUpload
-
-
+  documentsUpload,
+  getcourseresources,
+  getstatecountry,
+  getcourseinstitutions
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -75,7 +77,6 @@ class APIManager {
     var apiPathString = "";
 
     switch (api) {
-
       case API.login:
         apiPathString = "/api/candidate/candidate-login";
         break;
@@ -83,46 +84,54 @@ class APIManager {
       case API.logout:
         apiPathString = "/api/candidate/candidate-logout";
         break;
-        case API.countrylist:
+      case API.countrylist:
         apiPathString = "/api/candidate/country-list";
         break;
-        case API.departmentlist:
+      case API.departmentlist:
         apiPathString = "/api/master/department-list";
         break;
-        case API.getqualifications:
+      case API.getqualifications:
         apiPathString = "/api/master/get-qualifications";
         break;
-        case API.getdeptwiseranklist:
+      case API.getdeptwiseranklist:
         apiPathString = "/api/course/getdeptwiseranklist";
         break;
-        case API.emailOTP:
+      case API.emailOTP:
         apiPathString = "/api/candidate/sendemail-otp";
         break;
-        case API.verifyEmailOTP:
+      case API.verifyEmailOTP:
         apiPathString = "/api/candidate/verify-otp";
         break;
-        case API.registerCandidate:
+      case API.registerCandidate:
         apiPathString = "/api/candidate/register-candidate";
         break;
-        case API.candidateDetails:
+      case API.candidateDetails:
         apiPathString = "/api/candidate/candidate-details";
         break;
-        case API.getDocuments:
+      case API.getDocuments:
         apiPathString = "/api/candidate/get-enrollment-documents";
         break;
       case API.getcoursecategorylist:
         apiPathString = "/api/course/get-course-category-list";
         break;
- case API.getallcoursesbycategory:
+      case API.getallcoursesbycategory:
         apiPathString = "/api/course/get-allcourses-bycategory";
         break;
-case API.getcoursedetailsbyid:
+      case API.getcoursedetailsbyid:
         apiPathString = "/api/course/get-course-detailsbyid";
         break;
-        case API.documentsUpload:
+      case API.documentsUpload:
         apiPathString = "/api/candidate/candidate-documents-submit";
         break;
-
+      case API.getcourseresources:
+        apiPathString = "/api/course/get-course-resources";
+        break;
+      case API.getstatecountry:
+        apiPathString = "/api/course/get-state-country";
+        break;
+      case API.getcourseinstitutions:
+        apiPathString = "/api/course/get-course-institutions";
+        break;
 
       default:
         apiPathString = "/Login";
@@ -135,7 +144,6 @@ case API.getcoursedetailsbyid:
   HTTPMethod apiHTTPMethod(API api) {
     HTTPMethod method;
     switch (api) {
-
       case API.countrylist:
       case API.departmentlist:
       case API.getqualifications:
@@ -152,11 +160,10 @@ case API.getcoursedetailsbyid:
   String classNameForAPI(API api) {
     String className;
     switch (api) {
-
       case API.login:
         className = "LoginResponse";
         break;
-     case API.logout:
+      case API.logout:
         className = "CommonResponse";
         break;
       case API.countrylist:
@@ -186,11 +193,20 @@ case API.getcoursedetailsbyid:
       case API.getcoursecategorylist:
         className = "CategoryResponse";
         break;
-         case API.getallcoursesbycategory:
+      case API.getallcoursesbycategory:
         className = "GetCourseListResponse";
         break;
-         case API.getcoursedetailsbyid:
+      case API.getcoursedetailsbyid:
         className = "GetCourseDetailListResponse";
+        break;
+      case API.getcourseresources:
+        className = "GetResourceResponse";
+        break;
+      case API.getstatecountry:
+        className = "GetStateResponse";
+        break;
+          case API.getcourseinstitutions:
+        className = "GetCourseInstituteResponse";
         break;
       default:
         className = 'CommonResponse';
@@ -200,7 +216,6 @@ case API.getcoursedetailsbyid:
 
   dynamic parseResponse(String className, var json) {
     dynamic responseObj;
-
 
     if (className == 'LoginResponse') {
       responseObj = LoginResponse.fromJson(json);
@@ -214,24 +229,22 @@ case API.getcoursedetailsbyid:
       responseObj = QualificationListResponse.fromJson(json);
     } else if (className == 'OtpResponse') {
       responseObj = CommonResponse.fromJson(json);
-    }
-
-    else if (className == 'CategoryResponse') {
+    } else if (className == 'CategoryResponse') {
       responseObj = CategoryResponse.fromJson(json);
     } else if (className == 'GetCourseListResponse') {
       responseObj = CourseListResponse.fromJson(json);
-    }
-    else if (className == 'GetCourseDetailListResponse') {
+    } else if (className == 'GetCourseDetailListResponse') {
       responseObj = GetCourseDetailListResponse.fromJson(json);
-    }
-
-
-    else if (className == 'CommonResponse') {
+    } else if (className == 'CommonResponse') {
       responseObj = CommonResponse.fromJson(json);
     } else if (className == 'DocumentListResponse') {
       responseObj = DocumentListResponse.fromJson(json);
+    } else if (className == 'GetResourceResponse') {
+      responseObj = GetResourceResponse.fromJson(json);
     }
-
+    else if (className == 'GetCourseInstituteResponse') {
+      responseObj = GetCourseInstituteResponse.fromJson(json);
+    }
 
     return responseObj;
   }
@@ -263,14 +276,12 @@ case API.getcoursedetailsbyid:
       headers = {
         "Accept": 'application/json',
         "Content-Type": "application/json",
-
         "Authorization": "Bearer ${token}"
       };
       print("header is $headers");
     } else {
       headers = {
         "Accept": 'application/json',
-
         "Content-Type": "application/json",
       };
       // }
@@ -291,7 +302,8 @@ case API.getcoursedetailsbyid:
           const chunkSize = 800;
 
           for (var i = 0; i < body.length; i += chunkSize) {
-            print(body.substring(i, i + chunkSize > body.length ? body.length : i + chunkSize));
+            print(body.substring(
+                i, i + chunkSize > body.length ? body.length : i + chunkSize));
           }
         }
         // print(response.body);
@@ -329,7 +341,8 @@ case API.getcoursedetailsbyid:
             var jsonResponse = json.decode(response.body);
             onSuccess(parseResponse(classNameForAPI(api), jsonResponse));
           } catch (e) {
-            var appError = parseError("Failed to parse response" as http.Response);
+            var appError =
+                parseError("Failed to parse response" as http.Response);
             onFailure(appError);
           }
         }
@@ -376,7 +389,6 @@ case API.getcoursedetailsbyid:
       onFailure(appError);
     }
   }
-
 
   dynamic parseUploadError(String response, int statusCode) {
     var jsonResponse;

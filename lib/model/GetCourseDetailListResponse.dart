@@ -1,15 +1,21 @@
 class GetCourseDetailListResponse {
-  int? n;
-  String? msg;
-  CourseData? data;
+  final int? n;
+  final String? msg;
+  final CourseDetailData? data;
 
-  GetCourseDetailListResponse({this.n, this.msg, this.data});
+  GetCourseDetailListResponse({
+    this.n,
+    this.msg,
+    this.data,
+  });
 
   factory GetCourseDetailListResponse.fromJson(Map<String, dynamic> json) {
     return GetCourseDetailListResponse(
-      n: json['n'],
-      msg: json['msg'],
-      data: json['data'] != null ? CourseData.fromJson(json['data']) : null,
+      n: json['n'] as int?,
+      msg: json['msg'] as String?,
+      data: json['data'] != null
+          ? CourseDetailData.fromJson(json['data'] as Map<String, dynamic>)
+          : null,
     );
   }
 
@@ -22,36 +28,37 @@ class GetCourseDetailListResponse {
   }
 }
 
-class CourseData {
-  int? id;
-  String? createdAt;
-  String? updatedAt;
-  String? createdBy;
-  String? updatedBy;
-  bool? isActive;
-  String? courseName;
-  String? courseCode;
-  String? trainingMode;
-  String? duration;
-  String? expiry;
-  String? followedBy;
-  String? topicsCovered;
-  String? pricing;
-  String? description;
-  String? courseStatus;
-  String? infoStatus;
-  List<String>? languages;
-  String? ogCode;
-  bool? ogApproved;
-  String? ogApprovedBy;
-  bool? ptcApproved;
-  String? ptcApprovedBy;
-  String? centerName;
-  List<String>? topicsList;
-  List<Module>? modulesList;
-  List<Language>? languagesList;
+class CourseDetailData {
+  final int? id;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final bool? isActive;
+  final String? courseName;
+  final String? courseCode;
+  final String? trainingMode;
+  final String? duration;
+  final String? expiry;
+  final dynamic followedBy;
+  final String? topicsCovered;
+  final String? pricing;
+  final String? description;
+  final String? courseStatus;
+  final String? infoStatus;
+  final List<String>? languages;
+  final String? ogCode;
+  final bool? ogApproved;
+  final String? ogApprovedBy;
+  final bool? ptcApproved;
+  final String? ptcApprovedBy;
+  final String? centerName;
+  final List<String>? topicsList;
+  final List<ModuleData>? modulesList;
+  final List<LanguageData>? languagesList;
+  final String? enrollStatus;
 
-  CourseData({
+  CourseDetailData({
     this.id,
     this.createdAt,
     this.updatedAt,
@@ -79,41 +86,45 @@ class CourseData {
     this.topicsList,
     this.modulesList,
     this.languagesList,
+    this.enrollStatus,
   });
 
-  factory CourseData.fromJson(Map<String, dynamic> json) {
-    return CourseData(
-      id: json['id'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-      createdBy: json['createdBy'],
-      updatedBy: json['updatedBy'],
-      isActive: json['isActive'],
-      courseName: json['course_name'],
-      courseCode: json['course_code'],
-      trainingMode: json['training_mode'],
-      duration: json['duration'],
-      expiry: json['expiry'],
+  factory CourseDetailData.fromJson(Map<String, dynamic> json) {
+    return CourseDetailData(
+      id: json['id'] as int?,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      createdBy: json['createdBy'] as String?,
+      updatedBy: json['updatedBy'] as String?,
+      isActive: json['isActive'] as bool?,
+      courseName: json['course_name'] as String?,
+      courseCode: json['course_code'] as String?,
+      trainingMode: json['training_mode'] as String?,
+      duration: json['duration'] as String?,
+      expiry: json['expiry'] as String?,
       followedBy: json['followed_by'],
-      topicsCovered: json['topics_covered'],
-      pricing: json['pricing'],
-      description: json['description'],
-      courseStatus: json['course_status'],
-      infoStatus: json['info_status'],
-      languages: (json['languages'] as List?)?.map((e) => e.toString()).toList(),
-      ogCode: json['og_code'],
-      ogApproved: json['og_approved'],
-      ogApprovedBy: json['og_approvedby'],
-      ptcApproved: json['ptc_approved'],
-      ptcApprovedBy: json['ptc_approvedby'],
-      centerName: json['center_name'],
-      topicsList: (json['topics_list'] as List?)?.map((e) => e.toString()).toList(),
+      topicsCovered: json['topics_covered'] as String?,
+      pricing: json['pricing'] as String?,
+      description: json['description'] as String?,
+      courseStatus: json['course_status'] as String?,
+      infoStatus: json['info_status'] as String?,
+      languages:
+          (json['languages'] as List?)?.map((e) => e.toString()).toList(),
+      ogCode: json['og_code'] as String?,
+      ogApproved: json['og_approved'] as bool?,
+      ogApprovedBy: json['og_approvedby'] as String?,
+      ptcApproved: json['ptc_approved'] as bool?,
+      ptcApprovedBy: json['ptc_approvedby'] as String?,
+      centerName: json['center_name'] as String?,
+      topicsList:
+          (json['topics_list'] as List?)?.map((e) => e.toString()).toList(),
       modulesList: (json['modules_list'] as List?)
-          ?.map((e) => Module.fromJson(e))
+          ?.map((e) => ModuleData.fromJson(e as Map<String, dynamic>))
           .toList(),
       languagesList: (json['languages_list'] as List?)
-          ?.map((e) => Language.fromJson(e))
+          ?.map((e) => LanguageData.fromJson(e as Map<String, dynamic>))
           .toList(),
+      enrollStatus: json['enroll_status'] as String?,
     );
   }
 
@@ -146,23 +157,24 @@ class CourseData {
       'topics_list': topicsList,
       'modules_list': modulesList?.map((e) => e.toJson()).toList(),
       'languages_list': languagesList?.map((e) => e.toJson()).toList(),
+      'enroll_status': enrollStatus,
     };
   }
 }
 
-class Module {
-  int? id;
-  String? createdAt;
-  String? updatedAt;
-  String? createdBy;
-  String? updatedBy;
-  bool? isActive;
-  int? courseId;
-  String? moduleName;
-  String? moduleDescription;
-  String? moduleHours;
+class ModuleData {
+  final int? id;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final bool? isActive;
+  final int? courseId;
+  final String? moduleName;
+  final String? moduleDescription;
+  final String? moduleHours;
 
-  Module({
+  ModuleData({
     this.id,
     this.createdAt,
     this.updatedAt,
@@ -175,18 +187,18 @@ class Module {
     this.moduleHours,
   });
 
-  factory Module.fromJson(Map<String, dynamic> json) {
-    return Module(
-      id: json['id'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-      createdBy: json['createdBy'],
-      updatedBy: json['updatedBy'],
-      isActive: json['isActive'],
-      courseId: json['course_id'],
-      moduleName: json['module_name'],
-      moduleDescription: json['module_description'],
-      moduleHours: json['module_hours'],
+  factory ModuleData.fromJson(Map<String, dynamic> json) {
+    return ModuleData(
+      id: json['id'] as int?,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      createdBy: json['createdBy'] as String?,
+      updatedBy: json['updatedBy'] as String?,
+      isActive: json['isActive'] as bool?,
+      courseId: json['course_id'] as int?,
+      moduleName: json['module_name'] as String?,
+      moduleDescription: json['module_description'] as String?,
+      moduleHours: json['module_hours'] as String?,
     );
   }
 
@@ -206,16 +218,16 @@ class Module {
   }
 }
 
-class Language {
-  int? id;
-  String? createdAt;
-  String? updatedAt;
-  String? createdBy;
-  String? updatedBy;
-  bool? isActive;
-  String? languagesName;
+class LanguageData {
+  final int? id;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final bool? isActive;
+  final String? languagesName;
 
-  Language({
+  LanguageData({
     this.id,
     this.createdAt,
     this.updatedAt,
@@ -225,15 +237,15 @@ class Language {
     this.languagesName,
   });
 
-  factory Language.fromJson(Map<String, dynamic> json) {
-    return Language(
-      id: json['id'],
-      createdAt: json['createdAt'],
-      updatedAt: json['updatedAt'],
-      createdBy: json['createdBy'],
-      updatedBy: json['updatedBy'],
-      isActive: json['isActive'],
-      languagesName: json['languages_name'],
+  factory LanguageData.fromJson(Map<String, dynamic> json) {
+    return LanguageData(
+      id: json['id'] as int?,
+      createdAt: json['createdAt'] as String?,
+      updatedAt: json['updatedAt'] as String?,
+      createdBy: json['createdBy'] as String?,
+      updatedBy: json['updatedBy'] as String?,
+      isActive: json['isActive'] as bool?,
+      languagesName: json['languages_name'] as String?,
     );
   }
 

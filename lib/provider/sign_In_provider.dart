@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -20,7 +19,7 @@ class SignInProvider with ChangeNotifier {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final RegexHelper _regexHelper = RegexHelper();
   bool _isExploreChecked = false;
- 
+
   bool get isExploreChecked => _isExploreChecked;
   bool _isCheckedTerms = false;
 
@@ -31,7 +30,7 @@ class SignInProvider with ChangeNotifier {
   bool get isChecked => _isChecked;
 
   bool _showTermsError = false;
-  
+
   bool get showTermsError => _showTermsError;
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -41,6 +40,7 @@ class SignInProvider with ChangeNotifier {
     _showTermsError = false; // Hide error when checkbox is toggled
     notifyListeners();
   }
+
   // Setter
   set isExploreChecked(bool value) {
     _isExploreChecked = value;
@@ -87,7 +87,6 @@ class SignInProvider with ChangeNotifier {
     return null;
   }
 
-
   void toggleCheckbox(bool? value) {
     _isChecked = value ?? false;
     notifyListeners(); // Notify listeners when the state changes
@@ -100,24 +99,24 @@ class SignInProvider with ChangeNotifier {
     return isFormValid && _isCheckedTerms;
   }
 
-  
   var getToken = "";
   void onSingleChipSelected(String? label) {
     selectedChip = label; // Update the selected chip
-   
+
     notifyListeners();
   }
- 
+
   void validateTermsAcceptance() {
     _showTermsError = !_isCheckedTerms;
     notifyListeners();
   }
-Map<String, String> createRequestBody() {
-  return {
-    "email": emailController.text.trim(),
-    "password": passwordController.text,
-  };
-}
+
+  Map<String, String> createRequestBody() {
+    return {
+      "email": emailController.text.trim(),
+      "password": passwordController.text,
+    };
+  }
 
   Future<void> createSignIn() async {
     if (!validateForm()) {
@@ -142,10 +141,12 @@ Map<String, String> createRequestBody() {
       await APIManager().apiRequest(
         routeGlobalKey.currentContext!,
         API.login,
-            (response) async {
+        (response) async {
           if (response is LoginResponse) {
             // Store token
-            await SPManager().setAuthToken(response.token);
+           if(response.n==1)
+           {
+             await SPManager().setAuthToken(response.token);
 
             // Store user data if needed
             await SPManager().setUserData(json.encode(response.data));
@@ -159,9 +160,12 @@ Map<String, String> createRequestBody() {
                 'isSignUp': false,
               },
             );
+           }else{
+             ShowDialogs.showToast(response.msg);
+           }
           }
         },
-            (error) {
+        (error) {
           print('Login error: $error');
           ShowDialogs.showToast("Login failed. Please try again.");
         },
@@ -173,7 +177,7 @@ Map<String, String> createRequestBody() {
     }
   }
 
- /*createSignIn() async {
+  /*createSignIn() async {
     var status1 = await ConnectionDetector.checkInternetConnection();
 
     if (status1) {

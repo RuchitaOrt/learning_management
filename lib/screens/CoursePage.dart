@@ -522,7 +522,10 @@ Widget listing(CourseProvider courseProvider)
     return GestureDetector(
       onTap: () {
         Navigator.of(routeGlobalKey.currentContext!)
-            .pushNamed(CourseDetailPage.route)
+            .pushNamed(CourseDetailPage.route,
+            arguments: {
+                "courseID": course.id.toString()
+              })
             .then((value) {});
       },
       child: Container(
