@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/provider/CourseProvider.dart';
 import 'package:learning_mgt/screens/Videoscreen.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
+import 'package:provider/provider.dart';
 
 import '../Utils/lms_styles.dart';
 import 'OrderSummary.dart';
@@ -22,12 +24,20 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   bool isSelected = false;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
+ 
+ @override
   void initState() {
-    _tabController = TabController(length: 6, vsync: this);
+    // TODO: implement initState
     super.initState();
-  }
+ _tabController = TabController(length: 6, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+     
 
+       final courseProvider = Provider.of<CourseProvider>(context, listen: false);
+      courseProvider.courseDetailAPI("1");
+      // }
+    });
+  }
   @override
   void dispose() {
     _tabController.dispose();
