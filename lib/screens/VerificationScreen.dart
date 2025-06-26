@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -55,63 +56,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
     DetailFormWidget(),
     UploadFormWidget(),
   ];
-
-/*  Widget stepIndicator(
-      BuildContext context, int currentStep, bool isSubmitted) {
-    final steps = ['Basic', 'Detail', 'Upload'];
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(steps.length * 2 - 1, (index) {
-        if (index.isEven) {
-          final stepIndex = index ~/ 2;
-          final bool isCompleted = stepIndex < currentStep ||
-              (isSubmitted && stepIndex == currentStep);
-          final bool isCurrent = stepIndex == currentStep && !isSubmitted;
-
-          Color bgColor;
-          Widget childContent;
-
-          if (isCompleted) {
-            bgColor = Colors.green;
-            childContent = Icon(Icons.check, color: Colors.white, size: 20);
-          } else {
-            bgColor = Colors.grey.shade400;
-            childContent =
-                Text('${stepIndex + 1}', style: TextStyle(color: Colors.white));
-          }
-
-          return Column(
-            children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: bgColor,
-                child: childContent,
-              ),
-              SizedBox(height: 6),
-              Text(
-                steps[stepIndex],
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isCurrent ? Colors.black : Colors.grey.shade600,
-                ),
-              ),
-            ],
-          );
-        } else {
-          final lineIndex = (index - 1) ~/ 2;
-          final bool isLineActive = lineIndex < currentStep ||
-              (isSubmitted && lineIndex == currentStep - 1);
-          return Expanded(
-            child: Container(
-              height: 2,
-              color: isLineActive ? Colors.green : Colors.grey.shade300,
-            ),
-          );
-        }
-      }),
-    );
-  }*/
 
   Widget stepIndicator(
       BuildContext context, int currentStep, bool isSubmitted) {
@@ -335,10 +279,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       flex: 1,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          /*backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: LearningColors.neutral300),
-                          padding: EdgeInsets.symmetric(vertical: 16),*/
                           backgroundColor: Colors.white,
                           foregroundColor: Colors.black,
                           padding: EdgeInsets.symmetric(
@@ -383,7 +323,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
                               final formKey = current == 0
                                   ? signUpProvider.formKeyBasic
-                                  : signUpProvider.formKeyDetail;
+                                  : current == 1
+                                  ? signUpProvider.formKeyDetail
+                                  : signUpProvider.formKeyUpload;
 
                               if (formKey.currentState?.validate() ?? false) {
                                 try {
@@ -391,6 +333,10 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                     await signUpProvider.registerCandidate(context);
                                   } else if (current == 1) {
                                     await signUpProvider.saveCandidateDetails(context);
+                                    await signUpProvider.fetchDocuments();
+                                  } else if (current == 2) {
+                                    // This is the submit button for the upload step
+                                    await signUpProvider.uploadDocuments(context);
                                   }
 
                                   // Only proceed if API call succeeds
@@ -416,7 +362,9 @@ class _VerificationScreenState extends State<VerificationScreen> {
                         builder: (context, signUpProvider, _) {
                           return ElevatedButton(
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: signUpProvider.isEmailVerified && !signUpProvider.isRegistering
+                              backgroundColor: signUpProvider.isEmailVerified &&
+                                  !signUpProvider.isRegistering &&
+                                  !signUpProvider.isSavingDetails
                                   ? LearningColors.darkBlue
                                   : Colors.grey,
                               foregroundColor: Colors.white,
@@ -433,23 +381,32 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                 return;
                               }
 
-                              final formKey = signUpProvider.formKeyBasic;
+                              final formKey = current == 0
+                                  ? signUpProvider.formKeyBasic
+                                  : signUpProvider.formKeyDetail;
+
                               if (formKey.currentState?.validate() ?? false) {
                                 try {
-                                  await signUpProvider.registerCandidate(context);
-                                  // Only proceed to next step if registration succeeds
+                                  if (current == 0) {
+                                    await signUpProvider.registerCandidate(context);
+                                  } else if (current == 1) {
+                                    await signUpProvider.saveCandidateDetails(context);
+                                    await signUpProvider.fetchDocuments();
+                                  }
+
+                                  // Only proceed if API call succeeds
                                   Provider.of<StepProvider>(context, listen: false).nextStep();
                                 } catch (e) {
-                                  // Error is already shown by registerCandidate
+                                  // Error is already shown by the provider methods
                                 }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(content: Text('Please fix errors before proceeding')));
                               }
                             },
-                            child: signUpProvider.isRegistering
+                            child: signUpProvider.isRegistering || signUpProvider.isSavingDetails
                                 ? CircularProgressIndicator(color: Colors.white)
-                                : Text('Next'),
+                                : Text(current == 2 ? 'Submit' : 'Next'),
                           );
                         },
                       ),
@@ -708,259 +665,6 @@ class BasicFormWidget extends StatelessWidget {
 }
 
 // DetailFormWidget: Step 2
-/*class DetailFormWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final signUpProvider = Provider.of<SignUpProvider>(context);
-
-    return Form(
-      key: signUpProvider.formKeyDetail,
-      child: ListView(
-        padding: EdgeInsets.zero, // removes default padding
-        shrinkWrap: true,
-        physics: ClampingScrollPhysics(),
-        children: [
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // First Name
-              Expanded(
-                child: CustomTextFieldWidget(
-                  title: LMSStrings.strSeafarerNo,
-                  hintText: LMSStrings.strSeafarerNoHint,
-                  onChange: (val) {},
-                  textEditingController: signUpProvider.seafarerController,
-                  autovalidateMode: AutovalidateMode.disabled,
-                  validator: signUpProvider.validateSeafaer,
-                ),
-              ),
-              SizedBox(width: 10), // Space between fields
-
-              // Last Name
-              Expanded(
-                child: CustomTextFieldWidget(
-                  title: LMSStrings.strPassportNo,
-                  hintText: LMSStrings.strPassportNoHint,
-                  onChange: (val) {},
-                  textEditingController: signUpProvider.passportController,
-                  autovalidateMode: AutovalidateMode.disabled,
-                  validator: signUpProvider.validatePassport,
-                ),
-              ),
-            ],
-          ),
-          CustomTextFieldWidget(
-            textEditingController: signUpProvider.departmentController,
-            title: LMSStrings.strDepartment,
-            hintText: LMSStrings.strSelectDepartment,
-            autovalidateMode: AutovalidateMode.disabled,
-            isFieldReadOnly: true, // Make text field read-only
-            onTap: () async {
-              final selected = await showDialog<String>(
-                context: context,
-                builder: (context) {
-                  String? tempSelected =
-                      signUpProvider.departmentController.text;
-                  final departments = [
-                    'HR',
-                    'Finance',
-                    'Engineering',
-                    'Marketing'
-                  ];
-
-                  return AlertDialog(
-                    title: Text('Select Department'),
-                    content: StatefulBuilder(
-                      builder: (context, setState) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: departments.map((dept) {
-                            return RadioListTile<String>(
-                              title: Text(dept),
-                              value: dept,
-                              groupValue: tempSelected,
-                              onChanged: (value) {
-                                Navigator.pop(context, value);
-                              },
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                    // Remove the actions section entirely since we don't need the Select button
-                  );
-                },
-              );
-
-              if (selected != null && selected.isNotEmpty) {
-                signUpProvider.departmentController.text = selected;
-                // If you want, also notify listeners if needed
-              }
-            },
-            validator: signUpProvider.validateDepartment,
-          ),
-          CustomTextFieldWidget(
-            textEditingController: signUpProvider.rankController,
-            title: LMSStrings.strRank,
-            hintText: LMSStrings.strRankHint,
-
-            autovalidateMode: AutovalidateMode.disabled,
-            isFieldReadOnly: true, // Make text field read-only
-            onTap: () async {
-              final selected = await showDialog<String>(
-                context: context,
-                builder: (context) {
-                  String? tempSelected = signUpProvider.rankController.text;
-                  final departments = ['One', 'Two', 'Three'];
-
-                  return AlertDialog(
-                    title: Text('Select Rank'),
-                    content: StatefulBuilder(
-                      builder: (context, setState) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: departments.map((dept) {
-                            return RadioListTile<String>(
-                              title: Text(dept),
-                              value: dept,
-                              groupValue: tempSelected,
-                              onChanged: (value) {
-                                Navigator.pop(context, value);
-                              },
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-
-              if (selected != null && selected.isNotEmpty) {
-                signUpProvider.rankController.text = selected;
-                // If you want, also notify listeners if needed
-              }
-            },
-            validator: signUpProvider.validateRank,
-          ),
-          CustomTextFieldWidget(
-            textEditingController: signUpProvider.countryController,
-            title: LMSStrings.strCountry,
-
-            autovalidateMode: AutovalidateMode.disabled,
-            hintText: LMSStrings.strCountryHint,
-            isFieldReadOnly: true, // Make text field read-only
-            onTap: () async {
-              final selected = await showDialog<String>(
-                context: context,
-                builder: (context) {
-                  String? tempSelected = signUpProvider.countryController.text;
-                  final departments = ['India', 'USA', 'England'];
-
-                  return AlertDialog(
-                    title: Text('Select Country'),
-                    content: StatefulBuilder(
-                      builder: (context, setState) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: departments.map((dept) {
-                            return RadioListTile<String>(
-                              title: Text(dept),
-                              value: dept,
-                              groupValue: tempSelected,
-                              onChanged: (value) {
-                                Navigator.pop(context, value);
-                              },
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-
-              if (selected != null && selected.isNotEmpty) {
-                signUpProvider.countryController.text = selected;
-                // If you want, also notify listeners if needed
-              }
-            },
-            validator: signUpProvider.validateCountry,
-          ),
-          CustomTextFieldWidget(
-  title: LMSStrings.strDOB,
-  hintText: LMSStrings.strDOBHint,
-  textEditingController: signUpProvider.dobController,
-  isFieldReadOnly: true,
-  autovalidateMode: AutovalidateMode.disabled,
-  validator: signUpProvider.validateDOB,
-  onTap: () async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData.light().copyWith(
-            colorScheme: ColorScheme.light(
-              primary: LearningColors.darkBlue, // Header background and selected date circle
-              onPrimary: Colors.white, // Text color on primary (header text)
-              onSurface: Colors.black, // Default text color for dates
-              surface: Colors.white, // Background color of the picker
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: LearningColors.darkBlue, // OK/Cancel button text color
-                textStyle: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            dialogBackgroundColor: Colors.white, // Overall background
-          ),
-          child: child!,
-        );
-      },
-    );
-
-    if (pickedDate != null) {
-      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-      signUpProvider.dobController.text = formattedDate;
-    }
-  },
-  onChange: (val) {},
-),
-
-          CustomTextFieldWidget(
-            title: LMSStrings.strPincode,
-            hintText: LMSStrings.strPincodeHint,
-            onChange: (val) {},
-            textEditingController: signUpProvider.pincodeController,
-            suffixIcon: TextButton(
-              onPressed: () {
-                // Add logic to send OTP to email
-              },
-              child: Text(
-                "Locate Me",
-                style: TextStyle(
-                    color: LearningColors.darkBlue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12),
-              ),
-            ),
-            // autovalidateMode: AutovalidateMode.disabled,
-            // validator: signUpProvider.validatePincodet,
-          ),
-        ],
-      ),
-    );
-  }
-}*/
-
 class DetailFormWidget extends StatefulWidget {
   @override
   _DetailFormWidgetState createState() => _DetailFormWidgetState();
@@ -983,11 +687,15 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
   @override
   void initState() {
     super.initState();
-    fetchDepartments();
-    fetchCountries();
+    /*fetchDepartments();
+    fetchCountries();*/
+    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+    signUpProvider.fetchDepartments();
+    signUpProvider.fetchCountries();
+    signUpProvider.fetchQualifications();
   }
 
-  Future<void> fetchDepartments() async {
+  /*Future<void> fetchDepartments() async {
     if (mounted) setState(() {
       isLoading = true;
       errorMessage = null;
@@ -1117,50 +825,6 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
         isLoadingRanks = false;
       });
     }
-  }
-
-  /*Future<void> fetchRanks(int departmentId) async {
-    if (mounted) setState(() {
-      isLoadingRanks = true;
-      rankErrorMessage = null;
-      ranks.clear();
-    });
-
-    try {
-      // Try both formats - one of these should work
-      final requestBody = json.encode({
-        // "department": {"id": departmentId}
-        "departmentid": departmentId.toString()
-        // OR
-        // "department_id": departmentId.toString()  // String format
-      });
-
-      print('Requesting ranks with body: $requestBody');
-
-      await APIManager().apiRequest(
-        context,
-        API.getdeptwiseranklist,
-            (response) {
-          // Handle response
-        },
-            (error) {
-          print('Full error details: $error');
-          if (mounted) setState(() {
-            rankErrorMessage = 'Failed to load ranks. Please try again.';
-          });
-        },
-        jsonval: requestBody,
-      );
-    } catch (e) {
-      print('Complete exception: $e');
-      if (mounted) setState(() {
-        rankErrorMessage = 'Service unavailable. Please try later.';
-      });
-    } finally {
-      if (mounted) setState(() {
-        isLoadingRanks = false;
-      });
-    }
   }*/
 
   @override
@@ -1202,150 +866,12 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
               ),
             ],
           ),
-          /*isLoading
-              ? Center(child: CircularProgressIndicator())
-              : CustomTextFieldWidget(
-            textEditingController: signUpProvider.departmentController,
-            title: LMSStrings.strDepartment,
-            hintText: LMSStrings.strSelectDepartment,
-            autovalidateMode: AutovalidateMode.disabled,
-            isFieldReadOnly: true,
-            onTap: () async {
-              if (departments.isEmpty) {
-                await fetchDepartments();
-                if (departments.isEmpty) {
-                  ShowDialogs.showToast('No departments available');
-                  return;
-                }
-              }
-
-              final selected = await showDialog<String>(
-                context: context,
-                builder: (context) {
-                  String? tempSelected =
-                      signUpProvider.departmentController.text;
-
-                  return AlertDialog(
-                    title: Text('Select Department'),
-                    content: StatefulBuilder(
-                      builder: (context, setState) {
-                        return SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: departments.map((dept) {
-                              return RadioListTile<String>(
-                                title: Text(dept.departmentName),
-                                value: dept.departmentName,
-                                groupValue: tempSelected,
-                                onChanged: (value) {
-                                  Navigator.pop(context, value);
-                                },
-                              );
-                            }).toList(),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-
-              if (selected != null && selected.isNotEmpty) {
-                signUpProvider.departmentController.text = selected;
-              }
-            },
-            validator: signUpProvider.validateDepartment,
-          ),*/
 
           _buildDepartmentField(signUpProvider),
-
-          /*CustomTextFieldWidget(
-            textEditingController: signUpProvider.rankController,
-            title: LMSStrings.strRank,
-            hintText: LMSStrings.strRankHint,
-            autovalidateMode: AutovalidateMode.disabled,
-            isFieldReadOnly: true,
-            onTap: () async {
-              final selected = await showDialog<String>(
-                context: context,
-                builder: (context) {
-                  String? tempSelected = signUpProvider.rankController.text;
-                  final departments = ['One', 'Two', 'Three'];
-
-                  return AlertDialog(
-                    title: Text('Select Rank'),
-                    content: StatefulBuilder(
-                      builder: (context, setState) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: departments.map((dept) {
-                            return RadioListTile<String>(
-                              title: Text(dept),
-                              value: dept,
-                              groupValue: tempSelected,
-                              onChanged: (value) {
-                                Navigator.pop(context, value);
-                              },
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-
-              if (selected != null && selected.isNotEmpty) {
-                signUpProvider.rankController.text = selected;
-              }
-            },
-            validator: signUpProvider.validateRank,
-          ),*/
           _buildRankField(signUpProvider),
-          /*CustomTextFieldWidget(
-            textEditingController: signUpProvider.countryController,
-            title: LMSStrings.strCountry,
-            autovalidateMode: AutovalidateMode.disabled,
-            hintText: LMSStrings.strCountryHint,
-            isFieldReadOnly: true,
-            onTap: () async {
-              final selected = await showDialog<String>(
-                context: context,
-                builder: (context) {
-                  String? tempSelected = signUpProvider.countryController.text;
-                  final departments = ['India', 'USA', 'England'];
-
-                  return AlertDialog(
-                    title: Text('Select Country'),
-                    content: StatefulBuilder(
-                      builder: (context, setState) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: departments.map((dept) {
-                            return RadioListTile<String>(
-                              title: Text(dept),
-                              value: dept,
-                              groupValue: tempSelected,
-                              onChanged: (value) {
-                                Navigator.pop(context, value);
-                              },
-                            );
-                          }).toList(),
-                        );
-                      },
-                    ),
-                  );
-                },
-              );
-
-              if (selected != null && selected.isNotEmpty) {
-                signUpProvider.countryController.text = selected;
-              }
-            },
-            validator: signUpProvider.validateCountry,
-          ),*/
 
           _buildCountryField(signUpProvider),
+          _buildQualificationField(signUpProvider),
           CustomTextFieldWidget(
             title: LMSStrings.strDOB,
             hintText: LMSStrings.strDOBHint,
@@ -1415,21 +941,21 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
   }
 
   Widget _buildDepartmentField(SignUpProvider signUpProvider) {
-    if (isLoading) {
+    if (signUpProvider.isLoadingDepartments) {
       return Center(child: CircularProgressIndicator());
     }
 
-    if (errorMessage != null) {
+    if (signUpProvider.departmentError != null) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text(
-          errorMessage!,
+          signUpProvider.departmentError!,
           style: TextStyle(color: Colors.red),
         ),
       );
     }
 
-    if (departments.isEmpty) {
+    if (signUpProvider.departments.isEmpty) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Text('No departments available'),
@@ -1442,73 +968,103 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
       hintText: LMSStrings.strSelectDepartment,
       autovalidateMode: AutovalidateMode.disabled,
       isFieldReadOnly: true,
-      // onTap: () => _showDepartmentDialog(signUpProvider),
       onTap: () => _showDepartmentDialog(signUpProvider),
       validator: signUpProvider.validateDepartment,
+    );
+  }
+
+  Widget _buildCountryField(SignUpProvider signUpProvider) {
+    if (signUpProvider.isLoadingCountries) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (signUpProvider.countryError != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          signUpProvider.countryError!,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    if (signUpProvider.countries.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text('No countries available'),
+      );
+    }
+
+    return CustomTextFieldWidget(
+      textEditingController: signUpProvider.countryController,
+      title: LMSStrings.strCountry,
+      hintText: LMSStrings.strCountryHint,
+      autovalidateMode: AutovalidateMode.disabled,
+      isFieldReadOnly: true,
+      onTap: () => _showCountryDialog(signUpProvider),
+      validator: signUpProvider.validateCountry,
+    );
+  }
+
+  Widget _buildRankField(SignUpProvider signUpProvider) {
+    if (signUpProvider.isLoadingRanks) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (signUpProvider.rankError != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          signUpProvider.rankError!,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    if (signUpProvider.selectedDepartmentId == null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'Please select a department first',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    if (signUpProvider.ranks.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          'No ranks available for selected department',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
+    }
+
+    return CustomTextFieldWidget(
+      textEditingController: signUpProvider.rankController,
+      title: LMSStrings.strRank,
+      hintText: LMSStrings.strRank,
+      autovalidateMode: AutovalidateMode.disabled,
+      isFieldReadOnly: true,
+      onTap: () => _showRankDialog(signUpProvider),
+      validator: signUpProvider.validateRank,
     );
   }
 
   Future<void> _showDepartmentDialog(SignUpProvider signUpProvider) async {
     final selected = await showDialog<Department>(
       context: context,
-      builder: (context) {
-        String? currentSelection = signUpProvider.departmentController.text;
-
-        return AlertDialog(
-          title: Text('Select Department'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: departments.map((dept) {
-                return RadioListTile<Department>(
-                  title: Text(dept.departmentName),
-                  value: dept,
-                  /*groupValue: departments.firstWhere(
-                        (d) => d.departmentName == currentSelection,
-                    orElse: () => Department(id: -1, departmentName: '', status: false),
-                  ),*/
-                  groupValue: departments.firstWhere(
-                        (d) => d.id == Provider.of<SignUpProvider>(context, listen: false).selectedDepartmentId,
-                    orElse: () => Department(id: -1, departmentName: '', status: false),
-                  ),
-                  onChanged: (value) {
-                    Navigator.pop(context, value);
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-    );
-
-    /*if (selected != null) {
-      signUpProvider.clearTagSelection(); // Clear previous tag selection
-      signUpProvider.departmentController.text = selected.departmentName;
-      setState(() {
-        selectedDepartmentId = selected.id;
-      });
-      fetchRanks(selected.id);
-    }*/
-    if (selected != null) {
-      Provider.of<SignUpProvider>(context, listen: false).setSelectedDepartment(selected);
-      fetchRanks(selected.id);
-    }
-  }
-
-  /*Future<void> _showDepartmentDialog() async {
-    final selected = await showDialog<Department>(
-      context: context,
       builder: (context) => AlertDialog(
         title: Text('Select Department'),
         content: SingleChildScrollView(
           child: Column(
-            children: departments.map((dept) {
+            children: signUpProvider.departments.map((dept) {
               return RadioListTile<Department>(
                 title: Text(dept.departmentName),
                 value: dept,
-                groupValue: departments.firstWhere(
-                      (d) => d.id == Provider.of<SignUpProvider>(context, listen: false).selectedDepartmentId,
+                groupValue: signUpProvider.departments.firstWhere(
+                      (d) => d.id == signUpProvider.selectedDepartmentId,
                   orElse: () => Department(id: -1, departmentName: '', status: false),
                 ),
                 onChanged: (value) {
@@ -1522,90 +1078,24 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
     );
 
     if (selected != null) {
-      Provider.of<SignUpProvider>(context, listen: false).setSelectedDepartment(selected);
-      fetchRanks(selected.id);
+      signUpProvider.setSelectedDepartment(selected);
+      signUpProvider.fetchRanks(selected.id);
     }
-  }*/
-
-  Widget _buildCountryField(SignUpProvider signUpProvider) {
-    if (isLoadingCountries) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    if (countryErrorMessage != null) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          countryErrorMessage!,
-          style: TextStyle(color: Colors.red),
-        ),
-      );
-    }
-
-    if (countries.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text('No countries available'),
-      );
-    }
-
-    return CustomTextFieldWidget(
-      textEditingController: signUpProvider.countryController,
-      title: LMSStrings.strCountry,
-      hintText: LMSStrings.strCountryHint,
-      autovalidateMode: AutovalidateMode.disabled,
-      isFieldReadOnly: true,
-      // onTap: () => _showCountryDialog(signUpProvider),
-      onTap: () => _showCountryDialog(),
-      validator: signUpProvider.validateCountry,
-    );
   }
 
-  /*Future<void> _showCountryDialog(SignUpProvider signUpProvider) async {
-    final selected = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        String? currentSelection = signUpProvider.countryController.text;
-
-        return AlertDialog(
-          title: Text('Select Country'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: countries.map((country) {
-                return RadioListTile<String>(
-                  title: Text(country.name),
-                  value: country.name,
-                  groupValue: currentSelection,
-                  onChanged: (value) {
-                    Navigator.pop(context, value);
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-        );
-      },
-    );
-
-    if (selected != null) {
-      signUpProvider.countryController.text = selected;
-    }
-  }*/
-
-  Future<void> _showCountryDialog() async {
+  Future<void> _showCountryDialog(SignUpProvider signUpProvider) async {
     final selected = await showDialog<Country>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Select Country'),
         content: SingleChildScrollView(
           child: Column(
-            children: countries.map((country) {
+            children: signUpProvider.countries.map((country) {
               return RadioListTile<Country>(
                 title: Text(country.name),
                 value: country,
-                groupValue: countries.firstWhere(
-                      (c) => c.id == Provider.of<SignUpProvider>(context, listen: false).selectedCountryId,
+                groupValue: signUpProvider.countries.firstWhere(
+                      (c) => c.id == signUpProvider.selectedCountryId,
                   orElse: () => Country(id: -1, name: '', isActive: false),
                 ),
                 onChanged: (value) {
@@ -1619,74 +1109,23 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
     );
 
     if (selected != null) {
-      Provider.of<SignUpProvider>(context, listen: false).setSelectedCountry(selected);
+      signUpProvider.setSelectedCountry(selected);
     }
   }
 
-  Widget _buildRankField(SignUpProvider signUpProvider) {
-    // Show loading indicator
-    if (isLoadingRanks) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    // Show error message if exists
-    if (rankErrorMessage != null) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          rankErrorMessage!,
-          style: TextStyle(color: Colors.red),
-        ),
-      );
-    }
-
-    // Check if department is selected first
-    if (selectedDepartmentId == null) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          'Please select a department first',
-          style: TextStyle(color: Colors.grey),
-        ),
-      );
-    }
-
-    // Check if ranks are empty after all conditions
-    if (ranks.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          'No tags available for selected department',
-          style: TextStyle(color: Colors.grey),
-        ),
-      );
-    }
-
-    return CustomTextFieldWidget(
-      textEditingController: signUpProvider.rankController,
-      title: LMSStrings.strRank,
-      hintText: LMSStrings.strRank, // Changed hint text
-      autovalidateMode: AutovalidateMode.disabled,
-      isFieldReadOnly: true,
-      // onTap: () => _showTagRank(signUpProvider),
-      onTap: () => _showRankDialog(),
-      validator: signUpProvider.validateRank,
-    );
-  }
-
-  Future<void> _showRankDialog() async {
+  Future<void> _showRankDialog(SignUpProvider signUpProvider) async {
     final selected = await showDialog<Rank>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Select Rank'),
         content: SingleChildScrollView(
           child: Column(
-            children: ranks.map((rank) {
+            children: signUpProvider.ranks.map((rank) {
               return RadioListTile<Rank>(
                 title: Text(rank.rank),
                 value: rank,
-                groupValue: ranks.firstWhere(
-                      (r) => r.id == Provider.of<SignUpProvider>(context, listen: false).selectedRankId,
+                groupValue: signUpProvider.ranks.firstWhere(
+                      (r) => r.id == signUpProvider.selectedRankId,
                   orElse: () => Rank(id: -1, rank: '', tags: '', isActive: false),
                 ),
                 onChanged: (value) {
@@ -1700,56 +1139,77 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
     );
 
     if (selected != null) {
-      Provider.of<SignUpProvider>(context, listen: false).setSelectedRank(selected);
+      signUpProvider.setSelectedRank(selected);
     }
   }
 
-  /*Future<void> _showTagRank(SignUpProvider signUpProvider) async {
-    // Get all unique tags from all ranks
-    final allTags = ranks
-        .expand((rank) => rank.tags.split(',').map((t) => t.trim()))
-        .where((tag) => tag.isNotEmpty)
-        .toSet()
-        .toList();
+  Widget _buildQualificationField(SignUpProvider signUpProvider) {
+    if (signUpProvider.isLoadingQualifications) {
+      return Center(child: CircularProgressIndicator());
+    }
 
-    final selectedTag = await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) {
-        String? currentSelection = signUpProvider.selectedTag;
+    if (signUpProvider.qualificationError != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          signUpProvider.qualificationError!,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
 
-        return AlertDialog(
-          title: Text('Select Tag'),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: allTags.map((tag) {
-                return RadioListTile<String>(
-                  title: Text(tag),
-                  value: tag,
-                  groupValue: currentSelection,
-                  onChanged: (value) {
-                    Navigator.pop(context, value);
-                  },
-                );
-              }).toList(),
-            ),
-          ),
-        );
+    if (signUpProvider.qualifications.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text('No qualifications available'),
+      );
+    }
+
+    return CustomTextFieldWidget(
+      textEditingController: signUpProvider.qualificationController,
+      title: 'Qualification',
+      hintText: 'Select your qualification',
+      autovalidateMode: AutovalidateMode.disabled,
+      isFieldReadOnly: true,
+      onTap: () => _showQualificationDialog(signUpProvider),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select your qualification';
+        }
+        return null;
       },
     );
+  }
 
-    if (selectedTag != null) {
-      setState(() {
-        signUpProvider.selectedTag = selectedTag;
-        // Find the first rank that contains this tag and update the controller
-        final selectedRank = ranks.firstWhere(
-              (r) => r.tags.split(',').map((t) => t.trim()).contains(selectedTag),
-          orElse: () => ranks.first,
-        );
-        signUpProvider.rankController.text = selectedRank.rank;
-      });
+  Future<void> _showQualificationDialog(SignUpProvider signUpProvider) async {
+    final selected = await showDialog<Qualification>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Select Qualification'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: signUpProvider.qualifications.map((qualification) {
+              return RadioListTile<Qualification>(
+                title: Text(qualification.qualificationName),
+                value: qualification,
+                groupValue: signUpProvider.qualifications.firstWhere(
+                      (q) => q.id == signUpProvider.selectedQualificationId,
+                  orElse: () => Qualification(id: -1, qualificationName: '', isActive: false),
+                ),
+                onChanged: (value) {
+                  Navigator.pop(context, value);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (selected != null) {
+      signUpProvider.setSelectedQualification(selected);
     }
-  }*/
+  }
 }
 
 class UploadFormWidget extends StatelessWidget {
@@ -1757,115 +1217,196 @@ class UploadFormWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<SignUpProvider>(context);
 
+    print('Current documents count: ${provider.documents.length}');
+    provider.documents.forEach((doc) {
+      print('Document: ${doc.documentName}, Uploaded: ${doc.uploadedProof ?? "Not uploaded"}');
+    });
+
     return Form(
       key: provider.formKeyUpload,
-      child: provider.documentFields.isEmpty
+      child: provider.isLoadingDocuments
           ? Center(child: CircularProgressIndicator())
+          : provider.documents.isEmpty
+          ? Center(child: Text('No documents required'))
           : Column(
-              children: [
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(top: 8),
-                    itemCount: provider.documentFields.length,
-                    itemBuilder: (context, index) {
-                      final doc = provider.documentFields[index];
-                      return CustomTextFieldWidget(
-                        title: doc.name,
-                        isFieldReadOnly: true,
-                        hintText: doc.hint,
-                        textEditingController: provider.controllers[doc.name]!,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (_) => provider
-                            .validateFile(provider.selectedFilePaths[doc.name]),
-                        onChange: (val) {}, // optional
-                        suffixIcon: GestureDetector(
-                          onTap: () {
-                            if (provider.selectedFilePaths[doc.name] == null) {
-                              provider.pickFile(doc.name);
-                            } else {
-                              showImageDialog(
-                                provider.selectedFilePaths[doc.name],
-                                doc.name,
-                              );
-                            }
-                          },
-                          child: Icon(
-                            provider.selectedFilePaths[doc.name] == null
-                                ? Icons.upload
-                                : Icons.remove_red_eye,
-                          ),
-                        ),
-                      );
+        children: [
+          /*Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.only(top: 8),
+              itemCount: provider.documents.length,
+              itemBuilder: (context, index) {
+                final doc = provider.documents[index];
+                return CustomTextFieldWidget(
+                  title: doc.documentName,
+                  isFieldReadOnly: true,
+                  hintText: 'Upload ${doc.documentName}',
+                  textEditingController: provider.controllers[doc.documentName] ?? TextEditingController(),
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  validator: (_) => provider.validateFile(provider.selectedFilePaths[doc.documentName]),
+                  onChange: (val) {}, // optional
+                  suffixIcon: GestureDetector(
+                    onTap: () {
+                      if (provider.selectedFilePaths[doc.documentName] == null ||
+                          provider.selectedFilePaths[doc.documentName]!.isEmpty) {
+                        provider.pickFile(doc.documentName);
+                      } else {
+                        showImageDialog(
+                          context,
+                          provider.selectedFilePaths[doc.documentName]!,
+                          doc.documentName,
+                        );
+                      }
                     },
-                  ),
-                ),
-                // Note text after all fields
-                Padding(
-                  padding: const EdgeInsets.only(left: 12, top: 8, bottom: 16),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black87,
-                        fontStyle: FontStyle.italic,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Note',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: ': Allowed file types: ',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: 'PDF',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: ', ',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: 'JPG',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: ', ',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: 'PNG',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: '. Maximum file size: ',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: '2 MB',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.redAccent),
-                        ),
-                        TextSpan(
-                          text: ' per file.',
-                          style: TextStyle(color: Colors.redAccent),
-                        ),
-                      ],
+                    child: Icon(
+                      provider.selectedFilePaths[doc.documentName] == null ||
+                      provider.selectedFilePaths[doc.documentName]!.isEmpty
+                          ? Icons.upload
+                          : Icons.remove_red_eye,
                     ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
+          ),*/
+
+          Expanded(
+            child: ListView.builder(
+              itemCount: provider.documents.length,
+              itemBuilder: (context, index) {
+                final doc = provider.documents[index];
+                return _buildDocumentField(provider, doc);
+              },
+            ),
+          ),
+          // Note text after all fields
+          Padding(
+            padding: const EdgeInsets.only(left: 12, top: 8, bottom: 16),
+            child: RichText(
+              text: TextSpan(
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black87,
+                  fontStyle: FontStyle.italic,
+                ),
+                children: [
+                  TextSpan(
+                    text: 'Note',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: ': Allowed file types: ',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: 'PDF',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: ', ',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: 'JPG',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: ', ',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: 'PNG',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: '. Maximum file size: ',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: '2 MB',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.redAccent),
+                  ),
+                  TextSpan(
+                    text: ' per file.',
+                    style: TextStyle(color: Colors.redAccent),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDocumentField(SignUpProvider provider, Document doc) {
+    return CustomTextFieldWidget(
+      title: doc.documentName,
+      isFieldReadOnly: true,
+      hintText: doc.isEducationDocument
+          ? 'Upload ${doc.documentName} Certificate'
+          : 'Upload ${doc.documentName}',
+      textEditingController: provider.controllers[doc.documentName] ?? TextEditingController(),
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      validator: (_) => provider.validateFile(provider.selectedFilePaths[doc.documentName]),
+      suffixIcon: GestureDetector(
+        onTap: () {
+          if (provider.selectedFilePaths[doc.documentName] == null ||
+              provider.selectedFilePaths[doc.documentName]!.isEmpty) {
+            provider.pickFile(doc.documentName);
+          } else {
+            showImageDialog(
+              routeGlobalKey.currentContext!,
+              provider.selectedFilePaths[doc.documentName]!,
+              doc.documentName,
+            );
+          }
+        },
+        child: Icon(
+          provider.selectedFilePaths[doc.documentName] == null ||
+              provider.selectedFilePaths[doc.documentName]!.isEmpty
+              ? Icons.upload
+              : Icons.remove_red_eye,
+        ),
+      ),
+    );
+  }
+
+  void showImageDialog(BuildContext context, String filePath, String docName) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(docName),
+        content: filePath.endsWith('.pdf')
+            ? Text('PDF file: $filePath') // You might want to use a PDF viewer here
+            : Image.file(File(filePath)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              print('doc name: ${File(filePath)}');
+              Navigator.pop(context);
+          },
+            child: Text('Close'),
+          ),
+          TextButton(
+            onPressed: () {
+              Provider.of<SignUpProvider>(context, listen: false)
+                  .removeFile(docName);
+              Navigator.pop(context);
+            },
+            child: Text('Remove'),
+          ),
+        ],
+      ),
     );
   }
 }

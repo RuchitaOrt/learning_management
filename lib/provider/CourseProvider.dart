@@ -5,8 +5,10 @@ import 'package:learning_mgt/Utils/APIManager.dart';
 import 'package:learning_mgt/Utils/internetConnection.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/model/GetCourseDetailListResponse.dart' as detail;
+import 'package:learning_mgt/model/GetCourseInstitueResponse.dart';
 
 import 'package:learning_mgt/model/GetCourseListResponse.dart';
+import 'package:learning_mgt/model/GetResourceResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
 class Course {
@@ -40,7 +42,7 @@ class Course {
 }
 
 class CourseProvider with ChangeNotifier {
-  String? _selectedCategory="all";
+  String? _selectedCategory = "all";
 
   String? get selectedCategory => _selectedCategory;
 
@@ -54,7 +56,8 @@ class CourseProvider with ChangeNotifier {
   bool isSelected(String? category) {
     return _selectedCategory == category;
   }
- List<CourseData> _courseList = [];
+
+  List<CourseData> _courseList = [];
 
   // Getter for data
   List<CourseData> get courseList => _courseList;
@@ -62,6 +65,7 @@ class CourseProvider with ChangeNotifier {
     _courseList = data;
     notifyListeners();
   }
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
@@ -72,99 +76,244 @@ class CourseProvider with ChangeNotifier {
 
   void courseListAPI(String id) async {
     // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
-    
- isLoading = true;
- _courseList=[];
+
+    isLoading = true;
+    _courseList = [];
     var status1 = await ConnectionDetector.checkInternetConnection();
 
     if (status1) {
-    final body = {'category_id': id};
+      final body = {'category_id': id};
 
-    try {
-      await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
-        API.getallcoursesbycategory,
-        (response) {
-          // Navigator.pop(context);
-          CourseListResponse resp=response;
-          _courseList=resp.data!;
-           isLoading = false;
-          notifyListeners();
-print("courseList");
-          print(_courseList.length.toString());
-        },
-        (error) {
-          // Navigator.pop(context);
-           isLoading = false;
-          notifyListeners();
-          ShowDialogs.showToast("Server Not Responding");
-        },
-        jsonval: jsonEncode(body),
-      );
-    } catch (e) {
-       isLoading = false;
-          notifyListeners();
-      Navigator.pop(routeGlobalKey.currentContext!);
-      ShowDialogs.showToast('Unexpected error: $e');
-    }
-    }else{
-       isLoading = false;
-          notifyListeners();
-         ShowDialogs.showToast("Please check internet connection");
+      try {
+        await APIManager().apiRequest(
+          routeGlobalKey.currentContext!,
+          API.getallcoursesbycategory,
+          (response) {
+            // Navigator.pop(context);
+            CourseListResponse resp = response;
+            if (resp.n == 1) {
+              _courseList = resp.data!;
+              isLoading = false;
+              notifyListeners();
+              print("courseList");
+              print(_courseList.length.toString());
+            }
+          },
+          (error) {
+            // Navigator.pop(context);
+            isLoading = false;
+            notifyListeners();
+            ShowDialogs.showToast("Server Not Responding");
+          },
+          jsonval: jsonEncode(body),
+        );
+      } catch (e) {
+        isLoading = false;
+        notifyListeners();
+        Navigator.pop(routeGlobalKey.currentContext!);
+        ShowDialogs.showToast('Unexpected error: $e');
+      }
+    } else {
+      isLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
     }
   }
 
-
- late detail.CourseData _courseDetail;
+  late detail.CourseDetailData _courseDetail;
 
   // Getter for data
-  detail.CourseData get courseDetail => _courseDetail;
-  set courseDetail(detail.CourseData data) {
+  detail.CourseDetailData get courseDetail => _courseDetail;
+  set courseDetail(detail.CourseDetailData data) {
     _courseDetail = data;
     notifyListeners();
   }
 
- void courseDetailAPI(String id) async {
+  void courseDetailAPI(String id) async {
     // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
-    
- isLoading = true;
- _courseList=[];
+
+    isLoading = true;
+    _courseList = [];
     var status1 = await ConnectionDetector.checkInternetConnection();
 
     if (status1) {
-    final body = {'id': id};
+      final body = {'id': id};
 
-    try {
-      await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
-        API.getcoursedetailsbyid,
-        (response) {
-          // Navigator.pop(context);
-          detail.GetCourseDetailListResponse resp=response;
-          _courseDetail=resp.data!;
-           isLoading = false;
-          notifyListeners();
-print("courseList");
-          print(_courseDetail);
-        },
-        (error) {
-          // Navigator.pop(context);
-           isLoading = false;
-          notifyListeners();
-          ShowDialogs.showToast("Server Not Responding");
-        },
-        jsonval: jsonEncode(body),
-      );
-    } catch (e) {
-       isLoading = false;
-          notifyListeners();
-      Navigator.pop(routeGlobalKey.currentContext!);
-      ShowDialogs.showToast('Unexpected error: $e');
+      try {
+        await APIManager().apiRequest(
+          routeGlobalKey.currentContext!,
+          API.getcoursedetailsbyid,
+          (response) {
+            // Navigator.pop(context);
+            detail.GetCourseDetailListResponse resp = response;
+            if (resp.n == 1) {
+              _courseDetail = resp.data!;
+              isLoading = false;
+              notifyListeners();
+              print("courseList");
+              print(_courseDetail);
+            }
+          },
+          (error) {
+            // Navigator.pop(context);
+            isLoading = false;
+            notifyListeners();
+            ShowDialogs.showToast("Server Not Responding");
+          },
+          jsonval: jsonEncode(body),
+        );
+      } catch (e) {
+        isLoading = false;
+        notifyListeners();
+        Navigator.pop(routeGlobalKey.currentContext!);
+        ShowDialogs.showToast('Unexpected error: $e');
+      }
+    } else {
+      isLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
     }
-    }else{
-       isLoading = false;
-          notifyListeners();
-         ShowDialogs.showToast("Please check internet connection");
+  }
+
+   List<ResourceData> _resourceDetail=[];
+
+  // Getter for data
+  List<ResourceData> get resourceDetail => _resourceDetail;
+  set resourceDetail(List<ResourceData> data) {
+    _resourceDetail = data;
+    notifyListeners();
+  }
+
+  bool _isResourceLoading = false;
+  bool get isResourceLoading => _isResourceLoading;
+
+  set isResourceLoading(bool value) {
+    _isResourceLoading = value;
+    notifyListeners();
+  }
+
+  void courseResouceAPI(
+      String courseid, String moduleid, String languageid) async {
+    // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
+
+    isResourceLoading = true;
+    _resourceDetail = [];
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      final body = {
+        'courseid': courseid,
+        'moduleid': moduleid,
+        'languageid': languageid
+      };
+
+      try {
+        await APIManager().apiRequest(
+          routeGlobalKey.currentContext!,
+          API.getcourseresources,
+          (response) {
+            // Navigator.pop(context);
+            GetResourceResponse resp = response;
+            if (resp.n == 1) {
+              _resourceDetail = resp.data!;
+              isResourceLoading = false;
+              notifyListeners();
+              print("_resourceDetail");
+              print(_resourceDetail);
+            }
+          },
+          (error) {
+            // Navigator.pop(context);
+            isResourceLoading = false;
+            notifyListeners();
+            ShowDialogs.showToast("Server Not Responding");
+          },
+          jsonval: jsonEncode(body),
+        );
+      } catch (e) {
+        isResourceLoading = false;
+        notifyListeners();
+        Navigator.pop(routeGlobalKey.currentContext!);
+        ShowDialogs.showToast('Unexpected error: $e');
+      }
+    } else {
+      isResourceLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
+    }
+  }
+
+   List<InstituteData> _instituteDetail=[];
+
+  // Getter for data
+  List<InstituteData> get instituteDetail => _instituteDetail;
+  set instituteDetail(List<InstituteData> data) {
+    _instituteDetail = data;
+    notifyListeners();
+  }
+
+  bool _isInstituteLoading = false;
+  bool get isInstituteLoading => _isInstituteLoading;
+
+  set isInstituteLoading(bool value) {
+    _isInstituteLoading = value;
+    notifyListeners();
+  }
+
+  void courseInstituteAPI(
+    String courseid,
+    String countryid,
+  ) async {
+    isInstituteLoading = true;
+    _instituteDetail = [];
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      final body = {
+        'courseid':"10", //courseid,
+        'countryid': countryid,
+      };
+
+      try {
+        await APIManager().apiRequest(
+          routeGlobalKey.currentContext!,
+          API.getcourseinstitutions,
+          (response) {
+            print("API.getcourseinstitutions");
+            // Navigator.pop(context);
+            GetCourseInstituteResponse resp = response;
+            if (resp.n == 1) {
+              _instituteDetail = resp.data!;
+              isInstituteLoading = false;
+              notifyListeners();
+              print("_instituteDetail");
+              print(_instituteDetail);
+            }
+            else{
+               isInstituteLoading = false;
+              notifyListeners();
+            }
+             print("_instituteDetail");
+              print(_instituteDetail);
+          },
+          (error) {
+            // Navigator.pop(context);
+            isInstituteLoading = false;
+            notifyListeners();
+            ShowDialogs.showToast("Server Not Responding");
+          },
+          jsonval: jsonEncode(body),
+        );
+      } catch (e) {
+        isInstituteLoading = false;
+        notifyListeners();
+        Navigator.pop(routeGlobalKey.currentContext!);
+        ShowDialogs.showToast('Unexpected error: $e');
+      }
+    } else {
+      isInstituteLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
     }
   }
 

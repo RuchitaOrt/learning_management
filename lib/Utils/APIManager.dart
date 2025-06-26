@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
 import 'package:learning_mgt/model/GetCourseCategory.dart';
 import 'package:learning_mgt/model/GetCourseDetailListResponse.dart';
+import 'package:learning_mgt/model/GetCourseInstitueResponse.dart';
 import 'package:learning_mgt/model/GetCourseListResponse.dart';
+import 'package:learning_mgt/model/GetResourceResponse.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
@@ -22,9 +25,14 @@ enum API {
   verifyEmailOTP,
   registerCandidate,
   candidateDetails,
+  getDocuments,
   getcoursecategorylist,
   getallcoursesbycategory,
-  getcoursedetailsbyid
+  getcoursedetailsbyid,
+  documentsUpload,
+  getcourseresources,
+  getstatecountry,
+  getcourseinstitutions
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -100,16 +108,30 @@ class APIManager {
       case API.candidateDetails:
         apiPathString = "/api/candidate/candidate-details";
         break;
+      case API.getDocuments:
+        apiPathString = "/api/candidate/get-enrollment-documents";
+        break;
       case API.getcoursecategorylist:
         apiPathString = "/api/course/get-course-category-list";
         break;
- case API.getallcoursesbycategory:
+      case API.getallcoursesbycategory:
         apiPathString = "/api/course/get-allcourses-bycategory";
         break;
-case API.getcoursedetailsbyid:
+      case API.getcoursedetailsbyid:
         apiPathString = "/api/course/get-course-detailsbyid";
         break;
-  
+      case API.documentsUpload:
+        apiPathString = "/api/candidate/candidate-documents-submit";
+        break;
+      case API.getcourseresources:
+        apiPathString = "/api/course/get-course-resources";
+        break;
+      case API.getstatecountry:
+        apiPathString = "/api/course/get-state-country";
+        break;
+      case API.getcourseinstitutions:
+        apiPathString = "/api/course/get-course-institutions";
+        break;
 
       default:
         apiPathString = "/Login";
@@ -151,8 +173,7 @@ case API.getcoursedetailsbyid:
         className = "DepartmentListResponse";
         break;
       case API.getqualifications:
-        className = "LoginResponse";
-        break;
+        className = "QualificationListResponse";
 
       case API.getdeptwiseranklist:
         className = "RankListResponse";
@@ -165,14 +186,27 @@ case API.getcoursedetailsbyid:
       case API.verifyEmailOTP:
         className = "CommonResponse";
         break;
+      case API.getDocuments:
+        className = "DocumentListResponse";
+        break;
+
       case API.getcoursecategorylist:
         className = "CategoryResponse";
         break;
-         case API.getallcoursesbycategory:
+      case API.getallcoursesbycategory:
         className = "GetCourseListResponse";
         break;
-         case API.getcoursedetailsbyid:
+      case API.getcoursedetailsbyid:
         className = "GetCourseDetailListResponse";
+        break;
+      case API.getcourseresources:
+        className = "GetResourceResponse";
+        break;
+      case API.getstatecountry:
+        className = "GetStateResponse";
+        break;
+          case API.getcourseinstitutions:
+        className = "GetCourseInstituteResponse";
         break;
       default:
         className = 'CommonResponse';
@@ -191,22 +225,25 @@ case API.getcoursedetailsbyid:
       responseObj = CountryListResponse.fromJson(json);
     } else if (className == 'RankListResponse') {
       responseObj = RankListResponse.fromJson(json);
+    } else if (className == 'QualificationListResponse') {
+      responseObj = QualificationListResponse.fromJson(json);
     } else if (className == 'OtpResponse') {
       responseObj = CommonResponse.fromJson(json);
-    } 
-    
-    else if (className == 'CategoryResponse') {
+    } else if (className == 'CategoryResponse') {
       responseObj = CategoryResponse.fromJson(json);
     } else if (className == 'GetCourseListResponse') {
       responseObj = CourseListResponse.fromJson(json);
-    } 
-    else if (className == 'GetCourseDetailListResponse') {
+    } else if (className == 'GetCourseDetailListResponse') {
       responseObj = GetCourseDetailListResponse.fromJson(json);
-    } 
-    
-    
-    else if (className == 'CommonResponse') {
+    } else if (className == 'CommonResponse') {
       responseObj = CommonResponse.fromJson(json);
+    } else if (className == 'DocumentListResponse') {
+      responseObj = DocumentListResponse.fromJson(json);
+    } else if (className == 'GetResourceResponse') {
+      responseObj = GetResourceResponse.fromJson(json);
+    }
+    else if (className == 'GetCourseInstituteResponse') {
+      responseObj = GetCourseInstituteResponse.fromJson(json);
     }
 
     return responseObj;
@@ -260,7 +297,16 @@ case API.getcoursedetailsbyid:
         response =
             await http.post(Uri.parse(url), body: body, headers: headers);
         // .timeout(timeout!);
-        print(response.body);
+        if (kDebugMode) {
+          final body = response.body;
+          const chunkSize = 800;
+
+          for (var i = 0; i < body.length; i += chunkSize) {
+            print(body.substring(
+                i, i + chunkSize > body.length ? body.length : i + chunkSize));
+          }
+        }
+        // print(response.body);
       } else if (this.apiHTTPMethod(api) == HTTPMethod.GET) {
         //   print(url);
         response =

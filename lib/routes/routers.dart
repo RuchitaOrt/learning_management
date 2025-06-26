@@ -66,8 +66,11 @@ class Routers {
           builder: (_) => CoursePage(),
         );
       case CourseDetailPage.route:
+       final args = settings.arguments as Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => CourseDetailPage(),
+          builder: (_) => CourseDetailPage(
+            courseID: args?['courseID'] ?? "" ,
+          ),
         );
       case TabScreen.route:
         final args = settings.arguments as Map<String, dynamic>?;

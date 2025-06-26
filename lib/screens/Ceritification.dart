@@ -109,7 +109,9 @@ class _CeritificationState extends State<Ceritification> {
         borderRadius: BorderRadius.circular(16),
         onTap: () {
           Navigator.of(routeGlobalKey.currentContext!)
-              .pushNamed(CourseDetailPage.route);
+              .pushNamed(CourseDetailPage.route,arguments: {
+                "courseID":"1"
+              });
         },
         child: Padding(
           padding: const EdgeInsets.all(16.0),

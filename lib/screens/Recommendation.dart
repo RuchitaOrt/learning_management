@@ -723,7 +723,11 @@ class _RecommendationState extends State<Recommendation> {
     return GestureDetector(
       onTap: () {
         Navigator.of(routeGlobalKey.currentContext!)
-            .pushNamed(CourseDetailPage.route)
+            .pushNamed(CourseDetailPage.route,
+            
+            arguments: {
+                "courseID":"1"
+              })
             .then((value) {});
       },
       child: Card(

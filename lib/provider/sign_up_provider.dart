@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:learning_mgt/Utils/APIManager.dart';
 import 'package:learning_mgt/Utils/internetConnection.dart';
 
@@ -12,7 +13,9 @@ import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
+import '../Utils/SPManager.dart';
 import '../model/RegistrationResponse.dart';
+import 'package:http/http.dart' as http;
 
 class SignUpProvider with ChangeNotifier {
   TextEditingController firstNameController = TextEditingController();
@@ -69,6 +72,33 @@ class SignUpProvider with ChangeNotifier {
   int? selectedRankId;
   bool _isSavingDetails = false;
   bool get isSavingDetails => _isSavingDetails;
+  List<Department> _departments = [];
+  List<Country> _countries = [];
+  List<Rank> _ranks = [];
+  bool _isLoadingDepartments = false;
+  bool _isLoadingCountries = false;
+  bool _isLoadingRanks = false;
+  String? _departmentError;
+  String? _countryError;
+  String? _rankError;
+  List<Department> get departments => _departments;
+  List<Country> get countries => _countries;
+  List<Rank> get ranks => _ranks;
+  bool get isLoadingDepartments => _isLoadingDepartments;
+  bool get isLoadingCountries => _isLoadingCountries;
+  bool get isLoadingRanks => _isLoadingRanks;
+  String? get departmentError => _departmentError;
+  String? get countryError => _countryError;
+  String? get rankError => _rankError;
+  List<Qualification> qualifications = [];
+  bool isLoadingQualifications = false;
+  String? qualificationError;
+  int? selectedQualificationId;
+  TextEditingController qualificationController = TextEditingController();
+  String? selectedQualificationName;
+  List<Document> documents = [];
+  bool isLoadingDocuments = false;
+  String? documentError;
 
   // Validator example
   String? validateBirthCertificate(String? value) {
@@ -252,7 +282,13 @@ class SignUpProvider with ChangeNotifier {
       return 'Select Date of birth';
     }
 
-    return null;
+    try {
+      DateFormat('dd-MM-yyyy').parse(value);
+      return null;
+    } catch (e) {
+      return 'Please enter date in DD-MM-YYYY format';
+    }
+    // return null;
   }
 
   String? validatePincodet(String? value) {
@@ -358,7 +394,7 @@ class SignUpProvider with ChangeNotifier {
     // Replace with real API
     documentFields = [
       DocumentField(name: "Birth Certificate", hint: "Upload Birth Certificate"),
-      DocumentField(name: "Passport Certificate", hint: "Upload Passport Certificate"),
+      DocumentField(name: "Passport", hint: "Upload Passport Certificate"),
        DocumentField(name: "CDC Certificate", hint: "Upload CDC Certificate"),
         DocumentField(name: "Course Completion Certificate", hint: "Upload Course Completion Certificate"),
          DocumentField(name: "COC Certificate", hint: "Upload COC Certificate"),
@@ -443,12 +479,63 @@ Future<void> pickFile(String docName) async {
     );
   }
 
+  void setSelectedDepartment(Department department) {
+    selectedDepartmentId = department.id;
+    departmentController.text = department.departmentName;
+    notifyListeners();
+  }
+
+  void setSelectedCountry(Country country) {
+    selectedCountryId = country.id;
+    countryController.text = country.name;
+    notifyListeners();
+  }
+
+  void setSelectedRank(Rank rank) {
+    selectedRankId = rank.id;
+    rankController.text = rank.rank;
+    notifyListeners();
+  }
+
+  String? validateQualification(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please select your qualification';
+    }
+    return null;
+  }
+
+  void setSelectedQualification(Qualification qualification) {
+    selectedQualificationId = qualification.id;
+    selectedQualificationName = qualification.qualificationName;
+    qualificationController.text = qualification.qualificationName;
+    notifyListeners();
+  }
+
+  void processDocuments(List<Document> apiDocuments, List<String> settingDocuments) {
+    documentFields.clear();
+    controllers.clear();
+    selectedFilePaths.clear();
+
+    // Match API documents with setting documents
+    for (var apiDoc in apiDocuments) {
+      if (settingDocuments.contains(apiDoc.documentName)) {
+        documentFields.add(DocumentField(
+          name: apiDoc.documentName,
+          hint: 'Upload ${apiDoc.documentName}',
+        ));
+        controllers[apiDoc.documentName] = TextEditingController();
+        selectedFilePaths[apiDoc.documentName] = apiDoc.uploadedProof;
+      }
+    }
+
+    notifyListeners();
+  }
+
   void disposeAll() {
     for (var controller in controllers.values) {
       controller.dispose();
     }
   }
-
 
   void sendEmailOtp(BuildContext context, String email) async {
     // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
@@ -582,15 +669,26 @@ Future<void> pickFile(String docName) async {
         throw Exception('Candidate ID not found');
       }
 
+      // Convert date format from DD-MM-YYYY to YYYY-MM-DD
+      String formattedDob = '';
+      if (dobController.text.isNotEmpty) {
+        try {
+          final parsedDate = DateFormat('dd-MM-yyyy').parse(dobController.text);
+          formattedDob = DateFormat('yyyy-MM-dd').format(parsedDate);
+        } catch (e) {
+          throw Exception('Invalid date format. Please use DD-MM-YYYY');
+        }
+      }
+
       final requestBody = {
         "id": _registeredCandidate!.id,
         "passport_number": passportController.text.trim(),
         "department": selectedDepartmentId?.toString(),
         "rank": selectedRankId?.toString(),
-        "dob": dobController.text.trim(),
+        "dob": formattedDob,
         "country": selectedCountryId?.toString(),
         "pincode": pincodeController.text.trim(),
-        "highest_qualification": "1", // Update if you have this field
+        "highest_qualification": selectedQualificationId, // Update if you have this field
         "seafearers_number": seafarerController.text.trim(),
       };
       print('Request body for candidate detail: $requestBody');
@@ -624,52 +722,6 @@ Future<void> pickFile(String docName) async {
       notifyListeners();
     }
   }
-
-  // Add methods to handle department/country selection
-  void setSelectedDepartment(Department department) {
-    selectedDepartmentId = department.id;
-    departmentController.text = department.departmentName;
-    notifyListeners();
-  }
-
-  void setSelectedCountry(Country country) {
-    selectedCountryId = country.id;
-    countryController.text = country.name;
-    notifyListeners();
-  }
-
-  void setSelectedRank(Rank rank) {
-    selectedRankId = rank.id;
-    rankController.text = rank.rank;
-    notifyListeners();
-  }
-
-
-  /*Future<void> verifyEmailOtp(BuildContext context, String email) async {
-    try {
-      final requestBody = {
-        "email": email,
-        "otp": otpController.text,
-      };
-
-      await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
-        API.verifyEmailOTP,
-            (response) {
-          if (response is CommonResponse && response.status == true) {
-            ShowDialogs.showToast(response.message);
-          }
-        },
-            (error) {
-          ShowDialogs.showToast('OTP verification failed: ${error.toString()}');
-        },
-        jsonval: json.encode(requestBody),
-      );
-    } catch (e) {
-      print('Error verifying OTP: ${e.toString()}');
-      ShowDialogs.showToast('Error verifying OTP: ${e.toString()}');
-    }
-  }*/
 
   Future<void> getCountryListAPI() async {
     
@@ -734,6 +786,7 @@ Future<void> pickFile(String docName) async {
       return Future.error("No Internet Connection");
     }
   }
+
    Future<void> getQualificationListAPI() async {
     
 
@@ -763,6 +816,312 @@ Future<void> pickFile(String docName) async {
 
      
       return Future.error("No Internet Connection");
+    }
+  }
+
+  Future<void> fetchDepartments() async {
+    try {
+      _isLoadingDepartments = true;
+      _departmentError = null;
+      notifyListeners();
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.departmentlist,
+            (response) {
+          if (response is DepartmentListResponse) {
+            _departments = response.data;
+          } else {
+            _departmentError = 'Unexpected response format';
+          }
+        },
+            (error) {
+          _departmentError = 'Failed to load departments: ${error.toString()}';
+        },
+      );
+    } catch (e) {
+      _departmentError = 'Failed to load departments';
+    } finally {
+      _isLoadingDepartments = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchCountries() async {
+    try {
+      _isLoadingCountries = true;
+      _countryError = null;
+      notifyListeners();
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.countrylist,
+            (response) {
+          if (response is CountryListResponse) {
+            _countries = response.data.where((c) => c.isActive).toList();
+          } else {
+            _countryError = 'Unexpected response format';
+          }
+        },
+            (error) {
+          _countryError = 'Failed to load countries: ${error.toString()}';
+        },
+      );
+    } catch (e) {
+      _countryError = 'Failed to load countries';
+    } finally {
+      _isLoadingCountries = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchRanks(int departmentId) async {
+    try {
+      _isLoadingRanks = true;
+      _rankError = null;
+      _ranks.clear();
+      notifyListeners();
+
+      final requestBody = json.encode({"departmentid": departmentId.toString()});
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getdeptwiseranklist,
+            (response) {
+          if (response is RankListResponse) {
+            _ranks = response.data.where((r) => r.isActive).toList();
+          }
+        },
+            (error) {
+          _rankError = 'Failed to load ranks: ${error.toString()}';
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      _rankError = 'Failed to load ranks';
+    } finally {
+      _isLoadingRanks = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchQualifications() async {
+    try {
+      isLoadingQualifications = true;
+      qualificationError = null;
+      notifyListeners();
+
+      print('Fetching qualifications...');
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getqualifications,
+            (response) {
+          try {
+            print('Raw API response: $response');
+            print('Response type: ${response.runtimeType}');
+
+            // ✅ response is already QualificationListResponse
+            if (response is QualificationListResponse) {
+              qualifications = response.data;
+              qualificationError = null;
+              print('Successfully loaded ${qualifications.length} qualifications');
+            } else {
+              qualificationError = 'Unexpected response type: ${response.runtimeType}';
+            }
+          } catch (e) {
+            print('Parsing error: $e');
+            qualificationError = 'Failed to parse qualifications: $e';
+          }
+          notifyListeners();
+        },
+            (error) {
+          print('API error: $error');
+          qualificationError = 'Failed to load qualifications: ${error.toString()}';
+          notifyListeners();
+        },
+      );
+    } catch (e) {
+      print('Exception in fetchQualifications: $e');
+      qualificationError = 'Failed to load qualifications: $e';
+      notifyListeners();
+    } finally {
+      isLoadingQualifications = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchDocuments() async {
+    try {
+      isLoadingDocuments = true;
+      documentError = null;
+      notifyListeners();
+
+      final requestBody = json.encode({
+        "candidateid": _registeredCandidate!.id,
+      });
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getDocuments,
+            (response) {
+          try {
+            documents.clear();
+
+            // Handle DocumentListResponse case
+            if (response is DocumentListResponse) {
+              documents.addAll(response.data);
+              print('Received ${documents.length} documents from DocumentListResponse');
+            }
+            // Handle Map response
+            else if (response is Map<String, dynamic>) {
+              // Process proof_data
+              if (response['data']?['proof_data'] is List) {
+                documents.addAll(
+                    (response['data']['proof_data'] as List)
+                        .map((docJson) => Document.fromJson(docJson))
+                        .toList()
+                );
+              }
+
+              // Process education_document_data
+              if (response['data']?['education_document_data'] is Map) {
+                final eduDoc = response['data']['education_document_data'];
+                documents.add(Document.fromJson(eduDoc, isEducation: true));
+              }
+            }
+            // Handle String response
+            else if (response is String) {
+              final parsed = json.decode(response);
+              if (parsed['data']?['proof_data'] is List) {
+                documents.addAll(
+                    (parsed['data']['proof_data'] as List)
+                        .map((docJson) => Document.fromJson(docJson))
+                        .toList()
+                );
+              }
+              if (parsed['data']?['education_document_data'] is Map) {
+                final eduDoc = parsed['data']['education_document_data'];
+                documents.add(Document.fromJson(eduDoc, isEducation: true));
+              }
+            }
+
+            // Print debug info
+            print('Total documents found: ${documents.length}');
+            for (var doc in documents) {
+              print('Document: ${doc.documentName}, Uploaded: ${doc.uploadedProof ?? "Not uploaded"}');
+            }
+
+            // Initialize controllers
+            for (var doc in documents) {
+              controllers[doc.documentName] = TextEditingController();
+              selectedFilePaths[doc.documentName] = doc.uploadedProof;
+            }
+          } catch (e) {
+            print('Error processing documents: $e');
+            documentError = 'Failed to process documents: $e';
+          }
+        },
+            (error) {
+          print('API Error: $error');
+          documentError = 'Failed to load documents: ${error.toString()}';
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      print('Exception in fetchDocuments: $e');
+      documentError = 'Failed to load documents: $e';
+    } finally {
+      isLoadingDocuments = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> uploadDocuments(BuildContext context) async {
+    try {
+      _isSavingDetails = true;
+      notifyListeners();
+
+      // Prepare the multipart request
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(await APIManager().apiEndPoint(API.documentsUpload))
+      );
+
+      // Add user ID and certificate name
+      request.fields['user_id'] = "['${_registeredCandidate!.id}']";
+      request.fields['certificate_name'] = 'PHD'; // Or dynamic from input
+
+      // Prepare doc_id and doc_name lists
+      List<String> docIds = [];
+      List<String> docNames = [];
+
+      for (var doc in documents) {
+        final filePath = selectedFilePaths[doc.documentName];
+        if (filePath != null && filePath.isNotEmpty) {
+          if (doc.isEducationDocument) {
+            request.files.add(await http.MultipartFile.fromPath(
+              'educational_certificate_upload',
+              filePath,
+            ));
+          } else {
+            request.fields['doc_id'] = '[\'${doc.id}\']';
+            request.fields['doc_name'] = '[\'${doc.documentName}\']';
+
+            request.files.add(await http.MultipartFile.fromPath(
+              'document_file_upload',
+              filePath,
+            ));
+          }
+        } else {
+          print('⚠️ No file selected for ${doc.documentName}');
+        }
+
+      }
+
+      // Add the collected doc_id and doc_name arrays
+      if (docIds.isNotEmpty && docNames.isNotEmpty) {
+        request.fields['doc_id'] = "['${docIds.join("','")}']";
+        request.fields['doc_name'] = "['${docNames.join("','")}']";
+      }
+
+      // Add auth token if needed
+      final token = await SPManager().getAuthToken();
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      print('📦 Multipart Request Fields:');
+      request.fields.forEach((key, value) {
+        print('$key: $value');
+      });
+
+      // Debug print the uploaded file names
+      print('📎 Multipart Files:');
+      for (var file in request.files) {
+        print('${file.field}: ${file.filename}');
+      }
+
+      // Send request and handle response
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(responseBody);
+        if (jsonResponse['n'] == 1) {
+          ShowDialogs.showToast(jsonResponse['msg']);
+        } else {
+          throw Exception(jsonResponse['msg'] ?? 'Failed to upload documents');
+        }
+      } else {
+        throw Exception('Upload failed: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      ShowDialogs.showToast('Error uploading documents: $e');
+      rethrow;
+    } finally {
+      _isSavingDetails = false;
+      notifyListeners();
     }
   }
 }
