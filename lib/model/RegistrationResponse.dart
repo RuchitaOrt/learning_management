@@ -301,23 +301,6 @@ class Document {
       isEducationDocument: isEducation,
     );
   }
-
-/*factory Document.fromJson(Map<String, dynamic> json, {bool isEducation = false}) {
-    return Document(
-      id: json['id'] ?? 0,
-      documentName: isEducation
-          ? (json['qualification_name'] ?? 'Education Certificate')
-          : (json['document_name'] ?? 'Document'),
-      description: isEducation
-          ? 'Education Certificate'
-          : json['description'],
-      isActive: json['isActive'] ?? true,
-      uploadedProof: isEducation
-          ? json['uploaded_certificate']
-          : json['uploaded_proof'],
-      isEducationDocument: isEducation,
-    );
-  }*/
 }
 
 class DocumentListResponse {

@@ -17,6 +17,8 @@ import '../Utils/SPManager.dart';
 import '../model/RegistrationResponse.dart';
 import 'package:http/http.dart' as http;
 
+import 'StepProvider.dart';
+
 class SignUpProvider with ChangeNotifier {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
@@ -99,6 +101,21 @@ class SignUpProvider with ChangeNotifier {
   List<Document> documents = [];
   bool isLoadingDocuments = false;
   String? documentError;
+  bool _isSendingOtp = false;
+  bool _isVerifyingOtp = false;
+  bool get isSendingOtp => _isSendingOtp;
+  bool get isVerifyingOtp => _isVerifyingOtp;
+
+  void setSendingOtp(bool value) {
+    _isSendingOtp = value;
+    notifyListeners();
+  }
+
+  void setVerifyingOtp(bool value) {
+    _isVerifyingOtp = value;
+    notifyListeners();
+  }
+
 
   // Validator example
   String? validateBirthCertificate(String? value) {
@@ -537,7 +554,7 @@ Future<void> pickFile(String docName) async {
     }
   }
 
-  void sendEmailOtp(BuildContext context, String email) async {
+  /*void sendEmailOtp(BuildContext context, String email) async {
     // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
 
     final body = {'email': email};
@@ -567,9 +584,78 @@ Future<void> pickFile(String docName) async {
       Navigator.pop(context);
       ShowDialogs.showToast('Unexpected error: $e');
     }
+  }*/
+
+  void sendEmailOtp(BuildContext context, String email) async {
+    setSendingOtp(true); // Start loading
+
+    final body = {'email': email};
+
+    try {
+      await APIManager().apiRequest(
+        context,
+        API.emailOTP,
+            (response) {
+          setSendingOtp(false); // Stop loading
+          if (response is CommonResponse && response.n == 1) {
+            markOtpSent(true);
+            startOtpTimer();
+            ShowDialogs.showToast(response.message);
+          } else {
+            ShowDialogs.showToast('Failed to send OTP');
+          }
+        },
+            (error) {
+          setSendingOtp(false); // Stop loading
+          ShowDialogs.showToast('Error sending OTP: $error');
+        },
+        jsonval: jsonEncode(body),
+      );
+    } catch (e) {
+      setSendingOtp(false); // Stop loading
+      ShowDialogs.showToast('Unexpected error: $e');
+    }
   }
 
   Future<void> verifyEmailOtp(BuildContext context, String email) async {
+    setVerifyingOtp(true); // Start verification loading
+
+    try {
+      final requestBody = {
+        "email": email,
+        "otp": otpController.text,
+      };
+
+      await APIManager().apiRequest(
+        context,
+        API.verifyEmailOTP,
+            (response) {
+          setVerifyingOtp(false); // Stop loading
+          if (response is CommonResponse) {
+            if (response.n == 1) {
+              ShowDialogs.showToast(response.msg);
+              isEmailVerified = true;
+              notifyListeners();
+            } else {
+              ShowDialogs.showToast(response.msg);
+            }
+          } else {
+            ShowDialogs.showToast('Unexpected response format');
+          }
+        },
+            (error) {
+          setVerifyingOtp(false); // Stop loading
+          ShowDialogs.showToast('OTP verification failed: ${error.toString()}');
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      setVerifyingOtp(false); // Stop loading
+      ShowDialogs.showToast('Error verifying OTP: ${e.toString()}');
+    }
+  }
+
+  /*Future<void> verifyEmailOtp(BuildContext context, String email) async {
     try {
       final requestBody = {
         "email": email,
@@ -602,7 +688,7 @@ Future<void> pickFile(String docName) async {
     } catch (e) {
       ShowDialogs.showToast('Error verifying OTP: ${e.toString()}');
     }
-  }
+  }*/
 
   void handleVerificationResponse(CommonResponse response) {
     if (response.status) {  // Success case
@@ -1037,7 +1123,232 @@ Future<void> pickFile(String docName) async {
     }
   }
 
+  /*Future<void> uploadDocuments(BuildContext context) async {
+    try {
+      _isSavingDetails = true;
+      notifyListeners();
+
+      // Prepare the multipart request
+      var request = http.MultipartRequest(
+          'POST',
+          Uri.parse(await APIManager().apiEndPoint(API.documentsUpload))
+      );
+
+      // Add user ID and certificate name
+      request.fields['user_id'] = "['${_registeredCandidate!.id}']";
+      request.fields['certificate_name'] = 'PHD'; // Or dynamic from input
+
+      // Prepare doc_id and doc_name lists
+      List<String> docIds = [];
+      List<String> docNames = [];
+
+      for (var doc in documents) {
+        final filePath = selectedFilePaths[doc.documentName];
+        if (filePath != null && filePath.isNotEmpty) {
+          if (doc.isEducationDocument) {
+            request.files.add(await http.MultipartFile.fromPath(
+              'educational_certificate_upload',
+              filePath,
+            ));
+          } else {
+            request.fields['doc_id'] = '[\'${doc.id}\']';
+            request.fields['doc_name'] = '[\'${doc.documentName}\']';
+
+            request.files.add(await http.MultipartFile.fromPath(
+              'document_file_upload',
+              filePath,
+            ));
+          }
+        } else {
+          print('⚠️ No file selected for ${doc.documentName}');
+        }
+      }
+
+      // Add the collected doc_id and doc_name arrays
+      if (docIds.isNotEmpty && docNames.isNotEmpty) {
+        request.fields['doc_id'] = "['${docIds.join("','")}']";
+        request.fields['doc_name'] = "['${docNames.join("','")}']";
+      }
+
+      // Add auth token if needed
+      final token = await SPManager().getAuthToken();
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      // Debug print request details
+      print('\n📤 Request Details:');
+      print('URL: ${request.url}');
+      print('Method: ${request.method}');
+      print('Headers: ${request.headers}');
+      print('Fields:');
+      request.fields.forEach((key, value) {
+        print('  $key: $value');
+      });
+      print('Files:');
+      for (var file in request.files) {
+        print('  ${file.field}: ${file.filename} (${file.length} bytes)');
+      }
+
+      // Send request
+      print('\n🚀 Sending request...');
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      // Print full response
+      print('\n📥 Response Received:');
+      print('Status Code: ${response.statusCode}');
+      print('Headers: ${response.headers}');
+      print('Full Response Body:');
+      try {
+        final jsonResponse = json.decode(responseBody);
+        final prettyJson = JsonEncoder.withIndent('  ').convert(jsonResponse);
+        print(prettyJson);
+      } catch (e) {
+        print(responseBody); // Print as plain text if not JSON
+      }
+
+      // Handle response
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(responseBody);
+        if (jsonResponse['n'] == 1) {
+          print('\n✅ Success: ${jsonResponse['msg']}');
+          ShowDialogs.showToast(jsonResponse['msg']);
+        } else {
+          final errorMsg = jsonResponse['msg'] ?? 'Failed to upload documents';
+          print('\n❌ Error: $errorMsg');
+          throw Exception(errorMsg);
+        }
+      } else {
+        final errorMsg = 'Upload failed with status ${response.statusCode}: ${response.reasonPhrase}';
+        print('\n❌ $errorMsg');
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      print('\n🔥 Exception: $e');
+      print(StackTrace.current);
+      ShowDialogs.showToast('Error uploading documents: $e');
+      rethrow;
+    } finally {
+      _isSavingDetails = false;
+      notifyListeners();
+      print('\n🏁 Upload process completed');
+    }
+  }*/
   Future<void> uploadDocuments(BuildContext context) async {
+    try {
+      _isSavingDetails = true;
+      notifyListeners();
+
+      // Prepare the multipart request
+      var request = http.MultipartRequest(
+          'POST',
+          Uri.parse(await APIManager().apiEndPoint(API.documentsUpload))
+      );
+
+      // Add user ID and certificate name
+      request.fields['user_id'] = "['${_registeredCandidate!.id}']";
+      request.fields['certificate_name'] = 'PHD'; // Or dynamic from input
+
+      // Prepare doc_id and doc_name lists
+      List<String> docIds = [];
+      List<String> docNames = [];
+
+      for (var doc in documents) {
+        final filePath = selectedFilePaths[doc.documentName];
+        if (filePath != null && filePath.isNotEmpty) {
+          if (doc.isEducationDocument) {
+            request.files.add(await http.MultipartFile.fromPath(
+              'educational_certificate_upload',
+              filePath,
+            ));
+          } else {
+            request.fields['doc_id'] = '[\'${doc.id}\']';
+            request.fields['doc_name'] = '[\'${doc.documentName}\']';
+
+            request.files.add(await http.MultipartFile.fromPath(
+              'document_file_upload',
+              filePath,
+            ));
+          }
+        } else {
+          print('⚠️ No file selected for ${doc.documentName}');
+        }
+      }
+
+      // Add the collected doc_id and doc_name arrays
+      if (docIds.isNotEmpty && docNames.isNotEmpty) {
+        request.fields['doc_id'] = "['${docIds.join("','")}']";
+        request.fields['doc_name'] = "['${docNames.join("','")}']";
+      }
+
+      // Add auth token if needed
+      final token = await SPManager().getAuthToken();
+      if (token != null) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+
+      // Debug print request details
+      print('\n📤 Request Details:');
+      print('URL: ${request.url}');
+      print('Method: ${request.method}');
+      print('Headers: ${request.headers}');
+      print('Fields:');
+      request.fields.forEach((key, value) {
+        print('  $key: $value');
+      });
+      print('Files:');
+      for (var file in request.files) {
+        print('  ${file.field}: ${file.filename} (${file.length} bytes)');
+      }
+
+      // Send request
+      print('\n🚀 Sending request...');
+      final response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      // Print full response
+      print('\n📥 Response Received:');
+      print('Status Code: ${response.statusCode}');
+      print('Headers: ${response.headers}');
+      print('Full Response Body:');
+      try {
+        final jsonResponse = json.decode(responseBody);
+        final prettyJson = JsonEncoder.withIndent('  ').convert(jsonResponse);
+        print(prettyJson);
+      } catch (e) {
+        print(responseBody); // Print as plain text if not JSON
+      }
+
+      // Handle response
+      if (response.statusCode == 200) {
+        final jsonResponse = json.decode(responseBody);
+        if (jsonResponse['n'] == 1) {
+          print('\n✅ Success: ${jsonResponse['msg']}');
+          // Show the success message that's already defined in the UI
+          Provider.of<StepProvider>(context, listen: false).submit();
+        } else {
+          final errorMsg = jsonResponse['msg'] ?? 'Failed to upload documents';
+          print('\n❌ Error: $errorMsg');
+          throw Exception(errorMsg);
+        }
+      } else {
+        final errorMsg = 'Upload failed with status ${response.statusCode}: ${response.reasonPhrase}';
+        print('\n❌ $errorMsg');
+        throw Exception(errorMsg);
+      }
+    } catch (e) {
+      print('\n🔥 Exception: $e');
+      print(StackTrace.current);
+      ShowDialogs.showToast('Error uploading documents: $e');
+      rethrow;
+    } finally {
+      _isSavingDetails = false;
+      notifyListeners();
+      print('\n🏁 Upload process completed');
+    }
+  }
+  /*Future<void> uploadDocuments(BuildContext context) async {
     try {
       _isSavingDetails = true;
       notifyListeners();
@@ -1091,13 +1402,13 @@ Future<void> pickFile(String docName) async {
         request.headers['Authorization'] = 'Bearer $token';
       }
 
-      print('📦 Multipart Request Fields:');
+      print('Multipart Request Fields:');
       request.fields.forEach((key, value) {
         print('$key: $value');
       });
 
       // Debug print the uploaded file names
-      print('📎 Multipart Files:');
+      print('Multipart Files:');
       for (var file in request.files) {
         print('${file.field}: ${file.filename}');
       }
@@ -1123,5 +1434,5 @@ Future<void> pickFile(String docName) async {
       _isSavingDetails = false;
       notifyListeners();
     }
-  }
+  }*/
 }
