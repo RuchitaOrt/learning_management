@@ -23,9 +23,10 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  String? selectedCategory;
+  // String? selectedCategory;
   String? selectedModule;
   bool isSelected = false;
+  String selectedCategory = "all";
 
   // @override
   // void initState() {

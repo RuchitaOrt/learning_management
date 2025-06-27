@@ -50,6 +50,66 @@ class LandingScreenProvider with ChangeNotifier {
         API.logout,
             (response) async {
           Navigator.pop(rootContext); // Close loading dialog
+
+          // Print full response
+          print('\n📥 Logout Response:');
+          if (response is CommonResponse) {
+            print('Status: Success');
+            print('Message: ${response.msg}');
+            print('Response Code: ${response.n}');
+          } else {
+            print('Full Response: $response');
+          }
+
+          if (response is CommonResponse) {
+            await SPManager().clearAuthData();
+            ShowDialogs.showToast(response.msg);
+
+            // Navigate to sign-in page
+            Navigator.of(rootContext).pushNamedAndRemoveUntil(
+              SignInScreen.route,
+                  (route) => false,
+            );
+          }
+        },
+            (error) {
+          Navigator.pop(rootContext); // Close loading dialog
+          print('\n❌ Logout Error: $error');
+          ShowDialogs.showToast('Logout failed: ${error.toString()}');
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      if (rootContext.mounted) {
+        Navigator.pop(rootContext);
+        print('\n🔥 Logout Exception: $e');
+        ShowDialogs.showToast('Error during logout: ${e.toString()}');
+      }
+    }
+  }
+
+  /*Future<void> logout(BuildContext context) async {
+    // Use the root context instead of dialog context
+    final rootContext = routeGlobalKey.currentContext;
+    if (rootContext == null) return;
+
+    ShowDialogs.showLoadingDialog(rootContext, routeGlobalKey, message: 'Logging out...');
+
+    try {
+      final token = await SPManager().getAuthToken();
+      if (token == null || token.isEmpty) {
+        Navigator.pop(rootContext);
+        ShowDialogs.showToast('No active session found');
+        return;
+      }
+
+      final requestBody = {"token": token};
+
+      await APIManager().apiRequest(
+        rootContext,
+        API.logout,
+            (response) async {
+          Navigator.pop(rootContext); // Close loading dialog
           if (response is CommonResponse) {
             await SPManager().clearAuthData();
             ShowDialogs.showToast(response.msg);
@@ -73,7 +133,7 @@ class LandingScreenProvider with ChangeNotifier {
     }
 
     
-  }
+  }*/
 
     List<CategoryData> _categoryList = [];
 

@@ -119,6 +119,7 @@ class SignInProvider with ChangeNotifier {
   }
 
   Future<void> createSignIn() async {
+    _isLoading = true;
     if (!validateForm()) {
       ShowDialogs.showToast("Please fill all fields correctly");
       return;
@@ -160,18 +161,21 @@ class SignInProvider with ChangeNotifier {
                 'isSignUp': false,
               },
             );
-           }else{
+             _isLoading = true;
+           } else {
              ShowDialogs.showToast(response.msg);
            }
           }
         },
         (error) {
+          _isLoading = false;
           print('Login error: $error');
           ShowDialogs.showToast("Login failed. Please try again.");
         },
         jsonval: json.encode(requestBody),
       );
     } catch (e) {
+      _isLoading = false;
       print('Login exception: $e');
       ShowDialogs.showToast("An error occurred during login");
     }

@@ -11,6 +11,11 @@ import 'package:learning_mgt/screens/signIn_screen.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../Utils/SPManager.dart';
+import '../main.dart';
+import 'HomePage.dart';
+import 'TabScreen.dart';
+
 class SplashScreen extends StatefulWidget {
   static const String route = "/";
 
@@ -57,13 +62,35 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _navigateToFallback() async {
+    final token = await SPManager().getAuthToken();
+    if (token == null || token.isEmpty) {
+      // No token found, navigate to SignInScreen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SignInScreen(),
+        ),
+      );
+    } else {
+      // Valid token exists, navigate to HomePage
+      Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+        TabScreen.route,
+        arguments: {
+          'selectedPos': -1,
+          'isSignUp': false,
+        },
+      );
+    }
+  }
+
+  /*void _navigateToFallback() async {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => SignInScreen(),
       ),
     );
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
