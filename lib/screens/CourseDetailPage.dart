@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../Utils/lms_styles.dart';
 import '../model/GetCourseDetailListResponse.dart';
+import '../provider/sign_up_provider.dart';
 import '../widgets/CustomDropdown.dart';
 import 'OrderSummary.dart';
 import 'TabScreen.dart';
@@ -35,6 +36,8 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   void initState() {
     // TODO: implement initState
     super.initState();
+    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+    signUpProvider.fetchCountries();
     _tabController = TabController(length: 6, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final courseProvider =
@@ -444,6 +447,61 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   }
 
   Widget _buildInstituteTab(CourseProvider courseProvider) {
+    final signUpProvider = Provider.of<SignUpProvider>(context);
+    final selectedCountry = signUpProvider.selectedCountry;
+    final selectedState = courseProvider.selectedState;
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              // Country dropdown
+              Expanded(
+                child: signUpProvider.isLoadingCountries
+                    ? Center(child: CircularProgressIndicator(color: LearningColors.darkBlue))
+                    : CustomDropdown<String>(
+                  value: selectedCountry?.name,
+                  hintText: "Select Country",
+                  items: signUpProvider.countries.map((c) => c.name).toList(),
+                  onChanged: (value) {
+                    final countryObj = signUpProvider.countries.firstWhere((c) => c.name == value);
+                    signUpProvider.setSelectedCountry(countryObj);
+                    courseProvider.setSelectedState(null); // reset selected state
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // State dropdown (from API)
+              Expanded(
+                child: signUpProvider.isLoadingStates
+                    ? Center(child: CircularProgressIndicator())
+                    : CustomDropdown<String>(
+                  value: signUpProvider.selectedState,
+                  hintText: "Select State",
+                  items: signUpProvider.states.map((s) => s.name).toList(),
+                  onChanged: (value) {
+                    signUpProvider.setSelectedState(value);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: _buildInstituteList(courseProvider.instituteDetail),
+          ),
+        ),
+      ],
+    );
+  }
+
+
+  /*Widget _buildInstituteTab(CourseProvider courseProvider) {
     // final List<Map<String, dynamic>> institutes = [
     //   {
     //     'logo': 'assets/images/aims.png',
@@ -479,7 +537,8 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     //   },
     // ];
 
-    final List<String> countries = ['India', 'USA', 'UK', 'Australia'];
+    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
+
     final List<String> states = ['Kerala', 'Tamil Nadu', 'Karnataka', 'Maharashtra'];
 
     // State variables for dropdown values
@@ -499,26 +558,34 @@ class _CourseDetailPageState extends State<CourseDetailPage>
           child: Row(
             children: [
               // Country dropdown
-              Expanded(
-                child: CustomDropdown<String>(
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.445,
+                child: signUpProvider.isLoadingCountries
+                    ? Center(child: CircularProgressIndicator(color: LearningColors.darkBlue,))
+                    : CustomDropdown<String>(
                   value: selectedCountry,
                   hintText: "Select Country",
-                  items: countries,
+                  items: signUpProvider.countries
+                      .map((country) => country.name)
+                      .toList(),
                   onChanged: (value) {
                     selectedCountry = value;
+                    final selectedCountryObj = signUpProvider.countries
+                        .firstWhere((c) => c.name == value);
+                    signUpProvider.setSelectedCountry(selectedCountryObj);
                   },
                 ),
               ),
               const SizedBox(width: 12),
               // State dropdown
-              Expanded(
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.445,
                 child: CustomDropdown<String>(
-                  value: selectedState,
+                  value: courseProvider.selectedState,
                   hintText: "Select State",
                   items: states,
                   onChanged: (value) {
-                    selectedState = value;
-                    // You can add filtering logic here if needed
+                    courseProvider.setSelectedState(value);
                   },
                 ),
               ),
@@ -533,7 +600,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         ),
       ],
     );
-  }
+  }*/
 
   List<Widget> _buildInstituteList( List<InstituteData> instituteDetail) {
     return instituteDetail.map((institute) {

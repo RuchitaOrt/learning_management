@@ -127,7 +127,7 @@ class APIManager {
         apiPathString = "/api/course/get-course-resources";
         break;
       case API.getstatecountry:
-        apiPathString = "/api/course/get-state-country";
+        apiPathString = "/api/master/get-state-country";
         break;
       case API.getcourseinstitutions:
         apiPathString = "/api/course/get-course-institutions";

@@ -68,6 +68,18 @@ class CourseProvider with ChangeNotifier {
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+  String? selectedCountry;
+  String? selectedState;
+
+  void setSelectedCountry(String? country) {
+    selectedCountry = country;
+    notifyListeners();
+  }
+
+  void setSelectedState(String? state) {
+    selectedState = state;
+    notifyListeners();
+  }
 
   set isLoading(bool value) {
     _isLoading = value;

@@ -22,11 +22,14 @@ import 'package:learning_mgt/screens/splash_screen.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
+
+import 'Utils/SPManager.dart';
 // final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 final GlobalKey<NavigatorState> routeGlobalKey = GlobalKey();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  final token = await SPManager().getAuthToken();
+  print('Token: $token');
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
@@ -94,9 +97,6 @@ setState(() {
         ChangeNotifierProvider(
           create: (_) => StepProvider(),
         ),
-        ChangeNotifierProvider(
-          create: (_) => StepProvider(),
-        ),
         ChangeNotifierProvider<RecommendedCourseProvider>(
           create: (context) => RecommendedCourseProvider(),
         ),
@@ -109,11 +109,7 @@ setState(() {
         
          ChangeNotifierProvider<InstituteProvider>(
           create: (context) => InstituteProvider(),
-        ), 
-       ChangeNotifierProvider(
-      create: (_) => StepProvider(),
-      
-    ),
+         ),
         ChangeNotifierProvider<SearchProvider>(
           create: (context) => SearchProvider(),
         ),

@@ -5,6 +5,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/main.dart';
 
+import '../Utils/SPManager.dart';
+import '../screens/signIn_screen.dart';
+
 
 
 class ShowDialogs {
@@ -16,10 +19,10 @@ class ShowDialogs {
 
     Widget okButton = ElevatedButton(
         child: Text("OK"),
-        onPressed: () {
-
-          // Navigator.pushReplacement(
-          //     context, MaterialPageRoute(builder: (context) => SignInScreen()));
+        onPressed: () async {
+          await SPManager().clearAuthData();
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => SignInScreen()));
         });
 
     // set up the AlertDialog
