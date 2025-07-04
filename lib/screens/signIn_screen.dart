@@ -13,19 +13,44 @@ import 'package:learning_mgt/screens/forgotPassword_screen.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   static const String route = "/signIn";
   SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
   final BorderRadius borderRadius = const BorderRadius.all(
     Radius.circular(8),
   );
+
   final BorderSide focusedBorder = const BorderSide(
     width: 1.0,
   );
+
   final BorderSide enableBorder = BorderSide(
     color: LearningColors.neutral300,
     width: 1.0,
   );
+
+ @override
+  void initState() {
+    // TODO: implement initState
+ super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("COMING");
+      final provider =
+          Provider.of<SignInProvider>(context, listen: false);
+         
+        provider.setIDandpassword();
+
+           print(provider.emailController.text);
+ 
+
+    });
+  }
 
   Widget buildMostInterestedCard({
     required String title,

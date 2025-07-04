@@ -463,7 +463,7 @@ Widget listing(CourseProvider courseProvider)
               padding: const EdgeInsets.only(right: 8.0),
               child: ChoiceChip(
                 label: Text('ALL'),
-                selected: selectedCategory == "all",
+                selected: courseProvider.selectedCategory == "all",
                 showCheckmark: false,
                onSelected: (selected) {
                   courseProvider.selectCategory("all");

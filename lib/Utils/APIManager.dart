@@ -4,11 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
+import 'package:learning_mgt/model/GetCertificateResponse.dart';
 import 'package:learning_mgt/model/GetCourseCategory.dart';
 import 'package:learning_mgt/model/GetCourseDetailListResponse.dart';
 import 'package:learning_mgt/model/GetCourseInstitueResponse.dart';
 import 'package:learning_mgt/model/GetCourseListResponse.dart';
+import 'package:learning_mgt/model/GetRecommdedResponse.dart';
 import 'package:learning_mgt/model/GetResourceResponse.dart';
+import 'package:learning_mgt/model/GetResultResponse.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
@@ -32,7 +35,10 @@ enum API {
   documentsUpload,
   getcourseresources,
   getstatecountry,
-  getcourseinstitutions
+  getcourseinstitutions,
+  recommendationlist,
+  getcertificates,
+  getresults
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -132,6 +138,15 @@ class APIManager {
       case API.getcourseinstitutions:
         apiPathString = "/api/course/get-course-institutions";
         break;
+      case API.recommendationlist:
+        apiPathString = "/api/course/recommendation-list";
+        break;
+      case API.getcertificates:
+        apiPathString = "/api/candidate/getcertificates";
+        break;
+      case API.getresults:
+        apiPathString = "/api/candidate/getresults";
+        break;
 
       default:
         apiPathString = "/Login";
@@ -148,6 +163,7 @@ class APIManager {
       case API.departmentlist:
       case API.getqualifications:
       case API.getcoursecategorylist:
+      case API.getcertificates:
         method = HTTPMethod.GET;
         break;
 
@@ -205,8 +221,17 @@ class APIManager {
       case API.getstatecountry:
         className = "GetStateResponse";
         break;
-          case API.getcourseinstitutions:
+      case API.getcourseinstitutions:
         className = "GetCourseInstituteResponse";
+        break;
+      case API.recommendationlist:
+        className = "GetRecommdedResponse";
+        break;
+      case API.getcertificates:
+        className = "GetCertificateResponse";
+        break;
+      case API.getresults:
+        className = "GetResultResponse";
         break;
       default:
         className = 'CommonResponse';
@@ -241,9 +266,14 @@ class APIManager {
       responseObj = DocumentListResponse.fromJson(json);
     } else if (className == 'GetResourceResponse') {
       responseObj = GetResourceResponse.fromJson(json);
-    }
-    else if (className == 'GetCourseInstituteResponse') {
+    } else if (className == 'GetRecommdedResponse') {
+      responseObj = GetRecommdedResponse.fromJson(json);
+    } else if (className == 'GetCourseInstituteResponse') {
       responseObj = GetCourseInstituteResponse.fromJson(json);
+    } else if (className == 'GetCertificateResponse') {
+      responseObj = GetCertificateResponse.fromJson(json);
+    } else if (className == 'GetResultResponse') {
+      responseObj = GetResultResponse.fromJson(json);
     }
 
     return responseObj;

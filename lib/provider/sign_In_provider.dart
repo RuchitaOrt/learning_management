@@ -65,7 +65,12 @@ class SignInProvider with ChangeNotifier {
     }
     return null;
   }
-
+setIDandpassword()
+{
+    emailController.text="kattalemahesh@gmail.com";
+          passwordController.text="Mahesh@8548";
+          notifyListeners();
+}
   /*String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password cannot be empty';

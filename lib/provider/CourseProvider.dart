@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/APIManager.dart';
 import 'package:learning_mgt/Utils/internetConnection.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/model/GetCertificateResponse.dart' as cert;
 import 'package:learning_mgt/model/GetCourseDetailListResponse.dart' as detail;
 import 'package:learning_mgt/model/GetCourseInstitueResponse.dart';
 
@@ -317,6 +318,68 @@ class CourseProvider with ChangeNotifier {
     }
   }
 
+    bool _isCertificateLoading = false;
+  bool get isCertificateLoading => _isCertificateLoading;
+
+  set isCertificateLoading(bool value) {
+    _isCertificateLoading = value;
+    notifyListeners();
+  }
+ List<cert.CourseData> _certificatecourseList = [];
+
+  // Getter for data
+  List<cert.CourseData> get certificatecourseList => _certificatecourseList;
+  set certificatecourseList(List<cert.CourseData> data) {
+    _certificatecourseList = data;
+    notifyListeners();
+  }
+
+void getCertificateAPI() async {
+    // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
+
+    isCertificateLoading = true;
+    _certificatecourseList = [];
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      final body = "";
+
+      try {
+        await APIManager().apiRequest(
+          routeGlobalKey.currentContext!,
+          API.getcertificates,
+          (response) {
+            // Navigator.pop(context);
+            cert.GetCertificateResponse resp = response;
+            if (resp.n == 1) {
+              _certificatecourseList = resp.data;
+             
+              print("_certificatecourseList");
+              print(_certificatecourseList.length.toString());
+            }
+             isCertificateLoading = false;
+              notifyListeners();
+          },
+          (error) {
+            // Navigator.pop(context);
+            isCertificateLoading = false;
+            notifyListeners();
+            ShowDialogs.showToast("Server Not Responding");
+          },
+          jsonval: jsonEncode(body),
+        );
+      } catch (e) {
+        isCertificateLoading = false;
+        notifyListeners();
+        Navigator.pop(routeGlobalKey.currentContext!);
+        ShowDialogs.showToast('Unexpected error: $e');
+      }
+    } else {
+      isCertificateLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
+    }
+  }
   final Map<String, List<Course>> _coursesByCategory = {
     'All': [
       Course(

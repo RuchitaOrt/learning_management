@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/screens/signIn_screen.dart';
 
 
 
@@ -18,8 +19,8 @@ class ShowDialogs {
         child: Text("OK"),
         onPressed: () {
 
-          // Navigator.pushReplacement(
-          //     context, MaterialPageRoute(builder: (context) => SignInScreen()));
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => SignInScreen()));
         });
 
     // set up the AlertDialog
