@@ -32,7 +32,8 @@ enum API {
   documentsUpload,
   getcourseresources,
   getstatecountry,
-  getcourseinstitutions
+  getcourseinstitutions,
+  savePayment
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -131,6 +132,9 @@ class APIManager {
         break;
       case API.getcourseinstitutions:
         apiPathString = "/api/course/get-course-institutions";
+        break;
+      case API.savePayment:
+        apiPathString = "/api/enrollments/save-payment";
         break;
 
       default:

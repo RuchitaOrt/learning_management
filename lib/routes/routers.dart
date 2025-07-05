@@ -106,9 +106,16 @@ class Routers {
         return MaterialPageRoute(
           builder: (_) => CourseEnrollmentScreen(),
         );
-      case OrderSummaryScreen.route:
+      /*case OrderSummaryScreen.route:
         return MaterialPageRoute(
           builder: (_) => OrderSummaryScreen(),
+        );*/
+      case OrderSummaryScreen.route:
+        final args = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute(
+          builder: (_) => OrderSummaryScreen(
+            courseID: args?['courseID'] ?? "" ,
+          ),
         );
       case FeedbackScreen.route:
         return MaterialPageRoute(

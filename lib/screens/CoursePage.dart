@@ -701,8 +701,15 @@ Widget listing(CourseProvider courseProvider)
                           // Enroll button
                           ElevatedButton(
                             onPressed: () {
-                              Navigator.of(context)
+                              /*Navigator.of(context)
                                   .pushNamed(OrderSummaryScreen.route)
+                                  .then((value) {});*/
+
+                              Navigator.of(routeGlobalKey.currentContext!)
+                                  .pushNamed(OrderSummaryScreen.route,
+                                  arguments: {
+                                    "courseID": course.id.toString()
+                                  })
                                   .then((value) {});
                             },
                             style: ElevatedButton.styleFrom(

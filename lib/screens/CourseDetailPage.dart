@@ -446,7 +446,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     );
   }
 
-  Widget _buildInstituteTab(CourseProvider courseProvider) {
+  /*Widget _buildInstituteTab(CourseProvider courseProvider) {
     final signUpProvider = Provider.of<SignUpProvider>(context);
     final selectedCountry = signUpProvider.selectedCountry;
     final selectedState = courseProvider.selectedState;
@@ -498,8 +498,59 @@ class _CourseDetailPageState extends State<CourseDetailPage>
         ),
       ],
     );
-  }
+  }*/
 
+  Widget _buildInstituteTab(CourseProvider courseProvider) {
+    // Use the same provider for all country/state operations
+    final signUpProvider = Provider.of<SignUpProvider>(context);
+    final selectedCountry = signUpProvider.selectedCountry;
+    final selectedState = signUpProvider.selectedState; // Changed from courseProvider
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Row(
+            children: [
+              // Country dropdown
+              Expanded(
+                child: signUpProvider.isLoadingCountries
+                    ? Center(child: CircularProgressIndicator(color: LearningColors.darkBlue))
+                    : CustomDropdown<String>(
+                  value: selectedCountry?.name,
+                  hintText: "Select Country",
+                  items: signUpProvider.countries.map((c) => c.name).toList(),
+                  onChanged: (value) {
+                    final countryObj = signUpProvider.countries.firstWhere((c) => c.name == value);
+                    signUpProvider.setSelectedCountry(countryObj);
+                    signUpProvider.setSelectedState(null); // Changed from courseProvider
+                    signUpProvider.fetchStatesByCountry(countryObj.id); // Ensure this is called
+                  },
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // State dropdown
+              Expanded(
+                child: signUpProvider.isLoadingStates
+                    ? Center(child: CircularProgressIndicator())
+                    : CustomDropdown<String>(
+                  value: selectedState?.name, // Changed to use name if StateModel
+                  hintText: "Select State",
+                  items: signUpProvider.states.map((s) => s.name).toList(),
+                  onChanged: (value) {
+                    final stateObj = signUpProvider.states.firstWhere((s) => s.name == value);
+                    signUpProvider.setSelectedState(stateObj);
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        // ... rest of your code
+      ],
+    );
+  }
 
   /*Widget _buildInstituteTab(CourseProvider courseProvider) {
     // final List<Map<String, dynamic>> institutes = [

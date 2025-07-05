@@ -14,10 +14,12 @@ import 'package:learning_mgt/provider/TrainingProvider.dart';
 import 'package:learning_mgt/provider/faqprovider.dart';
 // import 'package:learning_mgt/provider/feedbackprovider.dart';
 import 'package:learning_mgt/provider/instituteprovider.dart';
+import 'package:learning_mgt/provider/order_summary_provider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/provider/sign_In_provider.dart';
 import 'package:learning_mgt/provider/sign_up_provider.dart';
 import 'package:learning_mgt/routes/routers.dart';
+import 'package:learning_mgt/screens/OrderSummary.dart';
 import 'package:learning_mgt/screens/splash_screen.dart';
 import 'package:learning_mgt/widgets/GlobalLists.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -116,6 +118,10 @@ setState(() {
         ChangeNotifierProvider<NotificationProvider>(
           create: (context) => NotificationProvider(),
         ),
+        ChangeNotifierProvider(
+          create: (context) => OrderSummaryProvider(),
+          child: OrderSummaryScreen(),
+        )
      
       ],
       child: MaterialApp(

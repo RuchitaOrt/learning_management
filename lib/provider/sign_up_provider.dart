@@ -112,13 +112,14 @@ class SignUpProvider with ChangeNotifier {
   List<StateModel> _states = [];
   bool _isLoadingStates = false;
   String? _stateError;
-  String? selectedState;
+  // String? selectedState;
   List<StateModel> get states => _states;
   bool get isLoadingStates => _isLoadingStates;
   String? get stateError => _stateError;
   Country? _selectedCountry;
-  String? _selectedState;
+  // String? _selectedState;
   Country? get selectedCountry => _selectedCountry;
+  StateModel? selectedState;
 
   void setSelectedCountry(Country country) {
     _selectedCountry = country;
@@ -126,7 +127,18 @@ class SignUpProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setSelectedState(dynamic state) {
+    if (state == null) {
+      selectedState = null;
+    } else if (state is StateModel) {
+      selectedState = state;
+    } else if (state is String) {
+      selectedState = _states.firstWhere((s) => s.name == state);
+    }
+    notifyListeners();
+  }
 
+  // In your fetchStatesByCountry function (should be in SignUpProvider)
   Future<void> fetchStatesByCountry(int countryId) async {
     try {
       _isLoadingStates = true;
@@ -144,25 +156,30 @@ class SignUpProvider with ChangeNotifier {
             if (response['n'] == 1) {
               final data = response['data'] as List;
               _states = data.map((stateJson) => StateModel.fromJson(stateJson)).toList();
+              notifyListeners(); // Add this here to update UI immediately
             } else {
               _stateError = response['msg'] ?? 'Failed to load states';
             }
           } else {
             _stateError = 'Unexpected response format';
           }
+          notifyListeners(); // And here for error cases
         },
             (error) {
           _stateError = 'Failed to load states: ${error.toString()}';
+          notifyListeners();
         },
         jsonval: requestBody,
       );
     } catch (e) {
       _stateError = 'Failed to load states';
+      notifyListeners();
     } finally {
       _isLoadingStates = false;
       notifyListeners();
     }
   }
+
   /*Future<void> fetchStatesByCountry(int countryId) async {
     try {
       _isLoadingStates = true;
@@ -199,10 +216,10 @@ class SignUpProvider with ChangeNotifier {
     }
   }*/
 
-  void setSelectedState(String? state) {
+  /*void setSelectedState(String? state) {
     selectedState = state;
     notifyListeners();
-  }
+  }*/
 
   Future<void> fetchInitialData() async {
     _isLoadingDetails = true;

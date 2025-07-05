@@ -2,7 +2,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
+import 'package:provider/provider.dart';
 
+import '../provider/order_summary_provider.dart';
 import '../widgets/CustomDropdown.dart';
 
 /*class OrderSummaryScreen extends StatefulWidget {
@@ -713,8 +715,9 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
 
 
 class OrderSummaryScreen extends StatefulWidget {
+  final String? courseID;
   static const String route = "/order-summary-screen";
-  const OrderSummaryScreen({super.key});
+  const OrderSummaryScreen({super.key, this.courseID});
 
   @override
   State<OrderSummaryScreen> createState() => _OrderSummaryScreenState();
@@ -1052,7 +1055,77 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
               const SizedBox(height: 24),
 
               // Pay Button
+              // Replace the existing Pay Button with this:
+              // In the _OrderSummaryScreenState class, update the Pay Button widget:
               SizedBox(
+                width: double.infinity,
+                child: Consumer<OrderSummaryProvider>(
+                  builder: (context, orderProvider, _) {
+                    if (orderProvider.isLoading) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: LearningColors.darkBlue,
+                        ),
+                      );
+                    }
+
+                    return ElevatedButton(
+                      onPressed: () {
+                        // Validate payment method and required fields
+                        if (_selectedPaymentMethod == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Please select a payment method')),
+                          );
+                          return;
+                        }
+
+                        // Call the savePayment API
+                        orderProvider.savePayment(
+                          courseId: '1', // Replace with actual course ID
+                          scheduleId: '2', // Replace with actual schedule ID
+                          trainingCenterId: 'fd092fbe-3811-47ea-b31d-a6bf1c6f4854',
+                          candidateId: 'fd092fbe-3811-47ea-b31d-a6bf1c6f4854',
+                          countryId: '2',
+                          stateId: '3',
+                          paymentMethod: _selectedPaymentMethod!,
+                          transactionId: _selectedPaymentMethod == 'upi' ? _upiIdController.text : null,
+                          cardNumber: _selectedPaymentMethod == 'card' ? _cardNumberController.text : null,
+                          expiryDate: _selectedPaymentMethod == 'card' ? _expiryController.text : null,
+                          cvc: _selectedPaymentMethod == 'card' ? _cvcController.text : null,
+                          nameOnCard: _selectedPaymentMethod == 'card' ? _cardNameController.text : null,
+                          amount: (8000 - (8000 * _couponDiscount)).toStringAsFixed(0),
+                          context: context,
+                          onSuccess: () {
+                            // Handle successful payment
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Payment successful!')),
+                            );
+                            Navigator.pop(context); // Or navigate to success screen
+                          },
+                          onError: (error) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Payment failed: $error')),
+                            );
+                          },
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: LearningColors.darkBlue,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        elevation: 5,
+                      ),
+                      child: Text(
+                        'Pay INR ${8000 - (8000 * _couponDiscount).toInt()}',
+                        style: LMSStyles.tsWhiteNeutral50W600162,
+                      ),
+                    );
+                  },
+                ),
+              ),
+              /*SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {},
@@ -1069,7 +1142,7 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                     style: LMSStyles.tsWhiteNeutral50W600162,
                   ),
                 ),
-              ),
+              ),*/
               const SizedBox(height: 24),
 
               // Money Back Guarantee
@@ -1180,7 +1253,17 @@ class _OrderSummaryScreenState extends State<OrderSummaryScreen> {
                   });
                 },
                 activeColor: LearningColors.darkBlue,
-              ),
+              )
+              /*Radio<String>(
+                value: value,
+                groupValue: _selectedPaymentMethod,
+                onChanged: (String? value) {
+                  setState(() {
+                    _selectedPaymentMethod = value;
+                  });
+                },
+                activeColor: LearningColors.darkBlue,
+              ),*/
             ],
           ),
         ),
