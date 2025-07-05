@@ -510,29 +510,49 @@ class ChangePasswordScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              TextFormField(
-                                style: LMSStyles.tsWhiteNeutral300W50012,
-                                obscureText: signUpProvider.isPasswordObscured,
-                                controller: signUpProvider.passwordController,
-                                validator: signUpProvider.validatePassword,
-                                decoration: CommonInputDecoration(
-                                  hint: LMSStrings.strEnterpassword,
-                                  label: LMSStrings.strpassword,
-                                  isObscured: signUpProvider.isPasswordObscured,
-                                  toggle: signUpProvider.togglePasswordVisibility,
+                              Theme(
+                                 data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+                                child: TextFormField(
+                                  cursorColor: LearningColors.darkBlue,
+                                  style: LMSStyles.tsWhiteNeutral300W50012,
+                                  obscureText: signUpProvider.isPasswordObscured,
+                                  controller: signUpProvider.passwordController,
+                                  validator: signUpProvider.validatePassword,
+                                  decoration: CommonInputDecoration(
+                                    hint: LMSStrings.strEnterpassword,
+                                    label: LMSStrings.strpassword,
+                                    isObscured: signUpProvider.isPasswordObscured,
+                                    toggle: signUpProvider.togglePasswordVisibility,
+                                  ),
                                 ),
                               ),
                               SizedBox(height: 16),
-                              TextFormField(
-                                style: LMSStyles.tsWhiteNeutral300W50012,
-                                obscureText: signUpProvider.isconfirmPasswordObscured,
-                                controller: signUpProvider.confirmpasswordController,
-                                validator: signUpProvider.validateConfirmPassword,
-                                decoration: CommonInputDecoration(
-                                  hint: LMSStrings.strEnterConfirmpassword,
-                                  label: LMSStrings.strConfirmpassword,
-                                  isObscured: signUpProvider.isconfirmPasswordObscured,
-                                  toggle: signUpProvider.toggleConfirmPasswordVisibility,
+                              Theme(
+                                 data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+                                child: TextFormField(
+                                  cursorColor: LearningColors.darkBlue,
+                                  style: LMSStyles.tsWhiteNeutral300W50012,
+                                  obscureText: signUpProvider.isconfirmPasswordObscured,
+                                  controller: signUpProvider.confirmpasswordController,
+                                  validator: signUpProvider.validateConfirmPassword,
+                                  decoration: CommonInputDecoration(
+                                    hint: LMSStrings.strEnterConfirmpassword,
+                                    label: LMSStrings.strConfirmpassword,
+                                    isObscured: signUpProvider.isconfirmPasswordObscured,
+                                    toggle: signUpProvider.toggleConfirmPasswordVisibility,
+                                  ),
                                 ),
                               ),
                             ],

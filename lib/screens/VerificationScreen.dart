@@ -247,7 +247,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                       Center(
                         child: GestureDetector(
                           onTap: () {
-                            Navigator.of(routeGlobalKey.currentContext!)
+                            Navigator.of(context)
                                 .pushNamed(
                               TabScreen.route,
                               arguments: {
@@ -296,7 +296,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     SizedBox(width: 8), // Add some spacing between buttons
 
                     // Next/Submit Button (50% width)
-                    Expanded(
+                    /*Expanded(
                       flex: 1,
                       child: Consumer<SignUpProvider>(
                         builder: (context, signUpProvider, _) {
@@ -343,6 +343,74 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                   Provider.of<StepProvider>(context, listen: false).nextStep();
                                 } catch (e) {
                                   // Error is already shown by the provider methods
+                                }
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Please fix errors before proceeding')));
+                              }
+                            },
+                            child: signUpProvider.isRegistering || signUpProvider.isSavingDetails
+                                ? CircularProgressIndicator(color: Colors.white)
+                                : Text(current == 2 ? 'Submit' : 'Next'),
+                          );
+                        },
+                      ),
+                    ),*/
+                    Expanded(
+                      flex: 1,
+                      child: Consumer<SignUpProvider>(
+                        builder: (context, signUpProvider, _) {
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: signUpProvider.isEmailVerified &&
+                                  !signUpProvider.isRegistering &&
+                                  !signUpProvider.isSavingDetails
+                                  ? LearningColors.darkBlue
+                                  : Colors.grey,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 5,
+                            ),
+                            onPressed: () async {
+                              if (!signUpProvider.isEmailVerified) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Please verify your email first')));
+                                return;
+                              }
+
+                              final formKey = current == 0
+                                  ? signUpProvider.formKeyBasic
+                                  : current == 1
+                                  ? signUpProvider.formKeyDetail
+                                  : signUpProvider.formKeyUpload;
+
+                              if (formKey.currentState?.validate() ?? false) {
+                                try {
+                                  if (current == 0) {
+                                    await signUpProvider.registerCandidate(context);
+                                    // Even if registration fails with "email exists" but is verified, proceed
+                                    if (signUpProvider.isEmailVerified) {
+                                      Provider.of<StepProvider>(context, listen: false).nextStep();
+                                    }
+                                  } else if (current == 1) {
+                                    await signUpProvider.saveCandidateDetails(context);
+                                    await signUpProvider.fetchDocuments();
+                                    Provider.of<StepProvider>(context, listen: false).nextStep();
+                                  } else if (current == 2) {
+                                    await signUpProvider.uploadDocuments(context);
+                                  }
+                                } catch (e) {
+                                  // If email exists but is verified, still allow to proceed
+                                  if (e.toString().toLowerCase().contains('email already exists') &&
+                                      signUpProvider.isEmailVerified) {
+                                    Provider.of<StepProvider>(context, listen: false).nextStep();
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text(e.toString())));
+                                  }
                                 }
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -542,6 +610,66 @@ class BasicFormWidget extends StatelessWidget {
             validator: signUpProvider.validateEmailField,
             suffixIcon: Consumer<SignUpProvider>(
               builder: (context, provider, _) {
+                // Don't show any OTP button if email is already verified
+                if (provider.isEmailVerified) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Icon(Icons.verified, color: Colors.green),
+                  );
+                }
+
+                if (provider.isSendingOtp) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Container(
+                      width: 80,
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          valueColor: AlwaysStoppedAnimation<Color>(LearningColors.darkBlue),
+                        ),
+                      ),
+                    ),
+                  );
+                }
+
+                return TextButton(
+                  onPressed: provider.isOtpCooldownActive
+                      ? null
+                      : () {
+                    final email = provider.emailController.text.trim();
+                    if (email.isNotEmpty) {
+                      provider.sendEmailOtp(context, email);
+                    }
+                  },
+                  child: Text(
+                    provider.isOtpCooldownActive
+                        ? 'Resend OTP'
+                        : 'Send OTP',
+                    style: TextStyle(
+                      color: provider.isOtpCooldownActive
+                          ? Colors.grey
+                          : LearningColors.darkBlue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+          /*CustomTextFieldWidget(
+            title: LMSStrings.strEmail,
+            hintText: LMSStrings.strEnterEmail,
+            onChange: (val) {},
+            textEditingController: signUpProvider.emailController,
+            autovalidateMode: AutovalidateMode.disabled,
+            validator: signUpProvider.validateEmailField,
+            suffixIcon: Consumer<SignUpProvider>(
+              builder: (context, provider, _) {
                 if (provider.isSendingOtp) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 8.0),
@@ -571,7 +699,8 @@ class BasicFormWidget extends StatelessWidget {
                   },
                   child: Text(
                     provider.isOtpCooldownActive
-                        ? 'Resend OTP (${provider.otpCountdown})'
+                        // ? 'Resend OTP (${provider.otpCountdown})'
+                        ? 'Resend OTP'
                         : 'Send OTP',
                     style: TextStyle(
                       color: provider.isOtpCooldownActive
@@ -584,46 +713,18 @@ class BasicFormWidget extends StatelessWidget {
                 );
               },
             ),
-            /*suffixIcon: Consumer<SignUpProvider>(
-              builder: (context, provider, _) {
-                return TextButton(
-                  onPressed: provider.isOtpCooldownActive
-                      ? null
-                      : () {
-                    final email = provider.emailController.text.trim();
-                    if (email.isNotEmpty) {
-                      provider.sendEmailOtp(context, email);
-                    }
-                  },
-                  child: Text(
-                    provider.isOtpCooldownActive
-                        ? 'Resend OTP (${provider.otpCountdown})'
-                        : 'Send OTP',
-                    style: TextStyle(
-                      color: provider.isOtpCooldownActive
-                          ? Colors.grey
-                          : LearningColors.darkBlue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                    ),
-                  ),
-                );
-              },
-            ),*/
-          ),
+          ),*/
 
           SizedBox(height: 0),
           // otp verification field
-          if (signUpProvider.isOtpSent) ...[
-            /*CustomTextFieldWidget(
+          // Only show OTP field if OTP was sent but email is not yet verified
+          if (signUpProvider.isOtpSent && !signUpProvider.isEmailVerified) ...[
+            CustomTextFieldWidget(
               title: 'OTP',
               hintText: 'Enter 4-digit OTP',
               textEditingController: signUpProvider.otpController,
               autovalidateMode: AutovalidateMode.disabled,
               validator: (value) {
-                if (!signUpProvider.isEmailVerified) {
-                  return 'Please verify your email';
-                }
                 return signUpProvider.validateOtp(value);
               },
               inputFormatters: [
@@ -631,27 +732,50 @@ class BasicFormWidget extends StatelessWidget {
                 FilteringTextInputFormatter.digitsOnly,
               ],
               textInputType: TextInputType.number,
-              suffixIcon: signUpProvider.isEmailVerified
-                  ? Icon(Icons.verified, color: Colors.green)
-                  : TextButton(
-                onPressed: () {
-                  final email = signUpProvider.emailController.text.trim();
-                  if (email.isNotEmpty &&
-                      signUpProvider.validateEmailField(email) == null &&
-                      signUpProvider.otpController.text.isNotEmpty) {
-                    signUpProvider.verifyEmailOtp(context, email);
+              suffixIcon: Consumer<SignUpProvider>(
+                builder: (context, provider, _) {
+                  if (provider.isVerifyingOtp) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Container(
+                        width: 80,
+                        alignment: Alignment.centerRight,
+                        child: SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(LearningColors.darkBlue),
+                          ),
+                        ),
+                      ),
+                    );
                   }
+
+                  return TextButton(
+                    onPressed: () {
+                      final email = provider.emailController.text.trim();
+                      if (email.isNotEmpty &&
+                          provider.validateEmailField(email) == null &&
+                          provider.otpController.text.isNotEmpty) {
+                        provider.verifyEmailOtp(context, email);
+                      }
+                    },
+                    child: Text(
+                      'Verify OTP',
+                      style: TextStyle(
+                        color: LearningColors.darkBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  );
                 },
-                child: Text(
-                  'Verify OTP',
-                  style: TextStyle(
-                    color: LearningColors.darkBlue,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                ),
               ),
-            ),*/
+            ),
+            SizedBox(height: 0),
+          ],
+          /*if (signUpProvider.isOtpSent) ...[
             CustomTextFieldWidget(
               title: 'OTP',
               hintText: 'Enter 4-digit OTP',
@@ -712,7 +836,7 @@ class BasicFormWidget extends StatelessWidget {
               ),
             ),
             SizedBox(height: 0),
-          ],
+          ],*/
 
           SizedBox(height: 0),
 
@@ -733,31 +857,51 @@ class BasicFormWidget extends StatelessWidget {
           SizedBox(height: 8),
 
           // Password field
-          TextFormField(
-            style: LMSStyles.tsWhiteNeutral300W50012,
-            obscureText: signUpProvider.isPasswordObscured,
-            controller: signUpProvider.passwordController,
-            validator: signUpProvider.validatePassword,
-            decoration: CommonInputDecoration(
-              hint: LMSStrings.strEnterpassword,
-              label: LMSStrings.strpassword,
-              isObscured: signUpProvider.isPasswordObscured,
-              toggle: signUpProvider.togglePasswordVisibility,
+          Theme(
+             data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+            child: TextFormField(
+              cursorColor: LearningColors.darkBlue,
+              style: LMSStyles.tsWhiteNeutral300W50012,
+              obscureText: signUpProvider.isPasswordObscured,
+              controller: signUpProvider.passwordController,
+              validator: signUpProvider.validatePassword,
+              decoration: CommonInputDecoration(
+                hint: LMSStrings.strEnterpassword,
+                label: LMSStrings.strpassword,
+                isObscured: signUpProvider.isPasswordObscured,
+                toggle: signUpProvider.togglePasswordVisibility,
+              ),
             ),
           ),
           SizedBox(height: 16),
 
           // Confirm Password field
-          TextFormField(
-            style: LMSStyles.tsWhiteNeutral300W50012,
-            obscureText: signUpProvider.isconfirmPasswordObscured,
-            controller: signUpProvider.confirmpasswordController,
-            validator: signUpProvider.validateConfirmPassword,
-            decoration: CommonInputDecoration(
-              hint: LMSStrings.strEnterConfirmpassword,
-              label: LMSStrings.strConfirmpassword,
-              isObscured: signUpProvider.isconfirmPasswordObscured,
-              toggle: signUpProvider.toggleConfirmPasswordVisibility,
+          Theme(
+             data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+            child: TextFormField(
+              cursorColor: LearningColors.darkBlue,
+              style: LMSStyles.tsWhiteNeutral300W50012,
+              obscureText: signUpProvider.isconfirmPasswordObscured,
+              controller: signUpProvider.confirmpasswordController,
+              validator: signUpProvider.validateConfirmPassword,
+              decoration: CommonInputDecoration(
+                hint: LMSStrings.strEnterConfirmpassword,
+                label: LMSStrings.strConfirmpassword,
+                isObscured: signUpProvider.isconfirmPasswordObscured,
+                toggle: signUpProvider.toggleConfirmPasswordVisibility,
+              ),
             ),
           ),
         ],
@@ -930,7 +1074,7 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
   }*/
 
   @override
-  Widget build(BuildContext context) {
+  /*Widget build(BuildContext context) {
     final signUpProvider = Provider.of<SignUpProvider>(context);
 
     return Form(
@@ -1040,6 +1184,124 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
         ],
       ),
     );
+  }*/
+  @override
+  Widget build(BuildContext context) {
+    final signUpProvider = Provider.of<SignUpProvider>(context);
+
+    return Form(
+      key: signUpProvider.formKeyDetail,
+      child: Stack(
+        children: [
+          ListView(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+            children: [
+              SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: CustomTextFieldWidget(
+                      title: LMSStrings.strSeafarerNo,
+                      hintText: LMSStrings.strSeafarerNoHint,
+                      onChange: (val) {},
+                      textEditingController: signUpProvider.seafarerController,
+                      autovalidateMode: AutovalidateMode.disabled,
+                      validator: signUpProvider.validateSeafaer,
+                    ),
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: CustomTextFieldWidget(
+                      title: LMSStrings.strPassportNo,
+                      hintText: LMSStrings.strPassportNoHint,
+                      onChange: (val) {},
+                      textEditingController: signUpProvider.passportController,
+                      autovalidateMode: AutovalidateMode.disabled,
+                      validator: signUpProvider.validatePassport,
+                    ),
+                  ),
+                ],
+              ),
+              _buildDepartmentField(signUpProvider),
+              _buildRankField(signUpProvider),
+              _buildCountryField(signUpProvider),
+              _buildQualificationField(signUpProvider),
+              CustomTextFieldWidget(
+                title: LMSStrings.strDOB,
+                hintText: LMSStrings.strDOBHint,
+                textEditingController: signUpProvider.dobController,
+                isFieldReadOnly: true,
+                autovalidateMode: AutovalidateMode.disabled,
+                validator: signUpProvider.validateDOB,
+                onTap: () async {
+                  DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(1900),
+                    lastDate: DateTime.now(),
+                    builder: (BuildContext context, Widget? child) {
+                      return Theme(
+                        data: ThemeData.light().copyWith(
+                          colorScheme: ColorScheme.light(
+                            primary: LearningColors.darkBlue,
+                            onPrimary: Colors.white,
+                            onSurface: Colors.black,
+                            surface: Colors.white,
+                          ),
+                          textButtonTheme: TextButtonThemeData(
+                            style: TextButton.styleFrom(
+                              foregroundColor: LearningColors.darkBlue,
+                              textStyle: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          dialogBackgroundColor: Colors.white,
+                        ),
+                        child: child!,
+                      );
+                    },
+                  );
+
+                  if (pickedDate != null) {
+                    String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+                    signUpProvider.dobController.text = formattedDate;
+                  }
+                },
+                onChange: (val) {},
+              ),
+              CustomTextFieldWidget(
+                title: LMSStrings.strPincode,
+                hintText: LMSStrings.strPincodeHint,
+                onChange: (val) {},
+                textEditingController: signUpProvider.pincodeController,
+                suffixIcon: TextButton(
+                  onPressed: () {
+                    // Add logic to send OTP to email
+                  },
+                  child: Text(
+                    "Locate Me",
+                    style: TextStyle(
+                        color: LearningColors.darkBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (signUpProvider.isOverallLoading)
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDepartmentField(SignUpProvider signUpProvider) {
@@ -1109,6 +1371,11 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
   }
 
   Widget _buildRankField(SignUpProvider signUpProvider) {
+    // Don't show anything if no department is selected
+    if (signUpProvider.selectedDepartmentId == null) {
+      return SizedBox.shrink(); // Returns an empty widget
+    }
+
     if (signUpProvider.isLoadingRanks) {
       return Center(child: CircularProgressIndicator());
     }
@@ -1123,24 +1390,9 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
       );
     }
 
-    if (signUpProvider.selectedDepartmentId == null) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          'Please select a department first',
-          style: TextStyle(color: Colors.grey),
-        ),
-      );
-    }
-
+    // Don't show anything if no ranks are available
     if (signUpProvider.ranks.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          'No ranks available for selected department',
-          style: TextStyle(color: Colors.grey),
-        ),
-      );
+      return SizedBox.shrink(); // Returns an empty widget
     }
 
     return CustomTextFieldWidget(
@@ -1151,6 +1403,44 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
       isFieldReadOnly: true,
       onTap: () => _showRankDialog(signUpProvider),
       validator: signUpProvider.validateRank,
+    );
+  }
+
+  Widget _buildQualificationField(SignUpProvider signUpProvider) {
+    if (signUpProvider.isLoadingQualifications) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (signUpProvider.qualificationError != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          signUpProvider.qualificationError!,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    if (signUpProvider.qualifications.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text('No qualifications available'),
+      );
+    }
+
+    return CustomTextFieldWidget(
+      textEditingController: signUpProvider.qualificationController,
+      title: 'Qualification',
+      hintText: 'Select your qualification',
+      autovalidateMode: AutovalidateMode.disabled,
+      isFieldReadOnly: true,
+      onTap: () => _showQualificationDialog(signUpProvider),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please select your qualification';
+        }
+        return null;
+      },
     );
   }
 
@@ -1243,44 +1533,6 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
     if (selected != null) {
       signUpProvider.setSelectedRank(selected);
     }
-  }
-
-  Widget _buildQualificationField(SignUpProvider signUpProvider) {
-    if (signUpProvider.isLoadingQualifications) {
-      return Center(child: CircularProgressIndicator());
-    }
-
-    if (signUpProvider.qualificationError != null) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text(
-          signUpProvider.qualificationError!,
-          style: TextStyle(color: Colors.red),
-        ),
-      );
-    }
-
-    if (signUpProvider.qualifications.isEmpty) {
-      return Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Text('No qualifications available'),
-      );
-    }
-
-    return CustomTextFieldWidget(
-      textEditingController: signUpProvider.qualificationController,
-      title: 'Qualification',
-      hintText: 'Select your qualification',
-      autovalidateMode: AutovalidateMode.disabled,
-      isFieldReadOnly: true,
-      onTap: () => _showQualificationDialog(signUpProvider),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please select your qualification';
-        }
-        return null;
-      },
-    );
   }
 
   Future<void> _showQualificationDialog(SignUpProvider signUpProvider) async {

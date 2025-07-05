@@ -47,6 +47,12 @@ class SignInProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  bool get areRequiredFieldsFilled {
+    return emailController.text.isNotEmpty &&
+        passwordController.text.isNotEmpty &&
+        isCheckedTerms;
+  }
+
   // Getter for formKey
   GlobalKey<FormState> get formKey => _formKey;
   bool get isPasswordObscured => _isPasswordObscured;
@@ -125,6 +131,76 @@ setIDandpassword()
 
   Future<void> createSignIn() async {
     _isLoading = true;
+    notifyListeners(); // optional if using Provider
+
+    if (!validateForm()) {
+      _isLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please fill all fields correctly");
+      return;
+    }
+
+    var status1 = await ConnectionDetector.checkInternetConnection();
+    if (!status1) {
+      _isLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
+      return;
+    }
+
+    try {
+      final requestBody = {
+        "email": emailController.text.trim(),
+        "password": passwordController.text,
+      };
+
+      print('Login request body: $requestBody');
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.login,
+            (response) async {
+          _isLoading = false;
+          notifyListeners();
+
+          if (response is LoginResponse) {
+            if (response.n == 1) {
+              await SPManager().setAuthToken(response.token);
+              await SPManager().setUserData(json.encode(response.userData));
+
+              ShowDialogs.showToast(response.msg);
+
+              Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+                TabScreen.route,
+                arguments: {
+                  'selectedPos': -1,
+                  'isSignUp': false,
+                },
+              );
+            } else {
+              ShowDialogs.showToast(response.msg);
+            }
+          }
+        },
+            (error) {
+          _isLoading = false;
+          notifyListeners();
+          print('Login error: $error');
+          ShowDialogs.showToast("Login failed. Please try again.");
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Login exception: $e');
+      ShowDialogs.showToast("An error occurred during login");
+    }
+  }
+
+
+/*Future<void> createSignIn() async {
+    _isLoading = true;
     if (!validateForm()) {
       ShowDialogs.showToast("Please fill all fields correctly");
       return;
@@ -183,42 +259,6 @@ setIDandpassword()
       _isLoading = false;
       print('Login exception: $e');
       ShowDialogs.showToast("An error occurred during login");
-    }
-  }
-
-  /*createSignIn() async {
-    var status1 = await ConnectionDetector.checkInternetConnection();
-
-    if (status1) {
-    Map<String, String> jsonbody = createRequestBody();
-      print(jsonbody);
-
-      APIManager().apiRequest(routeGlobalKey.currentContext!, API.login,
-          (response) async {
-        LoginResponse resp = response;
-
-        if (resp.status == true) {
-          ShowDialogs.showToast(resp.message);
-         
-
-          Navigator.of(
-            routeGlobalKey.currentContext!,
-          ).pushNamed(
-            TabScreen.route,
-            arguments: {
-              'selectedPos': -1,
-              'isSignUp': false,
-            },
-          );
-        }
-      }, (error) {
-        print('ERR msg is $error');
-
-        ShowDialogs.showToast("Server Not Responding");
-      }, parameter: jsonbody);
-    } else {
-      /// Navigator.of(_keyLoader.currentContext).pop();
-      ShowDialogs.showToast("Please check internet connection");
     }
   }*/
 }

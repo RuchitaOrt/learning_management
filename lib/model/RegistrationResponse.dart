@@ -87,6 +87,51 @@ class Country {
   String toString() => name;
 }
 
+class StateModel {
+  final int id;
+  final String name;
+  final String countryCode;
+  final int countryId;
+
+  StateModel({
+    required this.id,
+    required this.name,
+    required this.countryCode,
+    required this.countryId,
+  });
+
+  factory StateModel.fromJson(Map<String, dynamic> json) {
+    return StateModel(
+      id: json['id'],
+      name: json['name'],
+      countryCode: json['country_code'],
+      countryId: json['country'],
+    );
+  }
+
+  @override
+  String toString() => name;
+}
+
+class StateListResponse {
+  final int n;
+  final String msg;
+  final List<StateModel> data;
+
+  StateListResponse({
+    required this.n,
+    required this.msg,
+    required this.data,
+  });
+
+  factory StateListResponse.fromJson(Map<String, dynamic> json) {
+    return StateListResponse(
+      n: json['n'],
+      msg: json['msg'],
+      data: (json['data'] as List).map((item) => StateModel.fromJson(item)).toList(),
+    );
+  }
+}
 
 class RankListResponse {
   final int n;

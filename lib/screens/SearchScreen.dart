@@ -117,25 +117,35 @@ class SearchScreen extends StatelessWidget {
                   width: 2.0,
                 ),
               ),
-              child: TextField(
-                controller: provider.searchController,
-                focusNode: provider.searchFocusNode,
-                decoration: InputDecoration(
-                  hintText: 'Search courses, institutes...',
-                  hintStyle: TextStyle(color: Colors.grey[600]),
-                  border: InputBorder.none,
-                  prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
-                  suffixIcon: provider.searchController.text.isNotEmpty
-                      ? IconButton(
-                    icon: Icon(Icons.clear, color: Colors.grey[600]),
-                    onPressed: provider.clearSearch,
-                  )
-                      : null,
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
+              child: Theme(
+                 data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+                child: TextField(
+                  cursorColor: LearningColors.darkBlue,
+                  controller: provider.searchController,
+                  focusNode: provider.searchFocusNode,
+                  decoration: InputDecoration(
+                    hintText: 'Search courses, institutes...',
+                    hintStyle: TextStyle(color: Colors.grey[600]),
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
+                    suffixIcon: provider.searchController.text.isNotEmpty
+                        ? IconButton(
+                      icon: Icon(Icons.clear, color: Colors.grey[600]),
+                      onPressed: provider.clearSearch,
+                    )
+                        : null,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  onChanged: (value) {
+                    provider.notifyListeners();
+                  },
                 ),
-                onChanged: (value) {
-                  provider.notifyListeners();
-                },
               ),
             ),
           ),

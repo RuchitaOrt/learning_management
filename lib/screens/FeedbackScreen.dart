@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
@@ -322,19 +323,29 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           constraints: BoxConstraints(
                             minHeight: 200, // Minimum height to prevent shrinking
                           ),
-                          child: TextField(
-                            controller: feedbackController,
-                            maxLines: null,
-                            keyboardType: TextInputType.multiline,
-                            textInputAction: TextInputAction.newline,
-                            decoration: InputDecoration(
-                              hintText: "Add your feedback...",
-                              hintStyle: TextStyle(color: Colors.grey[500]),
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(16),
-                              alignLabelWithHint: true,
+                          child: Theme(
+                             data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+                            child: TextField(
+                              cursorColor: LearningColors.darkBlue,
+                              controller: feedbackController,
+                              maxLines: null,
+                              keyboardType: TextInputType.multiline,
+                              textInputAction: TextInputAction.newline,
+                              decoration: InputDecoration(
+                                hintText: "Add your feedback...",
+                                hintStyle: TextStyle(color: Colors.grey[500]),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.all(16),
+                                alignLabelWithHint: true,
+                              ),
+                              style: TextStyle(fontSize: 16),
                             ),
-                            style: TextStyle(fontSize: 16),
                           ),
                         ),
                       ),

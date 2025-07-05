@@ -29,7 +29,6 @@ class LandingScreenProvider with ChangeNotifier {
   }
 
   Future<void> logout(BuildContext context) async {
-    // Use the root context instead of dialog context
     final rootContext = routeGlobalKey.currentContext;
     if (rootContext == null) return;
 
@@ -39,7 +38,9 @@ class LandingScreenProvider with ChangeNotifier {
       final token = await SPManager().getAuthToken();
       if (token == null || token.isEmpty) {
         Navigator.pop(rootContext);
+        await SPManager().clearAuthData(); // Clear even if token is null
         ShowDialogs.showToast('No active session found');
+        _navigateToLogin(rootContext);
         return;
       }
 
@@ -51,41 +52,46 @@ class LandingScreenProvider with ChangeNotifier {
             (response) async {
           Navigator.pop(rootContext); // Close loading dialog
 
-          // Print full response
-          print('\n📥 Logout Response:');
           if (response is CommonResponse) {
+            print('\nLogout Response:');
             print('Status: Success');
             print('Message: ${response.msg}');
             print('Response Code: ${response.n}');
-          } else {
-            print('Full Response: $response');
-          }
-
-          if (response is CommonResponse) {
-            await SPManager().clearAuthData();
             ShowDialogs.showToast(response.msg);
-
-            // Navigate to sign-in page
-            Navigator.of(rootContext).pushNamedAndRemoveUntil(
-              SignInScreen.route,
-                  (route) => false,
-            );
           }
+
+          await SPManager().clearAuthData();
+          _navigateToLogin(rootContext);
         },
-            (error) {
+            (error) async {
           Navigator.pop(rootContext); // Close loading dialog
-          print('\n❌ Logout Error: $error');
+          print('\nLogout Error: $error');
           ShowDialogs.showToast('Logout failed: ${error.toString()}');
+
+          // Clear token and navigate even on error
+          await SPManager().clearAuthData();
+          _navigateToLogin(rootContext);
         },
         jsonval: json.encode(requestBody),
       );
     } catch (e) {
       if (rootContext.mounted) {
         Navigator.pop(rootContext);
-        print('\n🔥 Logout Exception: $e');
+        print('\nLogout Exception: $e');
         ShowDialogs.showToast('Error during logout: ${e.toString()}');
+
+        // Ensure token is cleared in case of unexpected error
+        await SPManager().clearAuthData();
+        _navigateToLogin(rootContext);
       }
     }
+  }
+
+  void _navigateToLogin(BuildContext context) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+      SignInScreen.route,
+          (route) => false,
+    );
   }
 
   /*Future<void> logout(BuildContext context) async {

@@ -105,6 +105,122 @@ class SignUpProvider with ChangeNotifier {
   bool _isVerifyingOtp = false;
   bool get isSendingOtp => _isSendingOtp;
   bool get isVerifyingOtp => _isVerifyingOtp;
+  bool _isOverallLoading = false;
+  bool get isOverallLoading => _isOverallLoading;
+  bool _isLoadingDetails = false;
+  bool get isLoadingDetails => _isLoadingDetails;
+  List<StateModel> _states = [];
+  bool _isLoadingStates = false;
+  String? _stateError;
+  String? selectedState;
+  List<StateModel> get states => _states;
+  bool get isLoadingStates => _isLoadingStates;
+  String? get stateError => _stateError;
+  Country? _selectedCountry;
+  String? _selectedState;
+  Country? get selectedCountry => _selectedCountry;
+
+  void setSelectedCountry(Country country) {
+    _selectedCountry = country;
+    fetchStatesByCountry(country.id); // fetch states immediately
+    notifyListeners();
+  }
+
+
+  Future<void> fetchStatesByCountry(int countryId) async {
+    try {
+      _isLoadingStates = true;
+      _stateError = null;
+      _states = [];
+      notifyListeners();
+
+      final requestBody = json.encode({"id": countryId.toString()});
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getstatecountry,
+            (response) {
+          if (response is Map<String, dynamic>) {
+            if (response['n'] == 1) {
+              final data = response['data'] as List;
+              _states = data.map((stateJson) => StateModel.fromJson(stateJson)).toList();
+            } else {
+              _stateError = response['msg'] ?? 'Failed to load states';
+            }
+          } else {
+            _stateError = 'Unexpected response format';
+          }
+        },
+            (error) {
+          _stateError = 'Failed to load states: ${error.toString()}';
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      _stateError = 'Failed to load states';
+    } finally {
+      _isLoadingStates = false;
+      notifyListeners();
+    }
+  }
+  /*Future<void> fetchStatesByCountry(int countryId) async {
+    try {
+      _isLoadingStates = true;
+      _stateError = null;
+      _states = [];
+      notifyListeners();
+
+      final requestBody = json.encode({"id": countryId.toString()});
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getstatecountry,
+            (response) {
+          if (response is StateListResponse) {
+            _states = response.data;
+            print('Fetched ${_states.length} states for country $countryId');
+            for (var state in _states) {
+              print('State: ${state.name}');
+            }
+          } else {
+            _stateError = 'Unexpected response format';
+          }
+        },
+            (error) {
+          _stateError = 'Failed to load states: ${error.toString()}';
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      _stateError = 'Failed to load states';
+    } finally {
+      _isLoadingStates = false;
+      notifyListeners();
+    }
+  }*/
+
+  void setSelectedState(String? state) {
+    selectedState = state;
+    notifyListeners();
+  }
+
+  Future<void> fetchInitialData() async {
+    _isLoadingDetails = true;
+    notifyListeners();
+
+    try {
+      await Future.wait([
+        fetchDepartments(),
+        fetchCountries(),
+        fetchQualifications(),
+      ]);
+    } catch (e) {
+      // Handle error
+    } finally {
+      _isLoadingDetails = false;
+      notifyListeners();
+    }
+  }
 
   void setSendingOtp(bool value) {
     _isSendingOtp = value;
@@ -502,11 +618,11 @@ Future<void> pickFile(String docName) async {
     notifyListeners();
   }
 
-  void setSelectedCountry(Country country) {
+  /*void setSelectedCountry(Country country) {
     selectedCountryId = country.id;
     countryController.text = country.name;
     notifyListeners();
-  }
+  }*/
 
   void setSelectedRank(Rank rank) {
     selectedRankId = rank.id;
@@ -618,8 +734,7 @@ Future<void> pickFile(String docName) async {
   }
 
   Future<void> verifyEmailOtp(BuildContext context, String email) async {
-    setVerifyingOtp(true); // Start verification loading
-
+    setVerifyingOtp(true);
     try {
       final requestBody = {
         "email": email,
@@ -630,7 +745,7 @@ Future<void> pickFile(String docName) async {
         context,
         API.verifyEmailOTP,
             (response) {
-          setVerifyingOtp(false); // Stop loading
+          setVerifyingOtp(false);
           if (response is CommonResponse) {
             if (response.n == 1) {
               ShowDialogs.showToast(response.msg);
@@ -639,18 +754,16 @@ Future<void> pickFile(String docName) async {
             } else {
               ShowDialogs.showToast(response.msg);
             }
-          } else {
-            ShowDialogs.showToast('Unexpected response format');
           }
         },
             (error) {
-          setVerifyingOtp(false); // Stop loading
+          setVerifyingOtp(false);
           ShowDialogs.showToast('OTP verification failed: ${error.toString()}');
         },
         jsonval: json.encode(requestBody),
       );
     } catch (e) {
-      setVerifyingOtp(false); // Stop loading
+      setVerifyingOtp(false);
       ShowDialogs.showToast('Error verifying OTP: ${e.toString()}');
     }
   }
@@ -701,7 +814,7 @@ Future<void> pickFile(String docName) async {
     }
   }
 
-  Future<void> registerCandidate(BuildContext context) async {
+  /*Future<void> registerCandidate(BuildContext context) async {
     try {
       _isRegistering = true;
       notifyListeners();
@@ -740,6 +853,63 @@ Future<void> pickFile(String docName) async {
     } catch (e) {
       ShowDialogs.showToast(e.toString());
       rethrow; // Re-throw to handle in the calling function
+    } finally {
+      _isRegistering = false;
+      notifyListeners();
+    }
+  }*/
+
+  Future<void> registerCandidate(BuildContext context) async {
+    try {
+      _isRegistering = true;
+      notifyListeners();
+
+      final requestBody = {
+        "first_name": firstNameController.text.trim(),
+        "middle_name": "",
+        "last_name": lastNameController.text.trim(),
+        "country_code": "+91",
+        "mobilenumber": phoneNumberController.text.trim(),
+        "email": emailController.text.trim(),
+        "password": passwordController.text.trim(),
+      };
+
+      await APIManager().apiRequest(
+        context,
+        API.registerCandidate,
+            (response) {
+          if (response is CommonResponse) {
+            if (response.n == 1) {
+              // Success case - new registration
+              ShowDialogs.showToast(response.msg);
+              _registeredCandidate = Candidate.fromJson(response.data);
+            } else if (response.msg.toLowerCase().contains('email already exists') ?? false) {
+              // Email exists but we'll proceed since it's verified
+              if (isEmailVerified) {
+                // Create a dummy candidate with just the email to proceed
+                _registeredCandidate = Candidate(
+                  id: 0.toString(),
+                  email: emailController.text.trim(),
+                );
+                //ShowDialogs.showToast('Using existing verified email');
+              } else {
+                throw Exception(response.msg);
+              }
+            } else {
+              throw Exception(response.msg);
+            }
+          } else {
+            throw Exception('Unexpected response format');
+          }
+        },
+            (error) {
+          throw Exception('Registration failed: ${error.toString()}');
+        },
+        jsonval: json.encode(requestBody),
+      );
+    } catch (e) {
+      ShowDialogs.showToast(e.toString());
+      rethrow;
     } finally {
       _isRegistering = false;
       notifyListeners();
@@ -1123,118 +1293,6 @@ Future<void> pickFile(String docName) async {
     }
   }
 
-  /*Future<void> uploadDocuments(BuildContext context) async {
-    try {
-      _isSavingDetails = true;
-      notifyListeners();
-
-      // Prepare the multipart request
-      var request = http.MultipartRequest(
-          'POST',
-          Uri.parse(await APIManager().apiEndPoint(API.documentsUpload))
-      );
-
-      // Add user ID and certificate name
-      request.fields['user_id'] = "['${_registeredCandidate!.id}']";
-      request.fields['certificate_name'] = 'PHD'; // Or dynamic from input
-
-      // Prepare doc_id and doc_name lists
-      List<String> docIds = [];
-      List<String> docNames = [];
-
-      for (var doc in documents) {
-        final filePath = selectedFilePaths[doc.documentName];
-        if (filePath != null && filePath.isNotEmpty) {
-          if (doc.isEducationDocument) {
-            request.files.add(await http.MultipartFile.fromPath(
-              'educational_certificate_upload',
-              filePath,
-            ));
-          } else {
-            request.fields['doc_id'] = '[\'${doc.id}\']';
-            request.fields['doc_name'] = '[\'${doc.documentName}\']';
-
-            request.files.add(await http.MultipartFile.fromPath(
-              'document_file_upload',
-              filePath,
-            ));
-          }
-        } else {
-          print('⚠️ No file selected for ${doc.documentName}');
-        }
-      }
-
-      // Add the collected doc_id and doc_name arrays
-      if (docIds.isNotEmpty && docNames.isNotEmpty) {
-        request.fields['doc_id'] = "['${docIds.join("','")}']";
-        request.fields['doc_name'] = "['${docNames.join("','")}']";
-      }
-
-      // Add auth token if needed
-      final token = await SPManager().getAuthToken();
-      if (token != null) {
-        request.headers['Authorization'] = 'Bearer $token';
-      }
-
-      // Debug print request details
-      print('\n📤 Request Details:');
-      print('URL: ${request.url}');
-      print('Method: ${request.method}');
-      print('Headers: ${request.headers}');
-      print('Fields:');
-      request.fields.forEach((key, value) {
-        print('  $key: $value');
-      });
-      print('Files:');
-      for (var file in request.files) {
-        print('  ${file.field}: ${file.filename} (${file.length} bytes)');
-      }
-
-      // Send request
-      print('\n🚀 Sending request...');
-      final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
-
-      // Print full response
-      print('\n📥 Response Received:');
-      print('Status Code: ${response.statusCode}');
-      print('Headers: ${response.headers}');
-      print('Full Response Body:');
-      try {
-        final jsonResponse = json.decode(responseBody);
-        final prettyJson = JsonEncoder.withIndent('  ').convert(jsonResponse);
-        print(prettyJson);
-      } catch (e) {
-        print(responseBody); // Print as plain text if not JSON
-      }
-
-      // Handle response
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(responseBody);
-        if (jsonResponse['n'] == 1) {
-          print('\n✅ Success: ${jsonResponse['msg']}');
-          ShowDialogs.showToast(jsonResponse['msg']);
-        } else {
-          final errorMsg = jsonResponse['msg'] ?? 'Failed to upload documents';
-          print('\n❌ Error: $errorMsg');
-          throw Exception(errorMsg);
-        }
-      } else {
-        final errorMsg = 'Upload failed with status ${response.statusCode}: ${response.reasonPhrase}';
-        print('\n❌ $errorMsg');
-        throw Exception(errorMsg);
-      }
-    } catch (e) {
-      print('\n🔥 Exception: $e');
-      print(StackTrace.current);
-      ShowDialogs.showToast('Error uploading documents: $e');
-      rethrow;
-    } finally {
-      _isSavingDetails = false;
-      notifyListeners();
-      print('\n🏁 Upload process completed');
-    }
-  }*/
   Future<void> uploadDocuments(BuildContext context) async {
     try {
       _isSavingDetails = true;
@@ -1272,7 +1330,7 @@ Future<void> pickFile(String docName) async {
             ));
           }
         } else {
-          print('⚠️ No file selected for ${doc.documentName}');
+          print('No file selected for ${doc.documentName}');
         }
       }
 
@@ -1289,7 +1347,7 @@ Future<void> pickFile(String docName) async {
       }
 
       // Debug print request details
-      print('\n📤 Request Details:');
+      print('\nRequest Details:');
       print('URL: ${request.url}');
       print('Method: ${request.method}');
       print('Headers: ${request.headers}');
@@ -1303,12 +1361,12 @@ Future<void> pickFile(String docName) async {
       }
 
       // Send request
-      print('\n🚀 Sending request...');
+      print('\nSending request...');
       final response = await request.send();
       final responseBody = await response.stream.bytesToString();
 
       // Print full response
-      print('\n📥 Response Received:');
+      print('\nResponse Received:');
       print('Status Code: ${response.statusCode}');
       print('Headers: ${response.headers}');
       print('Full Response Body:');
@@ -1324,28 +1382,28 @@ Future<void> pickFile(String docName) async {
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(responseBody);
         if (jsonResponse['n'] == 1) {
-          print('\n✅ Success: ${jsonResponse['msg']}');
+          print('\nSuccess: ${jsonResponse['msg']}');
           // Show the success message that's already defined in the UI
           Provider.of<StepProvider>(context, listen: false).submit();
         } else {
           final errorMsg = jsonResponse['msg'] ?? 'Failed to upload documents';
-          print('\n❌ Error: $errorMsg');
+          print('\nError: $errorMsg');
           throw Exception(errorMsg);
         }
       } else {
         final errorMsg = 'Upload failed with status ${response.statusCode}: ${response.reasonPhrase}';
-        print('\n❌ $errorMsg');
+        print('\n$errorMsg');
         throw Exception(errorMsg);
       }
     } catch (e) {
-      print('\n🔥 Exception: $e');
+      print('\nException: $e');
       print(StackTrace.current);
       ShowDialogs.showToast('Error uploading documents: $e');
       rethrow;
     } finally {
       _isSavingDetails = false;
       notifyListeners();
-      print('\n🏁 Upload process completed');
+      print('\nUpload process completed');
     }
   }
   /*Future<void> uploadDocuments(BuildContext context) async {

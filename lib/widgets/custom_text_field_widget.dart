@@ -137,105 +137,114 @@ class _CustomTextFieldWidgetState extends State<CustomTextFieldWidget> {
   }
 
   Widget _textFieldWidget() {
-    return TextFormField(
-      cursorColor: LearningColors.darkBlue,
-      textCapitalization: widget.textCapitalization,
-      autovalidateMode: widget.autovalidateMode,
-      controller: widget.textEditingController,
-      readOnly: widget.isFieldReadOnly || widget.onTapField != null,
-      focusNode: _focusNode,
-      enabled: !widget.isFieldDisabled,
-      keyboardType: widget.textInputType,
-      textInputAction: TextInputAction.done,
-      inputFormatters: widget.inputFormatters,
-      onEditingComplete: () => FocusScope.of(context).unfocus(),
-      validator: widget.validator,
-      showCursor: !widget.isFieldReadOnly && widget.onTapField == null,
-      onTap: widget.onTap ?? () async {
-        if (widget.onTapField != null) {
-          String value = await widget.onTapField!();
-          updateTextValue(value);
-        }
-        _focusNode.requestFocus();
-      },
-      onChanged: (value) {
-        if (widget.onChange != null) {
-          widget.onChange!(value);
-        }
-        setState(() {});
-      },
-      decoration: InputDecoration(
-        labelText: widget.title,
-        /*labelStyle: LMSStyles.tsHeading.copyWith(
-          fontSize: LMSStyles.tsHeading.fontSize! + 2,
-          color: Colors.grey.shade700,
-        ),*/
-        labelStyle: LMSStyles.tsHintstyle.copyWith(
-          fontSize: LMSStyles.tsHintstyle.fontSize! + 5,
+    return Theme(
+      data: Theme.of(context).copyWith(
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: LearningColors.darkBlue,       // blinking cursor
+      selectionColor: Colors.blue.withOpacity(0.3), // highlight selection
+      selectionHandleColor: LearningColors.darkBlue, // balloon/magnifier handle color
+    ),
+  ),
+      child: TextFormField(
+        cursorColor: LearningColors.darkBlue,
+        textCapitalization: widget.textCapitalization,
+        autovalidateMode: widget.autovalidateMode,
+        controller: widget.textEditingController,
+        readOnly: widget.isFieldReadOnly || widget.onTapField != null,
+        focusNode: _focusNode,
+        enabled: !widget.isFieldDisabled,
+        keyboardType: widget.textInputType,
+        textInputAction: TextInputAction.done,
+        inputFormatters: widget.inputFormatters,
+        onEditingComplete: () => FocusScope.of(context).unfocus(),
+        validator: widget.validator,
+        showCursor: !widget.isFieldReadOnly && widget.onTapField == null,
+        onTap: widget.onTap ?? () async {
+          if (widget.onTapField != null) {
+            String value = await widget.onTapField!();
+            updateTextValue(value);
+          }
+          _focusNode.requestFocus();
+        },
+        onChanged: (value) {
+          if (widget.onChange != null) {
+            widget.onChange!(value);
+          }
+          setState(() {});
+        },
+        decoration: InputDecoration(
+          labelText: widget.title,
+          /*labelStyle: LMSStyles.tsHeading.copyWith(
+            fontSize: LMSStyles.tsHeading.fontSize! + 2,
+            color: Colors.grey.shade700,
+          ),*/
+          labelStyle: LMSStyles.tsHintstyle.copyWith(
+            fontSize: LMSStyles.tsHintstyle.fontSize! + 5,
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.auto,
+          hintText: widget.hintText,
+          /*hintStyle: LMSStyles.tsHintstyle.copyWith(
+            fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
+            color: Colors.grey.shade400,
+          ),*/
+          hintStyle: LMSStyles.tsHintstyle.copyWith(
+            fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
+          ),
+          errorStyle: LMSStyles.tsWhiteNeutral300W50012.copyWith(
+            fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2,
+          ),
+          counterText: "",
+          contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: LearningColors.darkBlue, width: 2.0),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
+          ),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey.shade200, width: 1.0),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.red.shade400, width: 1.0),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.red.shade400, width: 1.0),
+          ),
+          filled: true,
+          fillColor: LearningColors.transparent,
+          prefixIcon: widget.leadingIcon != null
+              ? Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: widget.leadingIcon,
+          )
+              : null,
+          prefixIconConstraints: const BoxConstraints(
+              minHeight: 20, minWidth: 20, maxHeight: 40, maxWidth: 40),
+          suffixIcon: widget.suffixIcon != null
+              ? Container(
+            margin: const EdgeInsets.symmetric(horizontal: 10),
+            child: widget.suffixIcon,
+          )
+              : null,
+          errorMaxLines: 3,
         ),
-        floatingLabelBehavior: FloatingLabelBehavior.auto,
-        hintText: widget.hintText,
-        /*hintStyle: LMSStyles.tsHintstyle.copyWith(
-          fontSize: LMSStyles.tsHintstyle.fontSize! + 2,
-          color: Colors.grey.shade400,
-        ),*/
-        hintStyle: LMSStyles.tsHintstyle.copyWith(
-          fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
-        ),
-        errorStyle: LMSStyles.tsWhiteNeutral300W50012.copyWith(
+        style: LMSStyles.tsWhiteNeutral300W50012.copyWith(
           fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2,
+          color: Colors.black87,
         ),
-        counterText: "",
-        contentPadding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(color: Colors.grey.shade300, width: 1.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: LearningColors.darkBlue, width: 2.0),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: LearningColors.neutral300, width: 1.0),
-        ),
-        disabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade200, width: 1.0),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.red.shade400, width: 1.0),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.red.shade400, width: 1.0),
-        ),
-        filled: true,
-        fillColor: LearningColors.transparent,
-        prefixIcon: widget.leadingIcon != null
-            ? Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: widget.leadingIcon,
-        )
-            : null,
-        prefixIconConstraints: const BoxConstraints(
-            minHeight: 20, minWidth: 20, maxHeight: 40, maxWidth: 40),
-        suffixIcon: widget.suffixIcon != null
-            ? Container(
-          margin: const EdgeInsets.symmetric(horizontal: 10),
-          child: widget.suffixIcon,
-        )
-            : null,
-        errorMaxLines: 3,
+        minLines: widget.textFieldLines == 0 ? 1 : widget.textFieldLines,
+        maxLines: widget.textFieldLines == 0 ? 1 : widget.textFieldLines,
+        maxLength: widget.maxCharacterLength > 0 ? widget.maxCharacterLength : null,
       ),
-      style: LMSStyles.tsWhiteNeutral300W50012.copyWith(
-        fontSize: LMSStyles.tsWhiteNeutral300W50012.fontSize! + 2,
-        color: Colors.black87,
-      ),
-      minLines: widget.textFieldLines == 0 ? 1 : widget.textFieldLines,
-      maxLines: widget.textFieldLines == 0 ? 1 : widget.textFieldLines,
-      maxLength: widget.maxCharacterLength > 0 ? widget.maxCharacterLength : null,
     );
   }
 

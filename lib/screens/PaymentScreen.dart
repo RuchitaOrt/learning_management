@@ -194,11 +194,21 @@ class _CourseEnrollmentScreenState extends State<CourseEnrollmentScreen> {
   }
 
   Widget _buildTextField(TextEditingController controller, String hint) {
-    return TextFormField(
-      controller: controller,
-      decoration: InputDecoration(
-        labelText: hint,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+    return Theme(
+       data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+      child: TextFormField(
+        cursorColor: LearningColors.darkBlue,
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: hint,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       ),
     );
   }

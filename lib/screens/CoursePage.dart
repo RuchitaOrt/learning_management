@@ -23,10 +23,9 @@ class CoursePage extends StatefulWidget {
 
 class _CoursePageState extends State<CoursePage> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-  // String? selectedCategory;
+  String? selectedCategory;
   String? selectedModule;
   bool isSelected = false;
-  String selectedCategory = "all";
 
   // @override
   // void initState() {
@@ -637,7 +636,9 @@ Widget listing(CourseProvider courseProvider)
                                 SvgPicture.asset(LMSImagePath.mode),
                                 SizedBox(
                                     width: SizeConfig.blockSizeHorizontal * 1),
-                                Text(course.trainingMode!, style: LMSStyles.tsHeading),
+                                Text(course.trainingMode!,
+                                overflow: TextOverflow.ellipsis,
+                                 style: LMSStyles.tsHeading),
                               ],
                             ),
                           ),

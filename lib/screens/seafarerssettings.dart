@@ -466,35 +466,45 @@ class _SeafarerSettingsState extends State<SeafarerSettings> {
               Row(
                 children: [
                   Expanded(
-                    child: TextField(
-                      controller: personalprovider.COCController,
-                      decoration: InputDecoration(
-                        hintText: "Enter Your COC",
-                        hintStyle: LMSStyles.tsHintstyle.copyWith(
-                          fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide: BorderSide(
-                              color: LearningColors.neutral300, width: 1.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: LearningColors.neutral300, width: 1.0),
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
-                        suffixIcon: TextButton(
-                          onPressed: () {
-                            // Add logic to send OTP to email
-                          },
-                          child: Text(
-                            "Verify",
-                            style: TextStyle(
-                                color: LearningColors.darkBlue,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 12),
+                    child: Theme(
+                       data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+                      child: TextField(
+                        cursorColor: LearningColors.darkBlue,
+                        controller: personalprovider.COCController,
+                        decoration: InputDecoration(
+                          hintText: "Enter Your COC",
+                          hintStyle: LMSStyles.tsHintstyle.copyWith(
+                            fontSize: LMSStyles.tsHintstyle.fontSize! + 4,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(
+                                color: LearningColors.neutral300, width: 1.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                                color: LearningColors.neutral300, width: 1.0),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          suffixIcon: TextButton(
+                            onPressed: () {
+                              // Add logic to send OTP to email
+                            },
+                            child: Text(
+                              "Verify",
+                              style: TextStyle(
+                                  color: LearningColors.darkBlue,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12),
+                            ),
                           ),
                         ),
                       ),

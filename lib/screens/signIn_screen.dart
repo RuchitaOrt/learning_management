@@ -130,19 +130,29 @@ class _SignInScreenState extends State<SignInScreen> {
                                 SizedBox(
                                     height: SizeConfig.blockSizeVertical * 1),
                                 // Password Field with Validation
-                                TextFormField(
-                                  style: LMSStyles.tsWhiteNeutral300W50012,
-                                  obscureText:
-                                      signInProvider.isPasswordObscured,
-                                  controller: signInProvider.passwordController,
-                                  // validator: signInProvider.validatePassword,
-                                  decoration: CommonInputDecoration(
-                                    hint: LMSStrings.strEnterpassword,
-                                    label: LMSStrings.strpassword,
-                                    isObscured:
+                                Theme(
+                                   data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+                                  child: TextFormField(
+                                    cursorColor: LearningColors.darkBlue,
+                                    style: LMSStyles.tsWhiteNeutral300W50012,
+                                    obscureText:
                                         signInProvider.isPasswordObscured,
-                                    toggle:
-                                        signInProvider.togglePasswordVisibility,
+                                    controller: signInProvider.passwordController,
+                                    // validator: signInProvider.validatePassword,
+                                    decoration: CommonInputDecoration(
+                                      hint: LMSStrings.strEnterpassword,
+                                      label: LMSStrings.strpassword,
+                                      isObscured:
+                                          signInProvider.isPasswordObscured,
+                                      toggle:
+                                          signInProvider.togglePasswordVisibility,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -239,7 +249,7 @@ class _SignInScreenState extends State<SignInScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
+                /*Padding(
                   padding: const EdgeInsets.only(
                       left: 10, top: 16, right: 10), // only side padding
                   child: Consumer<SignInProvider>(
@@ -250,17 +260,6 @@ class _SignInScreenState extends State<SignInScreen> {
                         width: double.infinity, // full width
                         child: ElevatedButton(
                           onPressed: () {
-                            /*if (signInProvider.validateForm()) {
-                              Navigator.of(
-                                routeGlobalKey.currentContext!,
-                              ).pushNamed(
-                                TabScreen.route,
-                                arguments: {
-                                  'selectedPos': -1,
-                                  'isSignUp': false,
-                                },
-                              );
-                            }*/
                             FocusManager.instance.primaryFocus?.unfocus(); // Hide keyboard
                             Provider.of<SignInProvider>(context, listen: false).createSignIn();
                           },
@@ -274,6 +273,40 @@ class _SignInScreenState extends State<SignInScreen> {
                             elevation: 5,
                           ),
                           child: Text(
+                            LMSStrings.strSignIn,
+                            style: LMSStyles.tsWhiteNeutral50W600162,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),*/
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 16, right: 10),
+                  child: Consumer<SignInProvider>(
+                    builder: (context, signInProvider, _) {
+                      return  SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: signInProvider.areRequiredFieldsFilled
+                              ? () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            Provider.of<SignInProvider>(context, listen: false).createSignIn();
+                          }
+                              : null, // Disables button when conditions aren't met
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: signInProvider.areRequiredFieldsFilled
+                                ? LearningColors.darkBlue
+                                : LearningColors.darkBlue.withOpacity(0.5), // Grayed out when disabled
+                            padding: EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 5,
+                          ),
+                          child:signInProvider.isLoading
+                          ? Center(child: CircularProgressIndicator(color: LearningColors.white,))
+                          : Text(
                             LMSStrings.strSignIn,
                             style: LMSStyles.tsWhiteNeutral50W600162,
                           ),
