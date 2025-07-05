@@ -165,6 +165,49 @@ setIDandpassword()
 
           if (response is LoginResponse) {
             if (response.n == 1) {
+              // Store the token
+              await SPManager().setAuthToken(response.token);
+
+              // Store the user data
+              await SPManager().setUserData(json.encode(response.userData));
+
+              // Print and store the ID
+              if (response.userData != null) {
+                print('User ID: ${response.userData!.id}');
+                await SPManager().setUserId(response.userData!.id); // Assuming you have this method
+              }
+
+              ShowDialogs.showToast(response.msg);
+
+              Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+                TabScreen.route,
+                arguments: {
+                  'selectedPos': -1,
+                  'isSignUp': false,
+                },
+              );
+            } else {
+              ShowDialogs.showToast(response.msg);
+            }
+          }
+        },
+            (error) {
+          _isLoading = false;
+          notifyListeners();
+          print('Login error: $error');
+          ShowDialogs.showToast("Login failed. Please try again.");
+        },
+        jsonval: json.encode(requestBody),
+      );
+      /*await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.login,
+            (response) async {
+          _isLoading = false;
+          notifyListeners();
+
+          if (response is LoginResponse) {
+            if (response.n == 1) {
               await SPManager().setAuthToken(response.token);
               await SPManager().setUserData(json.encode(response.userData));
 
@@ -189,7 +232,7 @@ setIDandpassword()
           ShowDialogs.showToast("Login failed. Please try again.");
         },
         jsonval: json.encode(requestBody),
-      );
+      );*/
     } catch (e) {
       _isLoading = false;
       notifyListeners();
@@ -198,67 +241,4 @@ setIDandpassword()
     }
   }
 
-
-/*Future<void> createSignIn() async {
-    _isLoading = true;
-    if (!validateForm()) {
-      ShowDialogs.showToast("Please fill all fields correctly");
-      return;
-    }
-
-    var status1 = await ConnectionDetector.checkInternetConnection();
-    if (!status1) {
-      ShowDialogs.showToast("Please check internet connection");
-      return;
-    }
-
-    try {
-      final requestBody = {
-        "email": emailController.text.trim(),
-        "password": passwordController.text,
-      };
-
-      print('Login request body: $requestBody');
-
-      await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
-        API.login,
-        (response) async {
-          if (response is LoginResponse) {
-            // Store token
-           if(response.n==1)
-           {
-             await SPManager().setAuthToken(response.token);
-
-            // Store user data if needed
-            await SPManager().setUserData(json.encode(response.data));
-
-            ShowDialogs.showToast(response.msg);
-
-            Navigator.of(routeGlobalKey.currentContext!).pushNamed(
-              TabScreen.route,
-              arguments: {
-                'selectedPos': -1,
-                'isSignUp': false,
-              },
-            );
-             _isLoading = true;
-           } else {
-             ShowDialogs.showToast(response.msg);
-           }
-          }
-        },
-        (error) {
-          _isLoading = false;
-          print('Login error: $error');
-          ShowDialogs.showToast("Login failed. Please try again.");
-        },
-        jsonval: json.encode(requestBody),
-      );
-    } catch (e) {
-      _isLoading = false;
-      print('Login exception: $e');
-      ShowDialogs.showToast("An error occurred during login");
-    }
-  }*/
 }

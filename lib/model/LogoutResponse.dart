@@ -15,13 +15,26 @@ class CommonResponse {
     required this.data,
   });
 
-  factory CommonResponse.fromJson(Map<String, dynamic> json) {
+/*  factory CommonResponse.fromJson(Map<String, dynamic> json) {
     return CommonResponse(
       n: json['n'] ?? 0,
       msg: json['msg'] ?? '',
       data: json['data'] is List ? json['data'] : [],
     );
+  }*/
+  factory CommonResponse.fromJson(Map<String, dynamic> json) {
+    return CommonResponse(
+      n: json['n'] ?? 0,
+      msg: json['msg'] ?? '',
+      data: json['data'] is List
+          ? json['data']
+          : json['data'] is Map
+          ? [json['data']] // Wrap map in a list
+          : [], // Default to empty list
+    );
   }
+
+
 
   Map<String, dynamic> toJson() => {
     'n': n,

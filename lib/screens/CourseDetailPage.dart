@@ -98,10 +98,31 @@ class _CourseDetailPageState extends State<CourseDetailPage>
               padding: EdgeInsets.all(12),
               color: Colors.white,
               child: ElevatedButton(
-                onPressed: () {
+                /*onPressed: () {
                   Navigator.of(context)
                       .pushNamed(OrderSummaryScreen.route)
                       .then((value) {});
+                },*/
+                onPressed: () {
+                  // Assuming courseProvider has the current course details
+                  final courseId = courseProvider.courseDetail.id;
+                  if (courseId != null) {
+                    /*Navigator.of(context).pushNamed(
+                      OrderSummaryScreen.route,
+                      arguments: {'courseID': courseId}, // Pass the course ID
+                    ).then((value) {});*/
+                    Navigator.of(routeGlobalKey.currentContext!)
+                        .pushNamed(OrderSummaryScreen.route,
+                        arguments: {
+                          "courseID": courseId.toString()
+                        })
+                        .then((value) {});
+                  } else {
+                    // Handle case where course ID is not available
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Course information not available')),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: LearningColors.darkBlue,
@@ -461,60 +482,6 @@ Widget mainBody(CourseProvider courseProvider)
   }
 
   /*Widget _buildInstituteTab(CourseProvider courseProvider) {
-    final signUpProvider = Provider.of<SignUpProvider>(context);
-    final selectedCountry = signUpProvider.selectedCountry;
-    final selectedState = courseProvider.selectedState;
-
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Row(
-            children: [
-              // Country dropdown
-              Expanded(
-                child: signUpProvider.isLoadingCountries
-                    ? Center(child: CircularProgressIndicator(color: LearningColors.darkBlue))
-                    : CustomDropdown<String>(
-                  value: selectedCountry?.name,
-                  hintText: "Select Country",
-                  items: signUpProvider.countries.map((c) => c.name).toList(),
-                  onChanged: (value) {
-                    final countryObj = signUpProvider.countries.firstWhere((c) => c.name == value);
-                    signUpProvider.setSelectedCountry(countryObj);
-                    courseProvider.setSelectedState(null); // reset selected state
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-
-              // State dropdown (from API)
-              Expanded(
-                child: signUpProvider.isLoadingStates
-                    ? Center(child: CircularProgressIndicator())
-                    : CustomDropdown<String>(
-                  value: signUpProvider.selectedState,
-                  hintText: "Select State",
-                  items: signUpProvider.states.map((s) => s.name).toList(),
-                  onChanged: (value) {
-                    signUpProvider.setSelectedState(value);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.all(16),
-            children: _buildInstituteList(courseProvider.instituteDetail),
-          ),
-        ),
-      ],
-    );
-  }*/
-
-  Widget _buildInstituteTab(CourseProvider courseProvider) {
     // Use the same provider for all country/state operations
     final signUpProvider = Provider.of<SignUpProvider>(context);
     final selectedCountry = signUpProvider.selectedCountry;
@@ -564,9 +531,9 @@ Widget mainBody(CourseProvider courseProvider)
         // ... rest of your code
       ],
     );
-  }
+  }*/
 
-  /*Widget _buildInstituteTab(CourseProvider courseProvider) {
+  Widget _buildInstituteTab(CourseProvider courseProvider) {
     // final List<Map<String, dynamic>> institutes = [
     //   {
     //     'logo': 'assets/images/aims.png',
@@ -602,13 +569,11 @@ Widget mainBody(CourseProvider courseProvider)
     //   },
     // ];
 
-    final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
-
-    final List<String> states = ['Kerala', 'Tamil Nadu', 'Karnataka', 'Maharashtra'];
+    final signUpProvider = Provider.of<SignUpProvider>(context);
 
     // State variables for dropdown values
-    String? selectedCountry;
-    String? selectedState;
+    final selectedCountry = signUpProvider.selectedCountry;
+    final selectedState = signUpProvider.selectedState;
 
  if (courseProvider.isInstituteLoading) {
       return Center(
@@ -620,52 +585,119 @@ Widget mainBody(CourseProvider courseProvider)
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Row(
+          child: Column(
             children: [
               // Country dropdown
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.445,
-                child: signUpProvider.isLoadingCountries
-                    ? Center(child: CircularProgressIndicator(color: LearningColors.darkBlue,))
-                    : CustomDropdown<String>(
-                  value: selectedCountry,
-                  hintText: "Select Country",
-                  items: signUpProvider.countries
-                      .map((country) => country.name)
+              CustomDropdown<String>(
+                value: selectedCountry?.name,
+                hintText: "Select Country",
+                items: signUpProvider.countries.map((c) => c.name).toList(),
+                onChanged: (value) {
+                  final countryObj = signUpProvider.countries.firstWhere((c) => c.name == value);
+                  signUpProvider.setSelectedCountry(countryObj);
+                  signUpProvider.setSelectedState(null);
+                  signUpProvider.fetchStatesByCountry(countryObj.id);
+                },
+              ),
+              const SizedBox(height: 12),
+
+              // State dropdown (conditionally rendered)
+              if (signUpProvider.isLoadingStates)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8.0),
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (signUpProvider.states.isNotEmpty)
+                CustomDropdown<String>(
+                  value: selectedState?.name,
+                  hintText: "Select State",
+                  items: signUpProvider.states
+                      .map((s) => s.name ?? '')
+                      .where((name) => name.isNotEmpty)
                       .toList(),
                   onChanged: (value) {
-                    selectedCountry = value;
-                    final selectedCountryObj = signUpProvider.countries
-                        .firstWhere((c) => c.name == value);
-                    signUpProvider.setSelectedCountry(selectedCountryObj);
+                    final stateObj = signUpProvider.states.firstWhere((s) => s.name == value);
+                    signUpProvider.setSelectedState(stateObj);
                   },
-                ),
-              ),
-              const SizedBox(width: 12),
-              // State dropdown
-              SizedBox(
-                width: MediaQuery.of(context).size.width * 0.445,
-                child: CustomDropdown<String>(
-                  value: courseProvider.selectedState,
-                  hintText: "Select State",
-                  items: states,
-                  onChanged: (value) {
-                    courseProvider.setSelectedState(value);
-                  },
-                ),
-              ),
+                )
+              else
+                const SizedBox.shrink(),
             ],
           ),
         ),
+
+        // Institute list
         Expanded(
           child: ListView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
             children: _buildInstituteList(courseProvider.instituteDetail),
           ),
         ),
       ],
     );
-  }*/
+
+    /*Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          child: Column(
+            children: [
+              // Country dropdown
+              CustomDropdown<String>(
+                value: selectedCountry?.name,
+                hintText: "Select Country",
+                items: signUpProvider.countries.map((c) => c.name).toList(),
+                onChanged: (value) {
+                  final countryObj = signUpProvider.countries.firstWhere((c) => c.name == value);
+                  signUpProvider.setSelectedCountry(countryObj);
+                  signUpProvider.setSelectedState(null); // Changed from courseProvider
+                  signUpProvider.fetchStatesByCountry(countryObj.id); // Ensure this is called
+                },
+              ),
+              const SizedBox(height: 12),
+              // State dropdown
+              *//*signUpProvider.isLoadingStates
+                  ? Center(child: CircularProgressIndicator())
+                  : *//*
+              *//*CustomDropdown<String>(
+                value: selectedState?.name, // Changed to use name if StateModel
+                hintText: "Select State",
+                // items: signUpProvider.states.map((s) => s.name).toList(),
+                items: signUpProvider.states.map((s) => s.name ?? '').where((name) => name.isNotEmpty).toList(),
+                onChanged: (value) {
+                  final stateObj = signUpProvider.states.firstWhere((s) => s.name == value);
+                  signUpProvider.setSelectedState(stateObj);
+                },
+              ),*//*
+              if (signUpProvider.isLoadingStates)
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else if (signUpProvider.states.isNotEmpty)
+                CustomDropdown<String>(
+                  value: selectedState?.name,
+                  hintText: "Select State",
+                  items: signUpProvider.states.map((s) => s.name ?? '').where((name) => name.isNotEmpty).toList(),
+                  onChanged: (value) {
+                    final stateObj = signUpProvider.states.firstWhere((s) => s.name == value);
+                    signUpProvider.setSelectedState(stateObj);
+                  },
+                )
+              else
+                const SizedBox.shrink(), // hides the state dropdown completely
+
+            ],
+          ),
+        ),
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            children: _buildInstituteList(courseProvider.instituteDetail),
+          ),
+        ),
+      ],
+    );*/
+  }
 
   List<Widget> _buildInstituteList( List<InstituteData> instituteDetail) {
     return instituteDetail.map((institute) {
@@ -819,92 +851,6 @@ Widget mainBody(CourseProvider courseProvider)
       );
     }).toList();
   }
-
-  /*Widget _buildModulesTab() {
-    final modules = [
-      {
-        'title': 'What is User Experience Design?',
-        'lectures': [
-          'Introduction: a UXD Parable.',
-          'What UXD Isn\'t?',
-          'What UXD is?',
-          'Why should we care about UXD',
-        ],
-      },
-      {
-        'title': 'Understanding the elements of user experience?',
-        'lectures': [
-          'Lecture 1',
-          'Lecture 2',
-          'Lecture 3',
-          'Lecture 4',
-        ],
-      },
-      {
-        'title': 'Using the elements - Strategy',
-        'lectures': ['Lecture 1', 'Lecture 2', 'Lecture 3', 'Lecture 4'],
-      },
-      {
-        'title': 'Using the elements - Scope',
-        'lectures': ['Lecture 1', 'Lecture 2', 'Lecture 3', 'Lecture 4'],
-      },
-      {
-        'title': 'Using the elements - Structure',
-        'lectures': ['Lecture 1', 'Lecture 2', 'Lecture 3', 'Lecture 4'],
-      },
-    ];
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: ExpansionPanelList.radio(
-        expandedHeaderPadding: EdgeInsets.symmetric(vertical: 4),
-        elevation: 2,
-        children: modules.asMap().entries.map<ExpansionPanelRadio>((entry) {
-          final index = entry.key + 1; // 1-based index
-          final module = entry.value;
-
-          return ExpansionPanelRadio(
-            backgroundColor: LearningColors.white,
-            value: index,
-            headerBuilder: (context, isExpanded) {
-              return ListTile(
-                title: Text(
-                  '$index. ${module['title']}',
-                  style: LMSStyles.tsSubHeadingBold.copyWith(fontSize: 15),
-                ),
-                subtitle: Text("4 lectures  |  4 min",
-                    style: LMSStyles.tsWhiteNeutral300W500),
-              );
-            },
-            body: Container(
-              color: Colors.blue.shade50,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: Column(
-                children: List.generate(
-                  (module['lectures'] as List<String>).length * 2 - 1,
-                  (i) {
-                    final isDivider = i.isOdd;
-                    if (isDivider) return Divider(color: Colors.grey.shade300);
-                    final index = i ~/ 2;
-                    final lecture = (module['lectures'] as List<String>)[index];
-                    return ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(Icons.play_circle_fill,
-                          color: LearningColors.darkBlue),
-                      title:
-                          Text(lecture, style: LMSStyles.tsWhiteNeutral300W500),
-                      trailing:
-                          Text("4:24", style: LMSStyles.tsWhiteNeutral300W500),
-                    );
-                  },
-                ),
-              ),
-            ),
-          );
-        }).toList(),
-      ),
-    );
-  }*/
 
   Widget _buildModulesTab() {
     final provider = Provider.of<CourseProvider>(context, listen: false);

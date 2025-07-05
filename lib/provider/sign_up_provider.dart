@@ -138,8 +138,7 @@ class SignUpProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // In your fetchStatesByCountry function (should be in SignUpProvider)
-  Future<void> fetchStatesByCountry(int countryId) async {
+  /*Future<void> fetchStatesByCountry(int countryId) async {
     try {
       _isLoadingStates = true;
       _stateError = null;
@@ -157,6 +156,11 @@ class SignUpProvider with ChangeNotifier {
               final data = response['data'] as List;
               _states = data.map((stateJson) => StateModel.fromJson(stateJson)).toList();
               notifyListeners(); // Add this here to update UI immediately
+
+              print("Fetched states: ${_states.map((e) => e.name).toList()}");
+
+              print("Received states: $data");
+              print("Mapped states: $_states");
             } else {
               _stateError = response['msg'] ?? 'Failed to load states';
             }
@@ -173,6 +177,52 @@ class SignUpProvider with ChangeNotifier {
       );
     } catch (e) {
       _stateError = 'Failed to load states';
+      notifyListeners();
+    } finally {
+      _isLoadingStates = false;
+      notifyListeners();
+    }
+  }*/
+
+  Future<void> fetchStatesByCountry(int countryId) async {
+    try {
+      _isLoadingStates = true;
+      _stateError = null;
+      _states = [];
+      notifyListeners();
+
+      final requestBody = json.encode({"id": countryId.toString()});
+
+      await APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.getstatecountry,
+            (response) {
+          print("✅ Raw response in fetchStatesByCountry: $response");
+
+          // ✅ Directly use the response as StateResponse
+          if (response is StateResponse) {
+            if (response.n == 1 && response.data.isNotEmpty) {
+              _states = response.data;
+              print("✅ Parsed state list: ${_states.map((s) => s.name).toList()}");
+            } else {
+              _stateError = response.msg;
+              print("❌ API returned n != 1 or empty list");
+            }
+          } else {
+            _stateError = '❌ Unexpected response format';
+            print("❌ Response is not of type StateResponse");
+          }
+
+          notifyListeners();
+        },
+            (error) {
+          _stateError = 'Failed to load states: ${error.toString()}';
+          notifyListeners();
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      _stateError = 'Failed to load states: $e';
       notifyListeners();
     } finally {
       _isLoadingStates = false;
@@ -214,11 +264,6 @@ class SignUpProvider with ChangeNotifier {
       _isLoadingStates = false;
       notifyListeners();
     }
-  }*/
-
-  /*void setSelectedState(String? state) {
-    selectedState = state;
-    notifyListeners();
   }*/
 
   Future<void> fetchInitialData() async {

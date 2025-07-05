@@ -12,7 +12,11 @@ import 'package:learning_mgt/model/GetResourceResponse.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
+import '../model/GetCertificateResponse.dart';
+import '../model/GetRecommdedResponse.dart';
+import '../model/GetResultResponse.dart';
 import '../model/RegistrationResponse.dart';
+import '../provider/order_summary_provider.dart';
 
 enum API {
   login,
@@ -33,8 +37,7 @@ enum API {
   getcourseresources,
   getstatecountry,
   getcourseinstitutions,
-  savePayment
-  getcourseinstitutions,
+  savePayment,
   recommendationlist,
   getcertificates,
   getresults
@@ -221,7 +224,7 @@ class APIManager {
         className = "GetResourceResponse";
         break;
       case API.getstatecountry:
-        className = "GetStateResponse";
+        className = "StateResponse";
         break;
       case API.getcourseinstitutions:
         className = "GetCourseInstituteResponse";
@@ -234,6 +237,9 @@ class APIManager {
         break;
       case API.getresults:
         className = "GetResultResponse";
+        break;
+      case API.savePayment:
+        className = "PaymentResponse";
         break;
       default:
         className = 'CommonResponse';
@@ -276,6 +282,10 @@ class APIManager {
       responseObj = GetCertificateResponse.fromJson(json);
     } else if (className == 'GetResultResponse') {
       responseObj = GetResultResponse.fromJson(json);
+    } else if (className == 'PaymentResponse') {
+      responseObj = PaymentResponse.fromJson(json);
+    } else if (className == 'StateResponse') {
+      responseObj = StateResponse.fromJson(json);
     }
 
     return responseObj;

@@ -48,6 +48,82 @@ class LoginResponse {
 
 /// User details data
 class Datum {
+  final String id;
+  final String? lastLogin;
+  final String? createdAt;
+  final String? updatedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final bool isActive;
+  final String? profilePic;
+  final String firstName;
+  final String middleName;
+  final String lastName;
+  final String email;
+  final String password;
+  final String countryCode;
+  final int mobilenumber;
+  // Add all other fields as needed...
+
+  Datum({
+    required this.id,
+    this.lastLogin,
+    this.createdAt,
+    this.updatedAt,
+    this.createdBy,
+    this.updatedBy,
+    required this.isActive,
+    this.profilePic,
+    required this.firstName,
+    required this.middleName,
+    required this.lastName,
+    required this.email,
+    required this.password,
+    required this.countryCode,
+    required this.mobilenumber,
+    // Initialize all other fields...
+  });
+
+  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+    id: json["id"]?.toString() ?? '',
+    lastLogin: json["last_login"]?.toString(),
+    createdAt: json["createdAt"]?.toString(),
+    updatedAt: json["updatedAt"]?.toString(),
+    createdBy: json["createdBy"]?.toString(),
+    updatedBy: json["updatedBy"]?.toString(),
+    isActive: json["isActive"] ?? true,
+    profilePic: json["profile_pic"]?.toString(),
+    firstName: json["first_name"]?.toString() ?? '',
+    middleName: json["middle_name"]?.toString() ?? '',
+    lastName: json["last_name"]?.toString() ?? '',
+    email: json["email"]?.toString() ?? '',
+    password: json["password"]?.toString() ?? '',
+    countryCode: json["country_code"]?.toString() ?? '+91',
+    mobilenumber: json["mobilenumber"] is int
+        ? json["mobilenumber"]
+        : int.tryParse(json["mobilenumber"]?.toString() ?? '0') ?? 0,
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "last_login": lastLogin,
+    "createdAt": createdAt,
+    "updatedAt": updatedAt,
+    "createdBy": createdBy,
+    "updatedBy": updatedBy,
+    "isActive": isActive,
+    "profile_pic": profilePic,
+    "first_name": firstName,
+    "middle_name": middleName,
+    "last_name": lastName,
+    "email": email,
+    "password": password,
+    "country_code": countryCode,
+    "mobilenumber": mobilenumber,
+  };
+}
+
+/*class Datum {
   final String token;
   final String name;
   final int customerId;
@@ -71,7 +147,7 @@ class Datum {
         "name": name,
         "customer_id": customerId,
       };
-}
+}*/
 
 /// Plan information data
 class PlanInfo {

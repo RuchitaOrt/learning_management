@@ -90,14 +90,24 @@ class Country {
 class StateModel {
   final int id;
   final String name;
-  final String countryCode;
-  final int countryId;
+  final String? countryCode;
+  final String? stateCode;
+  final String? iso2;
+  final String? latitude;
+  final String? longitude;
+  final String? createdAt;
+  final int? country;
 
   StateModel({
     required this.id,
     required this.name,
-    required this.countryCode,
-    required this.countryId,
+    this.countryCode,
+    this.stateCode,
+    this.iso2,
+    this.latitude,
+    this.longitude,
+    this.createdAt,
+    this.country,
   });
 
   factory StateModel.fromJson(Map<String, dynamic> json) {
@@ -105,30 +115,34 @@ class StateModel {
       id: json['id'],
       name: json['name'],
       countryCode: json['country_code'],
-      countryId: json['country'],
+      stateCode: json['state_code'],
+      iso2: json['iso2'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      createdAt: json['created_at'],
+      country: json['country'],
     );
   }
-
-  @override
-  String toString() => name;
 }
 
-class StateListResponse {
+class StateResponse {
   final int n;
   final String msg;
   final List<StateModel> data;
 
-  StateListResponse({
+  StateResponse({
     required this.n,
     required this.msg,
     required this.data,
   });
 
-  factory StateListResponse.fromJson(Map<String, dynamic> json) {
-    return StateListResponse(
+  factory StateResponse.fromJson(Map<String, dynamic> json) {
+    return StateResponse(
       n: json['n'],
       msg: json['msg'],
-      data: (json['data'] as List).map((item) => StateModel.fromJson(item)).toList(),
+      data: (json['data'] as List)
+          .map((item) => StateModel.fromJson(item))
+          .toList(),
     );
   }
 }

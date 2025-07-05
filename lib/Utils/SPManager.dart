@@ -16,6 +16,15 @@ class SPManager {
     }
     //pref.clear();
   }
+  Future<void> setUserId(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user_id', userId);
+  }
+
+  Future<String?> getUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_id');
+  }
 
   //set auth token into shared preferences
 /*  Future<void> setAuthToken(String token) async {
