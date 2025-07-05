@@ -34,6 +34,10 @@ enum API {
   getstatecountry,
   getcourseinstitutions,
   savePayment
+  getcourseinstitutions,
+  recommendationlist,
+  getcertificates,
+  getresults
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -136,6 +140,15 @@ class APIManager {
       case API.savePayment:
         apiPathString = "/api/enrollments/save-payment";
         break;
+      case API.recommendationlist:
+        apiPathString = "/api/course/recommendation-list";
+        break;
+      case API.getcertificates:
+        apiPathString = "/api/candidate/getcertificates";
+        break;
+      case API.getresults:
+        apiPathString = "/api/candidate/getresults";
+        break;
 
       default:
         apiPathString = "/Login";
@@ -152,6 +165,7 @@ class APIManager {
       case API.departmentlist:
       case API.getqualifications:
       case API.getcoursecategorylist:
+      case API.getcertificates:
         method = HTTPMethod.GET;
         break;
 
@@ -209,8 +223,17 @@ class APIManager {
       case API.getstatecountry:
         className = "GetStateResponse";
         break;
-          case API.getcourseinstitutions:
+      case API.getcourseinstitutions:
         className = "GetCourseInstituteResponse";
+        break;
+      case API.recommendationlist:
+        className = "GetRecommdedResponse";
+        break;
+      case API.getcertificates:
+        className = "GetCertificateResponse";
+        break;
+      case API.getresults:
+        className = "GetResultResponse";
         break;
       default:
         className = 'CommonResponse';
@@ -245,9 +268,14 @@ class APIManager {
       responseObj = DocumentListResponse.fromJson(json);
     } else if (className == 'GetResourceResponse') {
       responseObj = GetResourceResponse.fromJson(json);
-    }
-    else if (className == 'GetCourseInstituteResponse') {
+    } else if (className == 'GetRecommdedResponse') {
+      responseObj = GetRecommdedResponse.fromJson(json);
+    } else if (className == 'GetCourseInstituteResponse') {
       responseObj = GetCourseInstituteResponse.fromJson(json);
+    } else if (className == 'GetCertificateResponse') {
+      responseObj = GetCertificateResponse.fromJson(json);
+    } else if (className == 'GetResultResponse') {
+      responseObj = GetResultResponse.fromJson(json);
     }
 
     return responseObj;

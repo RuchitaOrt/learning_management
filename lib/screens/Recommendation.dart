@@ -6,6 +6,7 @@ import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/model/GetRecommdedResponse.dart';
 
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/RecommendedCourseProvider.dart';
@@ -34,11 +35,14 @@ class _RecommendationState extends State<Recommendation> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final courseProvider =
           Provider.of<RecommendedCourseProvider>(context, listen: false);
-      if (courseProvider.coursesByCategory.isNotEmpty) {
-        setState(() {
-          selectedCategory = courseProvider.coursesByCategory.keys.first;
-        });
-      }
+      // if (courseProvider.coursesByCategory.isNotEmpty) {
+      //   setState(() {
+      //     selectedCategory = courseProvider.coursesByCategory.keys.first;
+      //   });
+      // }
+        if (!courseProvider.isLoading) {
+      courseProvider.recommendedCourseListAPI("All");
+        }
     });
   }
 
@@ -617,7 +621,7 @@ class _RecommendationState extends State<Recommendation> {
   @override
   Widget build(BuildContext context) {
     final courseProvider = Provider.of<RecommendedCourseProvider>(context);
-    final categories = courseProvider.coursesByCategory.keys.toList();
+  
 
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
       // Show loading spinner while fetching data
@@ -670,45 +674,47 @@ class _RecommendationState extends State<Recommendation> {
                   SizedBox(
                     height: SizeConfig.blockSizeVertical * 1,
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Row(
-                        children: categories.map((category) {
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                                right: 8.0), // spacing between chips
-                            child: ChoiceChip(
-                              label: Text(category),
-                              selected: selectedCategory == category,
-                              showCheckmark: false,
-                              onSelected: (selected) {
-                                setState(() {
-                                  selectedCategory = selected ? category : null;
-                                });
-                              },
-                              selectedColor: LearningColors.primaryBlue550,
-                              backgroundColor: Colors.grey.shade200,
-                              labelStyle: TextStyle(
-                                color: selectedCategory == category
-                                    ? LearningColors.neutral100
-                                    : Colors.black,
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
+                  // SingleChildScrollView(
+                  //   scrollDirection: Axis.horizontal,
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.only(left: 8),
+                  //     child: Row(
+                  //       children: categories.map((category) {
+                  //         return Padding(
+                  //           padding: const EdgeInsets.only(
+                  //               right: 8.0), // spacing between chips
+                  //           child: ChoiceChip(
+                  //             label: Text(category),
+                  //             selected: selectedCategory == category,
+                  //             showCheckmark: false,
+                  //             onSelected: (selected) {
+                  //               setState(() {
+                  //                 selectedCategory = selected ? category : null;
+                  //               });
+                  //             },
+                  //             selectedColor: LearningColors.primaryBlue550,
+                  //             backgroundColor: Colors.grey.shade200,
+                  //             labelStyle: TextStyle(
+                  //               color: selectedCategory == category
+                  //                   ? LearningColors.neutral100
+                  //                   : Colors.black,
+                  //             ),
+                  //           ),
+                  //         );
+                  //       }).toList(),
+                  //     ),
+                  //   ),
+                  // ),
+                  recommdedCourseChips(),
                   SizedBox(height: 8),
-                  if (selectedCategory != null &&
-                      courseProvider.coursesByCategory[selectedCategory!] !=
-                          null) ...[
-                    ...courseProvider.coursesByCategory[selectedCategory!]!
-                        .map((course) => _buildVerticalCard(course))
-                        .toList()
-                  ]
+                  listing(courseProvider)
+                  // if (selectedCategory != null &&
+                  //     courseProvider.coursesByCategory[selectedCategory!] !=
+                  //         null) ...[
+                  //   ...courseProvider.coursesByCategory[selectedCategory!]!
+                  //       .map((course) => _buildVerticalCard(courseProvider.recommendedcourseList))
+                  //       .toList()
+                  // ]
                 ],
               ),
             ),
@@ -718,17 +724,94 @@ class _RecommendationState extends State<Recommendation> {
     });
   }
 
-  Widget _buildVerticalCard(RecommendedCourse course) {
-    final Color baseColor = getButtonColorByStatus(course.courseStatus);
+   Widget recommdedCourseChips() {
+    final recommdedCourseProvider = Provider.of<RecommendedCourseProvider>(context);
+    final categories = recommdedCourseProvider.category;
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: Row(
+          children: [
+            // Static 'ALL' chip
+            // Padding(
+            //   padding: const EdgeInsets.only(right: 8.0),
+            //   child: ChoiceChip(
+            //     label: Text('ALL'),
+            //     selected: selectedCategory == "All",
+            //     showCheckmark: false,
+            //    onSelected: (selected) {
+            //       recommdedCourseProvider.selectCategory("All");
+            //     },
+            //     selectedColor: LearningColors.darkBlue,
+            //     backgroundColor: recommdedCourseProvider.selectedCategory == "All"? LearningColors.darkBlue:Colors.grey.shade200,
+            //     labelStyle: TextStyle(
+            //       color: recommdedCourseProvider.selectedCategory == "All"
+            //           ? LearningColors.neutral100
+            //           : Colors.black
+            //     ),
+            //   ),
+            // ),
+            // Dynamic chips from categories list
+            ...categories.map((category) {
+              final String categoryId = category.toString();
+         
+
+              return Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: ChoiceChip(
+                  label: Text(category),
+                  selected: recommdedCourseProvider.selectedCategory == categoryId,
+                  showCheckmark: false,
+                  onSelected: (selected) {
+                    recommdedCourseProvider.selectCategory(
+                      selected ? category : "All",
+                    );
+                  },
+                  selectedColor: LearningColors.darkBlue,
+                  backgroundColor: Colors.grey.shade200,
+                  labelStyle: TextStyle(
+                    color:recommdedCourseProvider.selectedCategory == categoryId
+                        ? LearningColors.neutral100
+                        : Colors.black,
+                  ),
+                ),
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
+  }
+
+Widget listing(RecommendedCourseProvider courseProvider)
+{
+      final courseProvider = Provider.of<RecommendedCourseProvider>(context);
+   
+    if (courseProvider.isLoading) {
+      return Center(
+          child: CircularProgressIndicator(
+        color: LearningColors.darkBlue,
+      ));
+    }
+   return Column(
+      children: courseProvider.recommendedcourseList
+          .map((course) => _buildVerticalCard(course))
+          .toList(),
+    );
+}
+  Widget _buildVerticalCard(CourseModel course) {
+    final Color baseColor = getButtonColorByStatus(course.courseType);
     return GestureDetector(
       onTap: () {
-        Navigator.of(routeGlobalKey.currentContext!)
-            .pushNamed(CourseDetailPage.route,
+        // Navigator.of(routeGlobalKey.currentContext!)
+        //     .pushNamed(CourseDetailPage.route,
             
-            arguments: {
-                "courseID":"1"
-              })
-            .then((value) {});
+        //     arguments: {
+        //         "courseID":"1"
+        //       })
+        //     .then((value) {});
       },
       child: Card(
         elevation: 0.5,
@@ -750,7 +833,7 @@ class _RecommendationState extends State<Recommendation> {
                     Container(
                       width: SizeConfig.blockSizeHorizontal * 75,
                       child: Text(
-                        course.institue,
+                        course.courseName,
                         style: LMSStyles.tsHeadingbold,
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -759,7 +842,7 @@ class _RecommendationState extends State<Recommendation> {
                   ]),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(course.title, style: LMSStyles.tsSubHeadingBold),
+                child: Text(course.description, style: LMSStyles.tsSubHeadingBold),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -774,7 +857,7 @@ class _RecommendationState extends State<Recommendation> {
                           SizedBox(
                             width: SizeConfig.blockSizeHorizontal * 1,
                           ),
-                          Text(course.mode, style: LMSStyles.tsHeading),
+                          Text(course.trainingMode, style: LMSStyles.tsHeading),
                         ],
                       ),
                     ),
@@ -788,7 +871,7 @@ class _RecommendationState extends State<Recommendation> {
                           SizedBox(
                             width: SizeConfig.blockSizeHorizontal * 1,
                           ),
-                          Text(course.courseDuration,
+                          Text(course.duration,
                               style: LMSStyles.tsHeading),
                         ],
                       ),
@@ -814,7 +897,7 @@ class _RecommendationState extends State<Recommendation> {
                       elevation: 0,
                     ),
                     child: Text(
-                      getButtonTextByStatus(course.courseStatus),
+                      getButtonTextByStatus(course.courseType),
                       style: LMSStyles.tsWhiteNeutral50W60016
                           .copyWith(color: baseColor), // 🔵 text
                     ),
@@ -829,11 +912,11 @@ class _RecommendationState extends State<Recommendation> {
                       onPressed: () {},
                       style: ElevatedButton.styleFrom(
                         backgroundColor:
-                            (course.status == LMSStrings.strRequested)
+                            (course.courseStatus == LMSStrings.strRequested)
                                 ? LearningColors.primaryBlue550
-                                : (course.status == LMSStrings.strPending)
+                                : (course.courseStatus == LMSStrings.strPending)
                                     ? LearningColors.neutral300
-                                    : (course.status == LMSStrings.strReappy)
+                                    : (course.courseStatus == LMSStrings.strReappy)
                                         ? LearningColors.red
                                         : LearningColors.darkBlue,
                         padding:
@@ -844,46 +927,47 @@ class _RecommendationState extends State<Recommendation> {
                         elevation: 5,
                       ),
                       child: Text(
-                        (course.status == LMSStrings.strRequested)
-                            ? LMSStrings.strRequested
-                            : (course.status == LMSStrings.strPending)
-                                ? LMSStrings.strDecline
-                                : (course.status == LMSStrings.strReappy)
-                                    ? LMSStrings.strDeclined
-                                    : LMSStrings.strEnrollNow,
+                        course.courseStatus=="Declined"?"Re-Apply":course.courseStatus==""?"Apply":course.courseStatus,
+                        // (course.courseStatus == LMSStrings.strRequested)
+                        //     ? LMSStrings.strRequested
+                        //     : (course.courseStatus == LMSStrings.strPending)
+                        //         ? LMSStrings.strDecline
+                        //         : (course.courseStatus == LMSStrings.strReappy)
+                        //             ? LMSStrings.strDeclined
+                        //             : LMSStrings.strEnrollNow,
                         style: LMSStyles.tsWhiteNeutral50W60016,
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal * 3,
-                  ),
-                  (course.status == LMSStrings.strRequested)
-                      ? Container()
-                      : Expanded(
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: LearningColors.darkBlue,
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 5,
-                            ),
-                            child: Text(
-                              (course.status == LMSStrings.strRequested)
-                                  ? LMSStrings.strRequested
-                                  : (course.status == LMSStrings.strPending)
-                                      ? LMSStrings.strAccept
-                                      : (course.status == LMSStrings.strReappy)
-                                          ? LMSStrings.strReappy
-                                          : LMSStrings.strEnrollNow,
-                              style: LMSStyles.tsWhiteNeutral50W60016,
-                            ),
-                          ),
-                        ),
+                  // SizedBox(
+                  //   width: SizeConfig.blockSizeHorizontal * 3,
+                  // ),
+                  // (course.courseStatus == LMSStrings.strRequested)
+                  //     ? Container()
+                  //     : Expanded(
+                  //         child: ElevatedButton(
+                  //           onPressed: () {},
+                  //           style: ElevatedButton.styleFrom(
+                  //             backgroundColor: LearningColors.darkBlue,
+                  //             padding: EdgeInsets.symmetric(
+                  //                 horizontal: 10, vertical: 5),
+                  //             shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(12),
+                  //             ),
+                  //             elevation: 5,
+                  //           ),
+                  //           child: Text(
+                  //             (course.courseStatus == LMSStrings.strRequested)
+                  //                 ? LMSStrings.strRequested
+                  //                 : (course.courseStatus == LMSStrings.strPending)
+                  //                     ? LMSStrings.strAccept
+                  //                     : (course.courseStatus == LMSStrings.strReappy)
+                  //                         ? LMSStrings.strReappy
+                  //                         : LMSStrings.strEnrollNow,
+                  //             style: LMSStyles.tsWhiteNeutral50W60016,
+                  //           ),
+                  //         ),
+                  //       ),
                 ],
               ),
               SizedBox(

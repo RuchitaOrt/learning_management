@@ -71,7 +71,12 @@ class SignInProvider with ChangeNotifier {
     }
     return null;
   }
-
+setIDandpassword()
+{
+    emailController.text="kattalemahesh@gmail.com";
+          passwordController.text="Mahesh@8548";
+          notifyListeners();
+}
   /*String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password cannot be empty';
@@ -161,7 +166,7 @@ class SignInProvider with ChangeNotifier {
           if (response is LoginResponse) {
             if (response.n == 1) {
               await SPManager().setAuthToken(response.token);
-              await SPManager().setUserData(json.encode(response.data));
+              await SPManager().setUserData(json.encode(response.userData));
 
               ShowDialogs.showToast(response.msg);
 

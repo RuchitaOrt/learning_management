@@ -1,5 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:learning_mgt/Utils/APIManager.dart';
+import 'package:learning_mgt/Utils/internetConnection.dart';
 import 'package:learning_mgt/Utils/lms_strings.dart';
+import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/model/GetRecommdedResponse.dart';
+import 'package:learning_mgt/widgets/ShowDialog.dart';
 
 class RecommendedCourse {
   final String id;
@@ -35,129 +42,87 @@ class RecommendedCourse {
 }
 
 class RecommendedCourseProvider with ChangeNotifier {
-  final Map<String, List<RecommendedCourse>> _coursesByCategory = {
-    'All': [
-      RecommendedCourse(
-        id: '1',
-        title: 'UI/UX Basics',
-        description: 'Learn the basics of UI/UX design.',
-        imageUrl: 'https://via.placeholder.com/150',
-        mode: "online",
-        noofpeoplevisited: "39",
-        discountedAmount: "70",
-        amount: "65",
-        offerPercentage: "30 %",
-        institue: "Centre for Maritime Education and Training (CMET)",
-        courseDuration: "2 days",
-        status: LMSStrings.strRequested,
-        courseStatus: LMSStrings.strRecommended
-        
-      ),
-      RecommendedCourse(
-          id: '2',
-          title: 'Figma Essentials',
-          description: 'Master the Figma tool.',
-          imageUrl: 'https://via.placeholder.com/150',
-          mode: "online",
-          noofpeoplevisited: "39",
-          discountedAmount: "70",
-          amount: "65",
-          offerPercentage: "30 %",
-          institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days",
-          status: LMSStrings.strPending,
-        courseStatus: LMSStrings.strMandatory),
-      RecommendedCourse(
-          id: '3',
-          title: 'Figma Essentials',
-          description: 'Master the Figma tool.',
-          imageUrl: 'https://via.placeholder.com/150',
-          mode: "online",
-          noofpeoplevisited: "39",
-          discountedAmount: "70",
-          amount: "65",
-          offerPercentage: "30 %",
-          institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days",
-            status: LMSStrings.strReappy,
-        courseStatus: LMSStrings.strRecommended)
-    ],
-    'Recommended': [
-      RecommendedCourse(
-          id: '1',
-          title: 'UI/UX Basics',
-          description: 'Learn the basics of UI/UX design.',
-          imageUrl: 'https://via.placeholder.com/150',
-          mode: "online",
-          noofpeoplevisited: "39",
-          discountedAmount: "70",
-          amount: "65",
-          offerPercentage: "30 %",
-          institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days",
-            status: LMSStrings.strPending,
-        courseStatus: LMSStrings.strRecommended),
-      RecommendedCourse(
-          id: '2',
-          title: 'Figma Essentials',
-          description: 'Master the Figma tool.',
-          imageUrl: 'https://via.placeholder.com/150',
-          mode: "online",
-          noofpeoplevisited: "39",
-          discountedAmount: "70",
-          amount: "65",
-          offerPercentage: "30 %",
-          institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days",
-           status: LMSStrings.strRequested,
-        courseStatus: LMSStrings.strRecommended),
-      RecommendedCourse(
-          id: '3',
-          title: 'Figma Essentials',
-          description: 'Master the Figma tool.',
-          imageUrl: 'https://via.placeholder.com/150',
-          mode: "online",
-          noofpeoplevisited: "39",
-          discountedAmount: "70",
-          amount: "65",
-          offerPercentage: "30 %",
-          institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days",
-          status: LMSStrings.strRequested,
-        courseStatus: LMSStrings.strRecommended),
-    ],
-    'Mandatory': [
-      RecommendedCourse(
-          id: '3',
-          title: 'Flutter for Beginners',
-          description: 'Kickstart your Flutter journey.',
-          imageUrl: 'https://via.placeholder.com/150',
-          mode: "online",
-          noofpeoplevisited: "39",
-          discountedAmount: "70",
-          amount: "65",
-          offerPercentage: "30 %",
-          institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days",
-          status: LMSStrings.strRequested,
-        courseStatus: LMSStrings.strMandatory),
-      RecommendedCourse(
-          id: '4',
-          title: 'Dart Language',
-          description: 'Understand Dart deeply.',
-          imageUrl: 'https://via.placeholder.com/150',
-          mode: "online",
-          noofpeoplevisited: "39",
-          discountedAmount: "70",
-          amount: "65",
-          offerPercentage: "30 %",
-          institue: "Centre for Maritime Education and Training (CMET)",
-          courseDuration: "2 days",
-          status: LMSStrings.strReappy,
-        courseStatus: LMSStrings.strMandatory),
-    ],
+  String? _selectedCategory = "All";
 
-  };
+  String? get selectedCategory => _selectedCategory;
 
-  Map<String, List<RecommendedCourse>> get coursesByCategory => _coursesByCategory;
+  void selectCategory(String? categoryID) {
+    _selectedCategory = categoryID;
+
+    recommendedCourseListAPI(_selectedCategory!);
+    notifyListeners();
+  }
+
+  bool isSelected(String? category) {
+    return _selectedCategory == category;
+  }
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  set isLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+  List<CourseModel> _recommendedcourseList = [];
+
+  // Getter for data
+  List<CourseModel> get recommendedcourseList => _recommendedcourseList;
+  set recommendedcourseList(List<CourseModel> data) {
+    _recommendedcourseList = data;
+    notifyListeners();
+  }
+void recommendedCourseListAPI(String listingType) async {
+    // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
+ print("_recommendedcourseList");
+    isLoading = true;
+    _recommendedcourseList = [];
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      final body = {'listtype': listingType};
+
+ print("_recommendedcourseList");
+      try {
+        await APIManager().apiRequest(
+          routeGlobalKey.currentContext!,
+          API.recommendationlist,
+          (response) {
+            // Navigator.pop(context);
+            print("_recommendedcourseList");
+            print("_recommendedcourseList ${response.n}");
+            GetRecommdedResponse resp = response;
+            if (resp.n == 1) {
+              _recommendedcourseList = resp.data!;
+              
+              print("_recommendedcourseList");
+              print(_recommendedcourseList.length.toString());
+            }
+            isLoading = false;
+              notifyListeners();
+          },
+          (error) {
+            // Navigator.pop(context);
+            isLoading = false;
+            notifyListeners();
+            ShowDialogs.showToast("Server Not Responding");
+          },
+          jsonval: jsonEncode(body),
+        );
+      } catch (e) {
+        isLoading = false;
+        notifyListeners();
+        Navigator.pop(routeGlobalKey.currentContext!);
+        ShowDialogs.showToast('Unexpected error: $e');
+      }
+    } else {
+      isLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
+    }
+  }
+
+
+
+List category=["All","Mandatory","Recommended"];
 }

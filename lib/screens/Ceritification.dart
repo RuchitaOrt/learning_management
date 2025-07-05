@@ -5,7 +5,9 @@ import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/model/GetCertificateResponse.dart';
 import 'package:learning_mgt/provider/CertificateProvider.dart';
+import 'package:learning_mgt/provider/CourseProvider.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/screens/CourseDetailPage.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
@@ -23,24 +25,41 @@ class _CeritificationState extends State<Ceritification> {
   String? selectedCategory;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final courseProvider =
+  //     Provider.of<CertificateCourseprovider>(context, listen: false);
+  //     if (courseProvider.coursesByCategory.isNotEmpty) {
+  //       setState(() {
+  //         selectedCategory = courseProvider.coursesByCategory.keys.first;
+  //       });
+  //     }
+  //   });
+  // }
+ @override
   void initState() {
+    // TODO: implement initState
     super.initState();
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final courseProvider =
-      Provider.of<CertificateCourseprovider>(context, listen: false);
-      if (courseProvider.coursesByCategory.isNotEmpty) {
-        setState(() {
-          selectedCategory = courseProvider.coursesByCategory.keys.first;
-        });
-      }
+      final provider =
+          Provider.of<LandingScreenProvider>(context, listen: false);
+
+      // if (!provider.isSubscriptionLoading) {
+      provider.getCategoryList();
+
+       final courseProvider = Provider.of<CourseProvider>(context, listen: false);
+      courseProvider.getCertificateAPI();
+      // }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final courseProvider = Provider.of<CertificateCourseprovider>(context);
-    final categories = courseProvider.coursesByCategory.keys.toList();
+     final courseProvider = Provider.of<CourseProvider>(context);
+    // final categories = courseProvider.coursesByCategory.keys.toList();
 
     return Consumer<LandingScreenProvider>(builder: (context, provider, _) {
       return Scaffold(
@@ -76,13 +95,15 @@ class _CeritificationState extends State<Ceritification> {
                     ),
                   ),
                   SizedBox(height: 16),
-                  if (selectedCategory != null &&
-                      courseProvider.coursesByCategory[selectedCategory!] !=
-                          null) ...[
-                    ...courseProvider.coursesByCategory[selectedCategory!]!
-                        .map((course) => _buildCertificateCard(course))
-                        .toList()
-                  ]
+                  listing(courseProvider)
+                  // _buildCertificateCard(courseProvider)
+                  // // if (selectedCategory != null &&
+                  // //     courseProvider.coursesByCategory[selectedCategory!] !=
+                  // //         null) ...[
+                    // ...courseProvider.certificatecourseList[selectedCategory!]!
+                    //     .map((course) => _buildCertificateCard(courseProvider.certificatecourseList!))
+                    //     .toList()
+                  // ]
                 ],
               ),
             ),
@@ -91,11 +112,26 @@ class _CeritificationState extends State<Ceritification> {
       );
     });
   }
-
-  Widget _buildCertificateCard(CertificateProvider course) {
+Widget listing(CourseProvider courseProvider)
+{
+     
+   
+    if (courseProvider.isCertificateLoading) {
+      return Center(
+          child: CircularProgressIndicator(
+        color: LearningColors.darkBlue,
+      ));
+    }
+   return Column(
+      children: courseProvider.certificatecourseList
+          .map((course) => _buildCertificateCard(course))
+          .toList(),
+    );
+}
+  Widget _buildCertificateCard(CourseData course) {
     // final isDownloaded = course.isDownloaded;
     final isDownloaded = true;
-    final expiryDate = course.expiryDate ?? DateTime.now().add(Duration(days: 365));
+    final expiryDate =DateTime.parse(course.expiry ) ?? DateTime.now().add(Duration(days: 365));
     final daysRemaining = expiryDate.difference(DateTime.now()).inDays;
     final isExpired = daysRemaining <= 0;
 
@@ -110,7 +146,7 @@ class _CeritificationState extends State<Ceritification> {
         onTap: () {
           Navigator.of(routeGlobalKey.currentContext!)
               .pushNamed(CourseDetailPage.route,arguments: {
-                "courseID":"1"
+                "courseID":course.id.toString()
               });
         },
         child: Padding(
@@ -139,7 +175,7 @@ class _CeritificationState extends State<Ceritification> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          course.title,
+                          course.courseName,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -170,12 +206,12 @@ class _CeritificationState extends State<Ceritification> {
                 children: [
                   _buildInfoItem(
                     icon: Icons.numbers,
-                    label: "ID: #ACDS1102999",
+                    label: "ID: ${course.ogCode}",
                   ),
                   SizedBox(width: 16),
                   _buildInfoItem(
                     icon: Icons.schedule,
-                    label: "Duration: 25.5 hrs",
+                    label: "Duration: ${course.duration}",
                   ),
                 ],
               ),
@@ -184,7 +220,8 @@ class _CeritificationState extends State<Ceritification> {
                 children: [
                   _buildInfoItem(
                     icon: Icons.calendar_today,
-                    label: "Expires: ${DateFormat('MMM d, y').format(expiryDate)}",
+                    label: "Expires: ${course.expiry}"
+                    //  ${DateFormat('MMM d, y').format(expiryDate)}",
                   ),
                   SizedBox(width: 16),
                   /*_buildInfoItem(

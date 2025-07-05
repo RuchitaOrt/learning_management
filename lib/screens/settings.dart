@@ -271,17 +271,27 @@ class _SettingsState extends State<Settings> {
                           SizedBox(
                             height: SizeConfig.blockSizeVertical * 1,
                           ),
-                          TextFormField(
-                            style: LMSStyles.tsWhiteNeutral300W50012,
-                            obscureText: personalprovider.isPasswordObscured,
-                            controller:
-                                personalprovider.confirmpasswordController,
-                            validator: personalprovider.validateConfirmPassword,
-                            decoration: CommonInputDecoration(
-                              hint: LMSStrings.strEnterChangeassword,
-                              label: LMSStrings.strEnterChangeassword,
-                              isObscured: personalprovider.isPasswordObscured,
-                              toggle: personalprovider.togglePasswordVisibility,
+                          Theme(
+                             data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+                            child: TextFormField(
+                              cursorColor: LearningColors.darkBlue,
+                              style: LMSStyles.tsWhiteNeutral300W50012,
+                              obscureText: personalprovider.isPasswordObscured,
+                              controller:
+                                  personalprovider.confirmpasswordController,
+                              validator: personalprovider.validateConfirmPassword,
+                              decoration: CommonInputDecoration(
+                                hint: LMSStrings.strEnterChangeassword,
+                                label: LMSStrings.strEnterChangeassword,
+                                isObscured: personalprovider.isPasswordObscured,
+                                toggle: personalprovider.togglePasswordVisibility,
+                              ),
                             ),
                           ),
                         ],

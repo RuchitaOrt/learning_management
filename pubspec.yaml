@@ -67,6 +67,7 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
   google_maps_flutter: ^2.5.0
+  flutter_widget_from_html:
   # location: ^5.0.3
   # (optional) for permission handling
 

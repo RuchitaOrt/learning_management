@@ -462,7 +462,7 @@ Widget listing(CourseProvider courseProvider)
               padding: const EdgeInsets.only(right: 8.0),
               child: ChoiceChip(
                 label: Text('ALL'),
-                selected: selectedCategory == "all",
+                selected: courseProvider.selectedCategory == "all",
                 showCheckmark: false,
                onSelected: (selected) {
                   courseProvider.selectCategory("all");
@@ -636,7 +636,9 @@ Widget listing(CourseProvider courseProvider)
                                 SvgPicture.asset(LMSImagePath.mode),
                                 SizedBox(
                                     width: SizeConfig.blockSizeHorizontal * 1),
-                                Text(course.trainingMode!, style: LMSStyles.tsHeading),
+                                Text(course.trainingMode!,
+                                overflow: TextOverflow.ellipsis,
+                                 style: LMSStyles.tsHeading),
                               ],
                             ),
                           ),

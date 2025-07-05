@@ -107,11 +107,13 @@ class CustomDrawer extends StatelessWidget {
             icon: Icons.person,
             label: 'Certification',
             onTap: () {
-              Navigator.of(
-                routeGlobalKey.currentContext!,
-              ).pushNamed(
-                Ceritification.route,
-              );
+                Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+                              TabScreen.route,
+                              arguments: {
+                                'selectedPos': 1,
+                                'isSignUp': false,
+                              },
+                            );
             },
           ),
 

@@ -67,206 +67,53 @@ class _CourseDetailPageState extends State<CourseDetailPage>
   Widget build(BuildContext context) {
 
     return Consumer<CourseProvider>(builder: (context, courseProvider, _) {
-      if (courseProvider.isLoading) {
-        return Scaffold(
+      
+      return WillPopScope(
+         onWillPop: () async {
+    Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+                              TabScreen.route,
+                              arguments: {
+                                'selectedPos': 0,
+                                'isSignUp': false,
+                              },
+                            );
+      return false; // Prevent default back behavior
+    },
+        child: Scaffold(
+          key: scaffoldKey,
+          appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(kToolbarHeight),
+            child: CustomAppBar(
+              isSearchClickVisible: () {},
+              isSearchValueVisible: false,
+              onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
+            ),
+          ),
+          endDrawer: CustomDrawer(),
           backgroundColor: LearningColors.white,
-          body: const Center(
-            child: CircularProgressIndicator(
-              color: LearningColors.darkBlue,
-            ),
-          ),
-        );
-      }
-      return Scaffold(
-        key: scaffoldKey,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(kToolbarHeight),
-          child: CustomAppBar(
-            isSearchClickVisible: () {},
-            isSearchValueVisible: false,
-            onMenuPressed: () => scaffoldKey.currentState?.openEndDrawer(),
-          ),
-        ),
-        endDrawer: CustomDrawer(),
-        backgroundColor: LearningColors.white,
-        body: CustomScrollView(
-          slivers: [
-            // Fixed Header Section
-            SliverToBoxAdapter(
-              child: Container(
-                height: 250, // Fixed height for header
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    Image.asset(
-                      LMSImagePath.coverbg,
-                      fit: BoxFit.cover,
-                    ),
-                    Container(color: Colors.black.withOpacity(0.4)),
-                    Positioned(
-                      top: 8,
-                      left: 8,
-                      child: IconButton(
-                        icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-                        onPressed: () {
-                          Navigator.of(routeGlobalKey.currentContext!).pushNamed(
-                            TabScreen.route,
-                            arguments: {
-                              'selectedPos': 0,
-                              'isSignUp': false,
-                            },
-                          );
-                        },
-                        // onPressed: () => Navigator.pop(context),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Video navigation logic
-                      },
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.play_circle_fill,
-                                size: 64, color: Colors.white),
-                            SizedBox(height: 8),
-                            Text(
-                              "Watch Demo",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
+          body:
+          mainBody(courseProvider),
+          bottomNavigationBar: SafeArea(
+            child: Container(
+              padding: EdgeInsets.all(12),
+              color: Colors.white,
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context)
+                      .pushNamed(OrderSummaryScreen.route)
+                      .then((value) {});
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: LearningColors.darkBlue,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 14),
                 ),
-              ),
-            ),
-
-            // Course Info Section
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Course Name", style: LMSStyles.tsblackTileBold),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.blue.shade50,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              isSelected
-                                  ? Icons.bookmark
-                                  : Icons.bookmark_border,
-                              color: LearningColors.darkBlue,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                isSelected = !isSelected;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.play_circle_outline,
-                          size: 16,
-                          color: LearningColors.neutral300,
-                        ),
-                        SizedBox(width: 4),
-                        Text("45 Lectures",
-                            style: LMSStyles.tsWhiteNeutral300W300),
-                        SizedBox(width: 16),
-                        Icon(
-                          Icons.access_time,
-                          size: 16,
-                          color: LearningColors.neutral300,
-                        ),
-                        SizedBox(width: 4),
-                        Text("160 Hours",
-                            style: LMSStyles.tsWhiteNeutral300W300),
-                      ],
-                    ),
-                  ],
+                child: Text(
+                  'Enroll for ₹499/mo',
+                  style: LMSStyles.tsWhiteNeutral50W60016.copyWith(fontSize: 16),
                 ),
-              ),
-            ),
-
-            // TabBar (pinned to stay visible while scrolling)
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _StickyTabBarDelegate(
-                child: TabBar(
-                  tabAlignment: TabAlignment.start,
-                  controller: _tabController,
-                  isScrollable: true,
-                  labelColor: LearningColors.darkBlue,
-                  unselectedLabelColor: Colors.grey,
-                  indicatorColor: LearningColors.darkBlue,
-                  labelStyle: LMSStyles.tsSubHeadingBold,
-                  unselectedLabelStyle: LMSStyles.tsWhiteNeutral300W300,
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  tabs: const [
-                    Tab(text: "About"),
-                    Tab(text: "Institute"),
-                    Tab(text: "Modules"),
-                    Tab(text: "Resources"),
-                    Tab(text: "FAQs"),
-                    Tab(text: "Reviews"),
-                  ],
-                ),
-              ),
-            ),
-
-            // Tab Content
-            SliverFillRemaining(
-              hasScrollBody: true,
-              child: TabBarView(
-                controller: _tabController,
-                children: [
-                  _buildAboutTab(),
-                  _buildInstituteTab(courseProvider),
-                  _buildModulesTab(),
-                  _buildResourcesTab(courseProvider),
-                  _buildFAQsTab(),
-                  _buildReviewsTab()
-                ],
-              ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: SafeArea(
-          child: Container(
-            padding: EdgeInsets.all(12),
-            color: Colors.white,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .pushNamed(OrderSummaryScreen.route)
-                    .then((value) {});
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: LearningColors.darkBlue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 14),
-              ),
-              child: Text(
-                'Enroll for ₹499/mo',
-                style: LMSStyles.tsWhiteNeutral50W60016.copyWith(fontSize: 16),
               ),
             ),
           ),
@@ -274,7 +121,174 @@ class _CourseDetailPageState extends State<CourseDetailPage>
       );
     });
   }
-
+Widget mainBody(CourseProvider courseProvider)
+{
+  if (courseProvider.isLoading) {
+        return Center(
+          child: CircularProgressIndicator(
+                color: LearningColors.darkBlue,
+              ),
+        );
+      }
+  return  CustomScrollView(
+            slivers: [
+              // Fixed Header Section
+              SliverToBoxAdapter(
+                child: Container(
+                  height: 250, // Fixed height for header
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.asset(
+                        LMSImagePath.coverbg,
+                        fit: BoxFit.cover,
+                      ),
+                      Container(color: Colors.black.withOpacity(0.4)),
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: IconButton(
+                          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+                          onPressed: () {
+                            Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+                              TabScreen.route,
+                              arguments: {
+                                'selectedPos': 0,
+                                'isSignUp': false,
+                              },
+                            );
+                          },
+                          // onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Video navigation logic
+                        },
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.play_circle_fill,
+                                  size: 64, color: Colors.white),
+                              SizedBox(height: 8),
+                              Text(
+                                "Watch Demo",
+                                style:
+                                    TextStyle(color: Colors.white, fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+        
+              // Course Info Section
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("${courseProvider.courseDetail.courseName}", style: LMSStyles.tsblackTileBold),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: IconButton(
+                              icon: Icon(
+                                isSelected
+                                    ? Icons.bookmark
+                                    : Icons.bookmark_border,
+                                color: LearningColors.darkBlue,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  isSelected = !isSelected;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 8),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.play_circle_outline,
+                            size: 16,
+                            color: LearningColors.neutral300,
+                          ),
+                          SizedBox(width: 4),
+                          Text("${courseProvider.courseDetail.modulesList!.length.toString()} Lectures",
+                              style: LMSStyles.tsWhiteNeutral300W300),
+                          SizedBox(width: 16),
+                          Icon(
+                            Icons.access_time,
+                            size: 16,
+                            color: LearningColors.neutral300,
+                          ),
+                          SizedBox(width: 4),
+                          Text("${courseProvider.courseDetail.duration} Days",
+                              style: LMSStyles.tsWhiteNeutral300W300),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+        
+              // TabBar (pinned to stay visible while scrolling)
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _StickyTabBarDelegate(
+                  child: TabBar(
+                    tabAlignment: TabAlignment.start,
+                    controller: _tabController,
+                    isScrollable: true,
+                    labelColor: LearningColors.darkBlue,
+                    unselectedLabelColor: Colors.grey,
+                    indicatorColor: LearningColors.darkBlue,
+                    labelStyle: LMSStyles.tsSubHeadingBold,
+                    unselectedLabelStyle: LMSStyles.tsWhiteNeutral300W300,
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    tabs: const [
+                      Tab(text: "About"),
+                      Tab(text: "Institute"),
+                      Tab(text: "Modules"),
+                      Tab(text: "Resources"),
+                      Tab(text: "FAQs"),
+                      Tab(text: "Reviews"),
+                    ],
+                  ),
+                ),
+              ),
+        
+              // Tab Content
+              SliverFillRemaining(
+                hasScrollBody: true,
+                child: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildAboutTab(),
+                    _buildInstituteTab(courseProvider),
+                    _buildModulesTab(),
+                    _buildResourcesTab(courseProvider),
+                    _buildFAQsTab(),
+                    _buildReviewsTab()
+                  ],
+                ),
+              ),
+            ],
+          );
+}
   /*Widget _buildAboutTab() {
     String aboutText =
         "Foundations of User Experience (UX) Design is the first of a series of seven courses that will equip you with the skills needed to apply to entry-level jobs in user experience design. Through a mix of videos, readings, and hands-on activities, you’ll learn how to describe common job responsibilities of entry-level UX designers and explore job opportunities in the field of UX design...";

@@ -13,19 +13,44 @@ import 'package:learning_mgt/screens/forgotPassword_screen.dart';
 import 'package:learning_mgt/widgets/custom_text_field_widget.dart';
 import 'package:provider/provider.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
   static const String route = "/signIn";
   SignInScreen({super.key});
+
+  @override
+  State<SignInScreen> createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
   final BorderRadius borderRadius = const BorderRadius.all(
     Radius.circular(8),
   );
+
   final BorderSide focusedBorder = const BorderSide(
     width: 1.0,
   );
+
   final BorderSide enableBorder = BorderSide(
     color: LearningColors.neutral300,
     width: 1.0,
   );
+
+ @override
+  void initState() {
+    // TODO: implement initState
+ super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      print("COMING");
+      final provider =
+          Provider.of<SignInProvider>(context, listen: false);
+         
+        provider.setIDandpassword();
+
+           print(provider.emailController.text);
+ 
+
+    });
+  }
 
   Widget buildMostInterestedCard({
     required String title,
@@ -105,19 +130,29 @@ class SignInScreen extends StatelessWidget {
                                 SizedBox(
                                     height: SizeConfig.blockSizeVertical * 1),
                                 // Password Field with Validation
-                                TextFormField(
-                                  style: LMSStyles.tsWhiteNeutral300W50012,
-                                  obscureText:
-                                      signInProvider.isPasswordObscured,
-                                  controller: signInProvider.passwordController,
-                                  // validator: signInProvider.validatePassword,
-                                  decoration: CommonInputDecoration(
-                                    hint: LMSStrings.strEnterpassword,
-                                    label: LMSStrings.strpassword,
-                                    isObscured:
+                                Theme(
+                                   data: Theme.of(context).copyWith(
+              textSelectionTheme: TextSelectionThemeData(
+                cursorColor: LearningColors.darkBlue, // blinking cursor
+                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+              ),
+            ),
+                                  child: TextFormField(
+                                    cursorColor: LearningColors.darkBlue,
+                                    style: LMSStyles.tsWhiteNeutral300W50012,
+                                    obscureText:
                                         signInProvider.isPasswordObscured,
-                                    toggle:
-                                        signInProvider.togglePasswordVisibility,
+                                    controller: signInProvider.passwordController,
+                                    // validator: signInProvider.validatePassword,
+                                    decoration: CommonInputDecoration(
+                                      hint: LMSStrings.strEnterpassword,
+                                      label: LMSStrings.strpassword,
+                                      isObscured:
+                                          signInProvider.isPasswordObscured,
+                                      toggle:
+                                          signInProvider.togglePasswordVisibility,
+                                    ),
                                   ),
                                 ),
                                 SizedBox(
@@ -250,9 +285,7 @@ class SignInScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 10, top: 16, right: 10),
                   child: Consumer<SignInProvider>(
                     builder: (context, signInProvider, _) {
-                      return signInProvider.isLoading
-                          ? Center(child: CircularProgressIndicator(color: LearningColors.darkBlue,))
-                          : SizedBox(
+                      return  SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: signInProvider.areRequiredFieldsFilled
@@ -271,7 +304,9 @@ class SignInScreen extends StatelessWidget {
                             ),
                             elevation: 5,
                           ),
-                          child: Text(
+                          child:signInProvider.isLoading
+                          ? Center(child: CircularProgressIndicator(color: LearningColors.white,))
+                          : Text(
                             LMSStrings.strSignIn,
                             style: LMSStyles.tsWhiteNeutral50W600162,
                           ),
