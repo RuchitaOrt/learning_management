@@ -44,7 +44,7 @@ class Course {
 
 class CourseProvider with ChangeNotifier {
   String? _selectedCategory = "all";
-
+  String? selectedLanguageName;
   String? get selectedCategory => _selectedCategory;
 
   void selectCategory(String? categoryID) {
@@ -141,6 +141,7 @@ class CourseProvider with ChangeNotifier {
     _courseDetail = data;
     notifyListeners();
   }
+
 
   void courseDetailAPI(String id) async {
     // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');

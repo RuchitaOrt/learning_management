@@ -120,10 +120,19 @@ class SignUpProvider with ChangeNotifier {
   // String? _selectedState;
   Country? get selectedCountry => _selectedCountry;
   StateModel? selectedState;
+  Country? _dialogSelectedCountry;
+  Country? get dialogSelectedCountry => _dialogSelectedCountry;
 
   void setSelectedCountry(Country country) {
     _selectedCountry = country;
+    selectedCountryId = country.id;
+    countryController.text = country.name;
     fetchStatesByCountry(country.id); // fetch states immediately
+    notifyListeners();
+  }
+
+  void setDialogSelectedCountry(Country country) {
+    _dialogSelectedCountry = country;
     notifyListeners();
   }
 
@@ -266,15 +275,15 @@ class SignUpProvider with ChangeNotifier {
     }
   }*/
 
-  Future<void> fetchInitialData() async {
+  Future<void> fetchInitialData(BuildContext context) async {
     _isLoadingDetails = true;
     notifyListeners();
 
     try {
       await Future.wait([
-        fetchDepartments(),
-        fetchCountries(),
-        fetchQualifications(),
+        fetchDepartments(context),
+        fetchCountries(context),
+        fetchQualifications(context),
       ]);
     } catch (e) {
       // Handle error
@@ -780,7 +789,7 @@ Future<void> pickFile(String docName) async {
             startOtpTimer();
             ShowDialogs.showToast(response.message);
           } else {
-            ShowDialogs.showToast('Failed to send OTP');
+            ShowDialogs.showToast(response.message);
           }
         },
             (error) {
@@ -949,10 +958,10 @@ Future<void> pickFile(String docName) async {
               // Email exists but we'll proceed since it's verified
               if (isEmailVerified) {
                 // Create a dummy candidate with just the email to proceed
-                _registeredCandidate = Candidate(
+                /*_registeredCandidate = Candidate(
                   id: 0.toString(),
                   email: emailController.text.trim(),
-                );
+                );*/
                 //ShowDialogs.showToast('Using existing verified email');
               } else {
                 throw Exception(response.msg);
@@ -979,6 +988,8 @@ Future<void> pickFile(String docName) async {
   }
 
   Future<void> saveCandidateDetails(BuildContext context) async {
+    print('Selected Country ID: $selectedCountryId');
+
     try {
       _isSavingDetails = true;
       notifyListeners();
@@ -1137,14 +1148,14 @@ Future<void> pickFile(String docName) async {
     }
   }
 
-  Future<void> fetchDepartments() async {
+  Future<void> fetchDepartments(BuildContext context) async {
     try {
       _isLoadingDepartments = true;
       _departmentError = null;
       notifyListeners();
 
       await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
+        context,
         API.departmentlist,
             (response) {
           if (response is DepartmentListResponse) {
@@ -1158,21 +1169,21 @@ Future<void> pickFile(String docName) async {
         },
       );
     } catch (e) {
-      _departmentError = 'Failed to load departments';
+      _departmentError = 'Failed to load departments ${e.toString()}';
     } finally {
       _isLoadingDepartments = false;
       notifyListeners();
     }
   }
 
-  Future<void> fetchCountries() async {
+  Future<void> fetchCountries(BuildContext context) async {
     try {
       _isLoadingCountries = true;
       _countryError = null;
       notifyListeners();
 
       await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
+        context,
         API.countrylist,
             (response) {
           if (response is CountryListResponse) {
@@ -1186,14 +1197,14 @@ Future<void> pickFile(String docName) async {
         },
       );
     } catch (e) {
-      _countryError = 'Failed to load countries';
+      _countryError = 'Failed to load countries ${e.toString()}';
     } finally {
       _isLoadingCountries = false;
       notifyListeners();
     }
   }
 
-  Future<void> fetchRanks(int departmentId) async {
+  Future<void> fetchRanks(BuildContext context, int departmentId) async {
     try {
       _isLoadingRanks = true;
       _rankError = null;
@@ -1203,7 +1214,7 @@ Future<void> pickFile(String docName) async {
       final requestBody = json.encode({"departmentid": departmentId.toString()});
 
       await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
+        context,
         API.getdeptwiseranklist,
             (response) {
           if (response is RankListResponse) {
@@ -1223,7 +1234,7 @@ Future<void> pickFile(String docName) async {
     }
   }
 
-  Future<void> fetchQualifications() async {
+  Future<void> fetchQualifications(BuildContext context) async {
     try {
       isLoadingQualifications = true;
       qualificationError = null;
@@ -1232,7 +1243,7 @@ Future<void> pickFile(String docName) async {
       print('Fetching qualifications...');
 
       await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
+        context,
         API.getqualifications,
             (response) {
           try {

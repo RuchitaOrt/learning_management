@@ -92,4 +92,7 @@ class LMSStrings {
   static const String strNoCompetent = "Not Yet Competent";
   static const String strCompetent = "Competent";
   static const String strInreview = "In Review";
+
+
+  static const String strNoInstituteFound = "No institutions found";
 }

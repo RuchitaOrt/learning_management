@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_images.dart';
@@ -5,12 +8,19 @@ import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/model/GetCourseInstitueResponse.dart';
 import 'package:learning_mgt/provider/CourseProvider.dart';
 import 'package:learning_mgt/screens/Videoscreen.dart';
+import 'package:learning_mgt/screens/open_resources.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../Utils/lms_strings.dart';
 import '../Utils/lms_styles.dart';
 import '../model/GetCourseDetailListResponse.dart';
+import '../model/GetResourceResponse.dart';
+import '../model/RegistrationResponse.dart';
 import '../provider/sign_up_provider.dart';
 import '../widgets/CustomDropdown.dart';
 import 'OrderSummary.dart';
@@ -37,7 +47,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     // TODO: implement initState
     super.initState();
     final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
-    signUpProvider.fetchCountries();
+    signUpProvider.fetchCountries(context);
     _tabController = TabController(length: 6, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final courseProvider =
@@ -63,6 +73,94 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     _tabController.dispose();
     super.dispose();
   }
+
+  Future<void> _showLanguageDialog(
+      BuildContext context, CourseProvider courseProvider, Function(String) onLanguageSelected) async {
+    final selected = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: LearningColors.white,
+        title: const Text('Select Language'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: courseProvider.courseDetail.languagesList!
+                .map((lang) {
+              return RadioListTile<String>(
+                title: Text(lang.languagesName ?? 'Unknown'),
+                value: lang.languagesName!,
+                groupValue: courseProvider.selectedLanguageName,
+                activeColor: LearningColors.darkBlue,
+                onChanged: (value) {
+                  Navigator.pop(context, value);
+                },
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (selected != null) {
+      onLanguageSelected(selected);
+    }
+  }
+
+  Future<void> _showInstitutionCountryDialog(BuildContext context, SignUpProvider signUpProvider) async {
+    final selected = await showDialog<Country>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: LearningColors.white,
+        title: const Text('Select Country'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: signUpProvider.countries.map((country) {
+              return RadioListTile<Country>(
+                title: Text(country.name),
+                value: country,
+                activeColor: LearningColors.darkBlue,
+                groupValue: signUpProvider.selectedCountry,
+                onChanged: (value) => Navigator.pop(context, value),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (selected != null) {
+      signUpProvider.setSelectedCountry(selected);
+      signUpProvider.setSelectedState(null);
+      signUpProvider.fetchStatesByCountry(selected.id);
+    }
+  }
+
+  Future<void> _showStateDialog(BuildContext context, SignUpProvider signUpProvider) async {
+    final selected = await showDialog<StateModel>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: LearningColors.white,
+        title: const Text('Select State'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: signUpProvider.states.map((state) {
+              return RadioListTile<StateModel>(
+                title: Text(state.name ?? ''),
+                value: state,
+                activeColor: LearningColors.darkBlue,
+                groupValue: signUpProvider.selectedState,
+                onChanged: (value) => Navigator.pop(context, value),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (selected != null) {
+      signUpProvider.setSelectedState(selected);
+    }
+  }
+
 
   Widget build(BuildContext context) {
 
@@ -481,59 +579,91 @@ Widget mainBody(CourseProvider courseProvider)
     );
   }
 
-  /*Widget _buildInstituteTab(CourseProvider courseProvider) {
-    // Use the same provider for all country/state operations
+  Widget _buildInstituteTab(CourseProvider courseProvider) {
     final signUpProvider = Provider.of<SignUpProvider>(context);
-    final selectedCountry = signUpProvider.selectedCountry;
-    final selectedState = signUpProvider.selectedState; // Changed from courseProvider
+
+    if (courseProvider.isInstituteLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: LearningColors.darkBlue),
+      );
+    }
 
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Row(
+          child: Column(
             children: [
-              // Country dropdown
-              Expanded(
-                child: signUpProvider.isLoadingCountries
-                    ? Center(child: CircularProgressIndicator(color: LearningColors.darkBlue))
-                    : CustomDropdown<String>(
-                  value: selectedCountry?.name,
-                  hintText: "Select Country",
-                  items: signUpProvider.countries.map((c) => c.name).toList(),
-                  onChanged: (value) {
-                    final countryObj = signUpProvider.countries.firstWhere((c) => c.name == value);
-                    signUpProvider.setSelectedCountry(countryObj);
-                    signUpProvider.setSelectedState(null); // Changed from courseProvider
-                    signUpProvider.fetchStatesByCountry(countryObj.id); // Ensure this is called
-                  },
+              // Country Button
+              ElevatedButton(
+                onPressed: () => _showInstitutionCountryDialog(context, signUpProvider),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  side: BorderSide(color: Colors.grey.shade400),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(signUpProvider.selectedCountry?.name ?? "Select Country"),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
                 ),
               ),
-              const SizedBox(width: 12),
 
-              // State dropdown
-              Expanded(
-                child: signUpProvider.isLoadingStates
-                    ? Center(child: CircularProgressIndicator())
-                    : CustomDropdown<String>(
-                  value: selectedState?.name, // Changed to use name if StateModel
-                  hintText: "Select State",
-                  items: signUpProvider.states.map((s) => s.name).toList(),
-                  onChanged: (value) {
-                    final stateObj = signUpProvider.states.firstWhere((s) => s.name == value);
-                    signUpProvider.setSelectedState(stateObj);
-                  },
-                ),
-              ),
+              const SizedBox(height: 12),
+
+              // State Button or Loader
+              if (signUpProvider.isLoadingStates)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: Center(child: CircularProgressIndicator(color: LearningColors.darkBlue)),
+                )
+              else if (signUpProvider.states.isNotEmpty)
+                ElevatedButton(
+                  onPressed: () => _showStateDialog(context, signUpProvider),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    side: BorderSide(color: Colors.grey.shade400),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(signUpProvider.selectedState?.name ?? "Select State"),
+                      const Icon(Icons.arrow_drop_down),
+                    ],
+                  ),
+                )
+              else
+                const SizedBox.shrink(),
             ],
           ),
         ),
-        // ... rest of your code
+
+        // Institute List
+        Expanded(
+          child: courseProvider.instituteDetail.isEmpty
+              ? const Center(
+            child: Text(
+              LMSStrings.strNoInstituteFound,
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          )
+              : ListView(
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            children: _buildInstituteList(courseProvider.instituteDetail),
+          ),
+        ),
       ],
     );
-  }*/
+  }
 
-  Widget _buildInstituteTab(CourseProvider courseProvider) {
+  /*Widget _buildInstituteTab(CourseProvider courseProvider) {
     // final List<Map<String, dynamic>> institutes = [
     //   {
     //     'logo': 'assets/images/aims.png',
@@ -633,73 +763,44 @@ Widget mainBody(CourseProvider courseProvider)
             children: _buildInstituteList(courseProvider.instituteDetail),
           ),
         ),
-      ],
-    );
-
-    /*Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Column(
-            children: [
-              // Country dropdown
-              CustomDropdown<String>(
-                value: selectedCountry?.name,
-                hintText: "Select Country",
-                items: signUpProvider.countries.map((c) => c.name).toList(),
-                onChanged: (value) {
-                  final countryObj = signUpProvider.countries.firstWhere((c) => c.name == value);
-                  signUpProvider.setSelectedCountry(countryObj);
-                  signUpProvider.setSelectedState(null); // Changed from courseProvider
-                  signUpProvider.fetchStatesByCountry(countryObj.id); // Ensure this is called
-                },
+        *//*Expanded(
+          child: courseProvider.instituteDetail.isEmpty
+              ? Center(
+            child: Text(
+              "No institutions available for the selected location",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
               ),
-              const SizedBox(height: 12),
-              // State dropdown
-              *//*signUpProvider.isLoadingStates
-                  ? Center(child: CircularProgressIndicator())
-                  : *//*
-              *//*CustomDropdown<String>(
-                value: selectedState?.name, // Changed to use name if StateModel
-                hintText: "Select State",
-                // items: signUpProvider.states.map((s) => s.name).toList(),
-                items: signUpProvider.states.map((s) => s.name ?? '').where((name) => name.isNotEmpty).toList(),
-                onChanged: (value) {
-                  final stateObj = signUpProvider.states.firstWhere((s) => s.name == value);
-                  signUpProvider.setSelectedState(stateObj);
-                },
-              ),*//*
-              if (signUpProvider.isLoadingStates)
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else if (signUpProvider.states.isNotEmpty)
-                CustomDropdown<String>(
-                  value: selectedState?.name,
-                  hintText: "Select State",
-                  items: signUpProvider.states.map((s) => s.name ?? '').where((name) => name.isNotEmpty).toList(),
-                  onChanged: (value) {
-                    final stateObj = signUpProvider.states.firstWhere((s) => s.name == value);
-                    signUpProvider.setSelectedState(stateObj);
-                  },
-                )
-              else
-                const SizedBox.shrink(), // hides the state dropdown completely
-
-            ],
-          ),
-        ),
-        Expanded(
-          child: ListView(
+            ),
+          )
+              : ListView(
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
             children: _buildInstituteList(courseProvider.instituteDetail),
           ),
-        ),
+        ),*//*
       ],
-    );*/
-  }
+    );
+  }*/
 
   List<Widget> _buildInstituteList( List<InstituteData> instituteDetail) {
+    if (instituteDetail.isEmpty) {
+      return [
+        Padding(
+          padding: const EdgeInsets.only(top: 80),
+          child: Center(
+            child: Text(
+              LMSStrings.strNoInstituteFound,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+        ),
+      ];
+    }
+
     return instituteDetail.map((institute) {
       return Card(
         color: LearningColors.white,
@@ -928,13 +1029,163 @@ Widget mainBody(CourseProvider courseProvider)
   }
 
   Widget _buildResourcesTab(CourseProvider courseProvider) {
-    // Initialize with the first language if available
-    String? selectedLanguage = courseProvider.courseDetail.languagesList?.isNotEmpty ?? false
-        ? courseProvider.courseDetail.languagesList!.first.languagesName
-        : null;
-
     return StatefulBuilder(
       builder: (context, setState) {
+        String? selectedLanguage = courseProvider.selectedLanguageName ??
+            (courseProvider.courseDetail.languagesList?.isNotEmpty ?? false
+                ? courseProvider.courseDetail.languagesList!.first.languagesName
+                : null);
+
+        return Column(
+          children: [
+            // Language selector (button instead of dropdown)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              child: ElevatedButton(
+                onPressed: () async {
+                  await _showLanguageDialog(
+                    context,
+                    courseProvider,
+                        (value) {
+                      setState(() {
+                        selectedLanguage = value;
+                        courseProvider.selectedLanguageName = value; // optional: store in provider
+                      });
+
+                      final selectedLang = courseProvider.courseDetail.languagesList!
+                          .firstWhere((lang) => lang.languagesName == value);
+
+                      courseProvider.courseResouceAPI(
+                        courseProvider.courseDetail.id.toString(),
+                        "",
+                        selectedLang.id.toString(),
+                      );
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  side: BorderSide(color: Colors.grey.shade400),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(selectedLanguage ?? "Select Language"),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
+              ),
+            ),
+
+            // Loading / No data / Resource List
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  if (courseProvider.isResourceLoading) {
+                    return const Center(child: CircularProgressIndicator(color: LearningColors.darkBlue,));
+                  } else if (courseProvider.resourceDetail.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No resources available for this language.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    );
+                  } else {
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      itemCount: courseProvider.resourceDetail.length,
+                      itemBuilder: (context, index) {
+                        final resource = courseProvider.resourceDetail[index];
+                        return Card(
+                          color: LearningColors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.shade100,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    resource.modulename ?? "",
+                                    style: TextStyle(
+                                      color: Colors.orange.shade800,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  resource.materialLabel ?? "",
+                                  style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      final url = getValidResourceUrl(resource);
+                                      if (url.isNotEmpty) {
+                                        print('Launching: $url');
+                                        _handleResourceAction(context, resource.materialType!, url);
+                                      } else {
+                                        print('No valid URL for resource');
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: LearningColors.darkBlue,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          _getResourceIcon(resource.materialType!),
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        _getResourceText(resource.materialType!),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /*Widget _buildResourcesTab(CourseProvider courseProvider) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        // Set default selected language to 0th index if available
+        String? selectedLanguage = courseProvider.courseDetail.languagesList?.isNotEmpty ?? false
+            ? courseProvider.courseDetail.languagesList!.first.languagesName
+            : null;
+
         return Column(
           children: [
             // Language dropdown
@@ -945,20 +1196,20 @@ Widget mainBody(CourseProvider courseProvider)
                 hintText: "Select Language",
                 items: courseProvider.courseDetail.languagesList
                     ?.map((lang) => lang.languagesName ?? "Unknown")
-                    .toList() ?? [],
+                    .toList() ??
+                    [],
                 onChanged: (value) {
                   setState(() {
                     selectedLanguage = value;
                   });
 
-                  // Call API to get resources for selected language
                   final selectedLang = courseProvider.courseDetail.languagesList
                       ?.firstWhere((lang) => lang.languagesName == value);
 
                   if (selectedLang != null) {
                     courseProvider.courseResouceAPI(
                       courseProvider.courseDetail.id.toString(),
-                      "", // moduleid - adjust if needed
+                      "", // module id (if required)
                       selectedLang.id.toString(),
                     );
                   }
@@ -966,99 +1217,108 @@ Widget mainBody(CourseProvider courseProvider)
               ),
             ),
 
-            // Show loading or resources list
-            if (courseProvider.isResourceLoading)
-              Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: LearningColors.darkBlue,
-                  ),
-                ),
-              )
-            else
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                  itemCount: courseProvider.resourceDetail.length,
-                  itemBuilder: (context, index) {
-                    final resource = courseProvider.resourceDetail[index];
-                    return Container(
-                      width: double.infinity,
-                      margin: const EdgeInsets.only(bottom: 8),
-                      child: Card(
-                        color: LearningColors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        elevation: 2,
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.shade100,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  resource.modulename!,
-                                  style: TextStyle(
-                                    color: Colors.orange.shade800,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                resource.materialLabel!,
-                                style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
-                              ),
-                              const SizedBox(height: 16),
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    _handleResourceAction(
-                                        resource.materialType!, resource.materialLink!);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: LearningColors.darkBlue,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(vertical: 12),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        _getResourceIcon(resource.materialType!),
-                                        color: Colors.white,
-                                        size: 20,
-                                      ),
-                                      SizedBox(width: 8),
-                                      _getResourceText(resource.materialType!),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+            // Resource list or loading or empty state
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  if (courseProvider.isResourceLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(color: LearningColors.darkBlue),
+                    );
+                  }
+
+                  if (courseProvider.resourceDetail.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No resources available for this language.',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                     );
-                  },
-                ),
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+                    itemCount: courseProvider.resourceDetail.length,
+                    itemBuilder: (context, index) {
+                      final resource = courseProvider.resourceDetail[index];
+                      return Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: Card(
+                          color: LearningColors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          elevation: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.shade100,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    resource.modulename ?? "",
+                                    style: TextStyle(
+                                      color: Colors.orange.shade800,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  resource.materialLabel ?? "",
+                                  style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
+                                ),
+                                const SizedBox(height: 16),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      _handleResourceAction(
+                                          resource.materialType!, resource.materialLink!);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: LearningColors.darkBlue,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(vertical: 12),
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          _getResourceIcon(resource.materialType!),
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        _getResourceText(resource.materialType!),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
+            ),
           ],
         );
       },
     );
-  }
+  }*/
 
   /*Widget _buildResourcesTab(CourseProvider courseProvider) {
     String? selectedLanguage;
@@ -1228,7 +1488,184 @@ Widget mainBody(CourseProvider courseProvider)
     }
   }
 
-  void _handleResourceAction(String type, String resourcelink) {
+  Future<File?> _downloadFile(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final tempDir = await getTemporaryDirectory();
+        final fileName = url.split('/').last;
+        final filePath = '${tempDir.path}/$fileName';
+        final file = File(filePath);
+        await file.writeAsBytes(response.bodyBytes);
+        return file;
+      } else {
+        print('Download failed with status: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('Download error: $e');
+      return null;
+    }
+  }
+
+  /*void _handleResourceAction(BuildContext context, String type, String resourcelink) async {
+    try {
+      if (resourcelink.trim().isEmpty || !Uri.tryParse(resourcelink)!.isAbsolute == true) {
+        print('Invalid or empty link: $resourcelink');
+        return;
+      }
+
+      switch (type) {
+        case 'video':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => VideoPlayerScreen(videoUrl: resourcelink),
+            ),
+          );
+          break;
+
+        case 'image':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ImagePreviewScreen(imageUrl: resourcelink),
+            ),
+          );
+          break;
+
+        case 'link':
+          final uri = Uri.parse(resourcelink);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            await launchUrl(uri, mode: LaunchMode.inAppWebView);
+          }
+          break;
+
+        case 'pdf':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PdfViewerScreen(pdfUrl: resourcelink),
+            ),
+          );
+          break;
+
+        case 'xlsx':
+        case 'file':
+        case 'zip':
+          final file = await _downloadFile(resourcelink);
+          if (file != null) {
+            final ext = file.path.split('.').last.toLowerCase();
+            if (ext == 'xlsx') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ExcelViewerScreen(excelFile: file)),
+              );
+            } else {
+              await OpenFilex.open(file.path);
+            }
+          } else {
+            print('Failed to download file');
+          }
+          break;
+
+
+        default:
+          print('Unsupported type: $type');
+      }
+    } catch (e) {
+      print('Error launching resource: $e');
+    }
+  }*/
+
+  void _handleResourceAction(BuildContext context, String type, String resourcelink) async {
+    try {
+      if (resourcelink.trim().isEmpty || !Uri.tryParse(resourcelink)!.isAbsolute == true) {
+        print('Invalid or empty link: $resourcelink');
+        return;
+      }
+
+      final ext = resourcelink.split('.').last.toLowerCase();
+
+      switch (type) {
+        case 'video':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => VideoPlayerScreen(videoUrl: resourcelink),
+            ),
+          );
+          break;
+
+        case 'image':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ImagePreviewScreen(imageUrl: resourcelink),
+            ),
+          );
+          break;
+
+        case 'link':
+          final uri = Uri.parse(resourcelink);
+          if (await canLaunchUrl(uri)) {
+            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          } else {
+            await launchUrl(uri, mode: LaunchMode.inAppWebView);
+          }
+          break;
+
+        case 'file':
+        case 'zip':
+          final file = await _downloadFile(resourcelink);
+          if (file != null) {
+            if (ext == 'pdf') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => PdfViewerScreen(pdfUrl: resourcelink)),
+              );
+            } else if (ext == 'xlsx') {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ExcelViewerScreen(excelFile: file)),
+              );
+            } else {
+              await OpenFilex.open(file.path);
+            }
+          } else {
+            print('Failed to download file');
+          }
+          break;
+
+        case 'pdf':
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => PdfViewerScreen(pdfUrl: resourcelink)),
+          );
+          break;
+
+        default:
+          print('Unsupported type: $type');
+      }
+    } catch (e) {
+      print('Error launching resource: $e');
+    }
+  }
+
+
+  String getValidResourceUrl(ResourceData resource) {
+    if (resource.materialLink != null && resource.materialLink!.trim().isNotEmpty) {
+      return resource.materialLink!.trim();
+    } else if (resource.materialFile != null && resource.materialFile!.trim().isNotEmpty) {
+      return resource.materialFile!.trim();
+    } else {
+      return '';
+    }
+  }
+
+  /*void _handleResourceAction(String type, String resourcelink) {
     switch (type) {
       case 'video':
         // Navigate to video screen
@@ -1247,7 +1684,7 @@ Widget mainBody(CourseProvider courseProvider)
         print('Downloading ZIP: ${resourcelink}');
         break;
     }
-  }
+  }*/
 
   Widget _buildFAQsTab() {
     final faqs = [

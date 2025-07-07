@@ -296,66 +296,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                     SizedBox(width: 8), // Add some spacing between buttons
 
                     // Next/Submit Button (50% width)
-                    /*Expanded(
-                      flex: 1,
-                      child: Consumer<SignUpProvider>(
-                        builder: (context, signUpProvider, _) {
-                          return ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: signUpProvider.isEmailVerified &&
-                                  !signUpProvider.isRegistering &&
-                                  !signUpProvider.isSavingDetails
-                                  ? LearningColors.darkBlue
-                                  : Colors.grey,
-                              foregroundColor: Colors.white,
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              elevation: 5,
-                            ),
-                            onPressed: () async {
-                              if (!signUpProvider.isEmailVerified) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Please verify your email first')));
-                                return;
-                              }
-
-                              final formKey = current == 0
-                                  ? signUpProvider.formKeyBasic
-                                  : current == 1
-                                  ? signUpProvider.formKeyDetail
-                                  : signUpProvider.formKeyUpload;
-
-                              if (formKey.currentState?.validate() ?? false) {
-                                try {
-                                  if (current == 0) {
-                                    await signUpProvider.registerCandidate(context);
-                                  } else if (current == 1) {
-                                    await signUpProvider.saveCandidateDetails(context);
-                                    await signUpProvider.fetchDocuments();
-                                  } else if (current == 2) {
-                                    // This is the submit button for the upload step
-                                    await signUpProvider.uploadDocuments(context);
-                                  }
-
-                                  // Only proceed if API call succeeds
-                                  Provider.of<StepProvider>(context, listen: false).nextStep();
-                                } catch (e) {
-                                  // Error is already shown by the provider methods
-                                }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Please fix errors before proceeding')));
-                              }
-                            },
-                            child: signUpProvider.isRegistering || signUpProvider.isSavingDetails
-                                ? CircularProgressIndicator(color: Colors.white)
-                                : Text(current == 2 ? 'Submit' : 'Next'),
-                          );
-                        },
-                      ),
-                    ),*/
                     Expanded(
                       flex: 1,
                       child: Consumer<SignUpProvider>(
@@ -936,9 +876,9 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
     /*fetchDepartments();
     fetchCountries();*/
     final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
-    signUpProvider.fetchDepartments();
-    signUpProvider.fetchCountries();
-    signUpProvider.fetchQualifications();
+    signUpProvider.fetchDepartments(context);
+    signUpProvider.fetchCountries(context);
+    signUpProvider.fetchQualifications(context);
   }
 
   /*Future<void> fetchDepartments() async {
@@ -1471,7 +1411,7 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
 
     if (selected != null) {
       signUpProvider.setSelectedDepartment(selected);
-      signUpProvider.fetchRanks(selected.id);
+      signUpProvider.fetchRanks(context, selected.id);
     }
   }
 

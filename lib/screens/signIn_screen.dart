@@ -319,7 +319,8 @@ class _SignInScreenState extends State<SignInScreen> {
                 GestureDetector(
                   onTap: () {
                     FocusManager.instance.primaryFocus?.unfocus();
-                    Navigator.of(routeGlobalKey.currentContext!)
+                    // Navigator.of(routeGlobalKey.currentContext!)
+                    Navigator.of(context)
                         .pushNamed(VerificationScreen.route)
                         .then((value) {});
                   },
