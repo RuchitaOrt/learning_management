@@ -105,7 +105,7 @@ class _CourseDetailPageState extends State<CourseDetailPage>
     }
   }
 
-  Future<void> _showInstitutionCountryDialog(BuildContext context, SignUpProvider signUpProvider) async {
+  /*Future<void> _showInstitutionCountryDialog(BuildContext context, SignUpProvider signUpProvider) async {
     final selected = await showDialog<Country>(
       context: context,
       builder: (context) => AlertDialog(
@@ -118,6 +118,37 @@ class _CourseDetailPageState extends State<CourseDetailPage>
                 title: Text(country.name),
                 value: country,
                 activeColor: LearningColors.darkBlue,
+                groupValue: signUpProvider.selectedCountry,
+                onChanged: (value) => Navigator.pop(context, value),
+              );
+            }).toList(),
+          ),
+        ),
+      ),
+    );
+
+    if (selected != null) {
+      signUpProvider.setSelectedCountry(selected);
+      signUpProvider.setSelectedState(null);
+      signUpProvider.fetchStatesByCountry(selected.id);
+    }
+  }*/
+
+  Future<void> _showInstitutionCountryDialog(BuildContext context, SignUpProvider signUpProvider) async {
+    print('Selected Country: ${signUpProvider.selectedCountry?.name}');
+    final selected = await showDialog<Country>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: LearningColors.white,
+        title: const Text('Select Country'),
+        content: SingleChildScrollView(
+          child: Column(
+            children: signUpProvider.countries.map((country) {
+              return RadioListTile<Country>(
+                title: Text(country.name),
+                value: country,
+                activeColor: LearningColors.darkBlue,
+                // Use the stored selectedCountry as the default selection
                 groupValue: signUpProvider.selectedCountry,
                 onChanged: (value) => Navigator.pop(context, value),
               );
@@ -923,7 +954,7 @@ Widget mainBody(CourseProvider courseProvider)
                   //const SizedBox(width: 12),
 
                   // Timings chips (2 per row)
-                  Expanded(
+                  /*Expanded(
                     child: Wrap(
                       spacing: 0,
                       runSpacing: 0,
@@ -943,7 +974,65 @@ Widget mainBody(CourseProvider courseProvider)
                         );
                       }).toList(),
                     ),
+                  ),*/
+                  Expanded(
+                    child: Wrap(
+                      spacing: 0,
+                      runSpacing: 0,
+                      children: (institute.batches as List<BatchData>).map((batchData) {
+                        // Determine the color based on capacity
+                        Color bgColor;
+                        Color textColor;
+                        Color borderColor;
+
+                        switch (batchData.capacity?.toLowerCase()) {
+                          case 'full':
+                            bgColor = LearningColors.red.withOpacity(0.2);
+                            textColor = LearningColors.red;
+                            borderColor = LearningColors.red;
+                            break;
+                          case 'filling fast':
+                            bgColor = LearningColors.darkOrange.withOpacity(0.2);
+                            textColor = LearningColors.darkOrange;
+                            borderColor = LearningColors.darkOrange;
+                            break;
+                          case 'available':
+                            bgColor = LearningColors.secondary550.withOpacity(0.2);
+                            textColor = LearningColors.secondary550;
+                            borderColor = LearningColors.secondary550;
+                            break;
+                          default:
+                            bgColor = LearningColors.white.withOpacity(0.2);
+                            textColor = LearningColors.black;
+                            borderColor = LearningColors.black.withOpacity(0.5);
+                        }
+
+                        return SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          child: Chip(
+                            label: Text(
+                              "${batchData.startDate} to ${batchData.endDate}",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: textColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            backgroundColor: bgColor,
+                            side: BorderSide(
+                              color: borderColor,
+                              width: 1.0,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
+
                 ],
               ),
             ],
@@ -1028,7 +1117,7 @@ Widget mainBody(CourseProvider courseProvider)
     );
   }
 
-  Widget _buildResourcesTab(CourseProvider courseProvider) {
+  /*Widget _buildResourcesTab(CourseProvider courseProvider) {
     return StatefulBuilder(
       builder: (context, setState) {
         String? selectedLanguage = courseProvider.selectedLanguageName ??
@@ -1176,48 +1265,61 @@ Widget mainBody(CourseProvider courseProvider)
         );
       },
     );
-  }
+  }*/
 
-  /*Widget _buildResourcesTab(CourseProvider courseProvider) {
+  Widget _buildResourcesTab(CourseProvider courseProvider) {
     return StatefulBuilder(
       builder: (context, setState) {
-        // Set default selected language to 0th index if available
-        String? selectedLanguage = courseProvider.courseDetail.languagesList?.isNotEmpty ?? false
-            ? courseProvider.courseDetail.languagesList!.first.languagesName
-            : null;
+        String? selectedLanguage = courseProvider.selectedLanguageName ??
+            (courseProvider.courseDetail.languagesList?.isNotEmpty ?? false
+                ? courseProvider.courseDetail.languagesList!.first.languagesName
+                : null);
 
         return Column(
           children: [
-            // Language dropdown
+            // Language selector (button instead of dropdown)
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-              child: CustomDropdown<String>(
-                value: selectedLanguage,
-                hintText: "Select Language",
-                items: courseProvider.courseDetail.languagesList
-                    ?.map((lang) => lang.languagesName ?? "Unknown")
-                    .toList() ??
-                    [],
-                onChanged: (value) {
-                  setState(() {
-                    selectedLanguage = value;
-                  });
+              child: ElevatedButton(
+                onPressed: () async {
+                  await _showLanguageDialog(
+                    context,
+                    courseProvider,
+                        (value) {
+                      setState(() {
+                        selectedLanguage = value;
+                        courseProvider.selectedLanguageName = value;
+                      });
 
-                  final selectedLang = courseProvider.courseDetail.languagesList
-                      ?.firstWhere((lang) => lang.languagesName == value);
+                      final selectedLang = courseProvider.courseDetail.languagesList!
+                          .firstWhere((lang) => lang.languagesName == value);
 
-                  if (selectedLang != null) {
-                    courseProvider.courseResouceAPI(
-                      courseProvider.courseDetail.id.toString(),
-                      "", // module id (if required)
-                      selectedLang.id.toString(),
-                    );
-                  }
+                      courseProvider.courseResouceAPI(
+                        courseProvider.courseDetail.id.toString(),
+                        "",
+                        selectedLang.id.toString(),
+                      );
+                    },
+                  );
                 },
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  side: BorderSide(color: Colors.grey.shade400),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(selectedLanguage ?? "Select Language"),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
               ),
             ),
 
-            // Resource list or loading or empty state
+            // Loading / No data / Resource List
             Expanded(
               child: Builder(
                 builder: (context) {
@@ -1225,31 +1327,36 @@ Widget mainBody(CourseProvider courseProvider)
                     return const Center(
                       child: CircularProgressIndicator(color: LearningColors.darkBlue),
                     );
-                  }
-
-                  if (courseProvider.resourceDetail.isEmpty) {
+                  } else if (courseProvider.resourceDetail.isEmpty) {
                     return const Center(
-                      child: Text(
-                        'No resources available for this language.',
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.folder_off, size: 48, color: Colors.grey),
+                          SizedBox(height: 16),
+                          Text(
+                            LMSStrings.strNoLearningMaterialFound,
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
+                          ),
+                          /*SizedBox(height: 8),
+                          Text(
+                            'Please check back later or try another language',
+                            style: TextStyle(fontSize: 14, color: Colors.grey),
+                            textAlign: TextAlign.center,
+                          ),*/
+                        ],
                       ),
                     );
-                  }
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-                    itemCount: courseProvider.resourceDetail.length,
-                    itemBuilder: (context, index) {
-                      final resource = courseProvider.resourceDetail[index];
-                      return Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(bottom: 8),
-                        child: Card(
+                  } else {
+                    return ListView.builder(
+                      padding: const EdgeInsets.only(left: 16, right: 16),
+                      itemCount: courseProvider.resourceDetail.length,
+                      itemBuilder: (context, index) {
+                        final resource = courseProvider.resourceDetail[index];
+                        return Card(
                           color: LearningColors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 2,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          margin: const EdgeInsets.only(bottom: 12),
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -1280,8 +1387,13 @@ Widget mainBody(CourseProvider courseProvider)
                                   width: double.infinity,
                                   child: ElevatedButton(
                                     onPressed: () {
-                                      _handleResourceAction(
-                                          resource.materialType!, resource.materialLink!);
+                                      final url = getValidResourceUrl(resource);
+                                      if (url.isNotEmpty) {
+                                        print('Launching: $url');
+                                        _handleResourceAction(context, resource.materialType!, url);
+                                      } else {
+                                        print('No valid URL for resource');
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: LearningColors.darkBlue,
@@ -1307,10 +1419,10 @@ Widget mainBody(CourseProvider courseProvider)
                               ],
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
+                        );
+                      },
+                    );
+                  }
                 },
               ),
             ),
@@ -1318,130 +1430,7 @@ Widget mainBody(CourseProvider courseProvider)
         );
       },
     );
-  }*/
-
-  /*Widget _buildResourcesTab(CourseProvider courseProvider) {
-    String? selectedLanguage;
-
-    if (courseProvider.isResourceLoading) {
-      return Center(
-          child: CircularProgressIndicator(
-        color: LearningColors.darkBlue,
-      ));
-    }
-    return Column(
-      children: [Padding(
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-        child: CustomDropdown<String>(
-          value: selectedLanguage,
-          hintText: "Select Language",
-          items: courseProvider.courseDetail.languagesList
-              ?.map((lang) => lang.languagesName ?? "Unknown")
-              .toList() ?? [],
-          onChanged: (value) {
-            selectedLanguage = value;
-            // Call API to get resources for selected language
-            final selectedLangId = courseProvider.courseDetail.languagesList
-                ?.firstWhere((lang) => lang.languagesName == value)
-                .id
-                .toString();
-
-            if (selectedLangId != null) {
-              courseProvider.courseResouceAPI(
-                courseProvider.courseDetail.id.toString(),
-                "", // moduleid - adjust if needed
-                selectedLangId,
-              );
-            }
-          },
-        ),
-      ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
-            itemCount: courseProvider.resourceDetail.length,
-            itemBuilder: (context, index) {
-              final resource = courseProvider.resourceDetail[index];
-              return Container(
-                width: double.infinity,
-                margin: const EdgeInsets.only(bottom: 8),
-                child: Card(
-                  color: LearningColors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.orange.shade100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            resource.modulename!,
-                            style: TextStyle(
-                              color: Colors.orange.shade800,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          resource.materialLabel!,
-                          style: LMSStyles.tsblackTileBold.copyWith(fontSize: 16),
-                        ),
-                        // const SizedBox(height: 8),
-                        // Text(
-                        //   resource.description!,
-                        //   style: LMSStyles.tsWhiteNeutral300W500,
-                        // ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _handleResourceAction(
-                                  resource.materialType!, resource.materialLink!);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: LearningColors.darkBlue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  _getResourceIcon(resource.materialType!),
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                                SizedBox(width: 8),
-                                _getResourceText(resource.materialType!),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
-  }*/
+  }
 
   IconData _getResourceIcon(String type) {
     switch (type) {

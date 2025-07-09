@@ -1,10 +1,10 @@
 import 'dart:io';
-
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:video_player/video_player.dart';
+import '../Utils/learning_colors.dart';
 
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
@@ -22,7 +22,6 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   void initState() {
     super.initState();
-
     _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
       ..initialize().then((_) {
         setState(() {
@@ -45,14 +44,16 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Video')),
+      backgroundColor: LearningColors.black,
+      appBar: AppBar(backgroundColor: LearningColors.black, elevation: 0, iconTheme: const IconThemeData(color: Colors.white),),
       body: _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
           ? Chewie(controller: _chewieController!)
-          : const Center(child: CircularProgressIndicator()),
+          : const Center(
+        child: CircularProgressIndicator(color: LearningColors.darkBlue),
+      ),
     );
   }
 }
-
 
 class ImagePreviewScreen extends StatelessWidget {
   final String imageUrl;
@@ -62,14 +63,14 @@ class ImagePreviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Image Preview')),
+      backgroundColor: LearningColors.black,
+      appBar: AppBar(backgroundColor: LearningColors.black, elevation: 0, iconTheme: const IconThemeData(color: Colors.white),),
       body: Center(
         child: Image.network(imageUrl, fit: BoxFit.contain),
       ),
     );
   }
 }
-
 
 class PdfViewerScreen extends StatelessWidget {
   final String pdfUrl;
@@ -79,13 +80,12 @@ class PdfViewerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('PDF Viewer')),
+      backgroundColor: LearningColors.black,
+      appBar: AppBar(backgroundColor: LearningColors.black, elevation: 0, iconTheme: const IconThemeData(color: Colors.white),),
       body: SfPdfViewer.network(pdfUrl),
     );
   }
 }
-
-
 
 class ExcelViewerScreen extends StatelessWidget {
   final File excelFile;
@@ -98,17 +98,18 @@ class ExcelViewerScreen extends StatelessWidget {
     final Sheet sheet = excel.tables.values.first;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Excel Preview')),
+      backgroundColor: LearningColors.black,
+      appBar: AppBar(backgroundColor: LearningColors.black, elevation: 0, iconTheme: const IconThemeData(color: Colors.white),),
       body: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
           columns: sheet.rows.first
-              .map((cell) => DataColumn(label: Text(cell?.value.toString() ?? '')))
+              .map((cell) => DataColumn(label: Text(cell?.value.toString() ?? '', style: const TextStyle(color: Colors.white))))
               .toList(),
           rows: sheet.rows.skip(1).map((row) {
             return DataRow(
               cells: row
-                  .map((cell) => DataCell(Text(cell?.value.toString() ?? '')))
+                  .map((cell) => DataCell(Text(cell?.value.toString() ?? '', style: const TextStyle(color: Colors.white))))
                   .toList(),
             );
           }).toList(),

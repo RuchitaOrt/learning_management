@@ -334,8 +334,18 @@ class _CoursePageState extends State<CoursePage> {
   @override
   Widget build(BuildContext context) {
     // final courseProvider = Provider.of<CourseProvider>(context);
-    return Consumer<CourseProvider>(builder: (context, courseProvider, _) {
+    // return Consumer<CourseProvider>(builder: (context, courseProvider, _) {
       // Show loading spinner while fetching data
+    return Consumer2<CourseProvider, LandingScreenProvider>(
+        builder: (context, courseProvider, landingProvider, _) {
+          // Show loading spinner while fetching data for either provider
+          if (landingProvider.isLoading || courseProvider.isLoading) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: LearningColors.darkBlue,
+              ),
+            );
+          }
 
       return WillPopScope(
         onWillPop: () async {
@@ -626,55 +636,48 @@ Widget listing(CourseProvider courseProvider)
                       // Course metadata (mode, duration) with category badge
                       Row(
                         mainAxisAlignment: MainAxisAlignment
-                            .spaceEvenly, // Changed to spaceEvenly for full width distribution
+                            .spaceBetween, // Changed to spaceEvenly for full width distribution
                         children: [
                           // Mode section
-                          Expanded(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SvgPicture.asset(LMSImagePath.mode),
-                                SizedBox(
-                                    width: SizeConfig.blockSizeHorizontal * 1),
-                                Text(course.trainingMode!,
-                                overflow: TextOverflow.ellipsis,
-                                 style: LMSStyles.tsHeading),
-                              ],
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(LMSImagePath.mode),
+                              SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal * 1),
+                              Text(course.trainingMode!,
+                              overflow: TextOverflow.ellipsis,
+                               style: LMSStyles.tsHeading),
+                            ],
                           ),
-
                           // Duration section
-                          Expanded(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                SvgPicture.asset(LMSImagePath.time),
-                                SizedBox(
-                                    width: SizeConfig.blockSizeHorizontal * 1),
-                                Text(course.duration!,
-                                    style: LMSStyles.tsHeading),
-                              ],
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SvgPicture.asset(LMSImagePath.time),
+                              SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal * 1),
+                              Text(course.duration!,
+                                  style: LMSStyles.tsHeading),
+                            ],
                           ),
 
                           // Category section
-                          Expanded(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.circle,
-                                  size: 14,
-                                  color: LearningColors.darkBlue,
-                                ),
-                                SizedBox(
-                                    width: SizeConfig.blockSizeHorizontal * 1),
-                                Text(
-                                 "General",
-                                  style: LMSStyles.tsHeading,
-                                ),
-                              ],
-                            ),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.circle,
+                                size: 14,
+                                color: LearningColors.darkBlue,
+                              ),
+                              SizedBox(
+                                  width: SizeConfig.blockSizeHorizontal * 1),
+                              Text(
+                               "General",
+                                style: LMSStyles.tsHeading,
+                              ),
+                            ],
                           ),
                         ],
                       ),

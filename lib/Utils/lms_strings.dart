@@ -95,4 +95,5 @@ class LMSStrings {
 
 
   static const String strNoInstituteFound = "No institutions found";
+  static const String strNoLearningMaterialFound = "No learning materials available";
 }

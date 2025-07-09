@@ -40,7 +40,8 @@ enum API {
   savePayment,
   recommendationlist,
   getcertificates,
-  getresults
+  getresults,
+  updateSeafarerDetails
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -151,6 +152,9 @@ class APIManager {
         break;
       case API.getresults:
         apiPathString = "/api/candidate/getresults";
+        break;
+      case API.updateSeafarerDetails:
+        apiPathString = "/api/candidate/update-seafarers-details";
         break;
 
       default:

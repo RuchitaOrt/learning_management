@@ -1,8 +1,15 @@
 
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 
 import 'package:learning_mgt/Utils/regex_helper.dart';
+
+import '../Utils/APIManager.dart';
+import '../Utils/SPManager.dart';
+import '../model/RegistrationResponse.dart';
+import '../widgets/ShowDialog.dart';
 
 class PersonalAccountProvider with ChangeNotifier {
   TextEditingController firstNameController = TextEditingController();
@@ -127,6 +134,64 @@ bool _isLoading = false;
   set isLoading(bool value) {
     _isLoading = value;
     notifyListeners();
+  }
+
+  Future<void> updateSeafarerDetails(BuildContext context) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final requestBody = json.encode({
+        "seaman_book_number": seafarersNoController.text,
+        "passport_number": passportNoController.text,
+        "department": departmentController.text,
+        "rank": rankController.text,
+        "pincode": pinCodeController.text,
+        "country": countryController.text,
+        "state": stateController.text,
+        "city": cityController.text,
+        "coc": COCController.text,
+      });
+
+      await APIManager().apiRequest(
+        context,
+        API.updateSeafarerDetails,
+            (response) {
+          try {
+            if (response is CommonResponse) {
+              _handleCommonResponse(response, context);
+            } else if (response is Map<String, dynamic>) {
+              _handleCommonResponse(CommonResponse.fromJson(response), context);
+            } else if (response is String) {
+              final parsed = json.decode(response);
+              _handleCommonResponse(CommonResponse.fromJson(parsed), context);
+            } else {
+              ShowDialogs.showToast('Unexpected response type: ${response.runtimeType}');
+            }
+          } catch (e) {
+            ShowDialogs.showToast('Parse error: ${e.toString()}');
+          }
+        },
+            (error) {
+          ShowDialogs.showToast('API Error: ${error.toString()}');
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      ShowDialogs.showToast('Unexpected error: ${e.toString()}');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+  void _handleCommonResponse(CommonResponse response, BuildContext context) {
+    if (response.status) {
+      ShowDialogs.showToast('Details updated successfully');
+    } else {
+      ShowDialogs.showToast(response.message);
+    }
   }
 
   

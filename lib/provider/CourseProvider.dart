@@ -208,6 +208,58 @@ class CourseProvider with ChangeNotifier {
 
   void courseResouceAPI(
       String courseid, String moduleid, String languageid) async {
+    isResourceLoading = true;
+    _resourceDetail = [];
+    notifyListeners();
+
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      final body = {
+        'courseid': courseid,
+        'moduleid': moduleid,
+        'languageid': languageid
+      };
+
+      try {
+        await APIManager().apiRequest(
+          routeGlobalKey.currentContext!,
+          API.getcourseresources,
+              (response) {
+            GetResourceResponse resp = response;
+            print("API Response: ${resp.n}, ${resp.msg}"); // Debug log
+
+            if (resp.n == 1) {
+              _resourceDetail = resp.data ?? [];
+            } else {
+              // Handle case when n = 0 (no materials found)
+              _resourceDetail = [];
+              ShowDialogs.showToast(resp.msg ?? "No materials found");
+            }
+            isResourceLoading = false;
+            notifyListeners();
+          },
+              (error) {
+            isResourceLoading = false;
+            notifyListeners();
+            ShowDialogs.showToast("Server Not Responding");
+          },
+          jsonval: jsonEncode(body),
+        );
+      } catch (e) {
+        isResourceLoading = false;
+        notifyListeners();
+        ShowDialogs.showToast('Unexpected error: $e');
+      }
+    } else {
+      isResourceLoading = false;
+      notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
+    }
+  }
+
+  /*void courseResouceAPI(
+      String courseid, String moduleid, String languageid) async {
     // ShowDialogs.showLoadingDialog(context, routeGlobalKey, message: 'Sending OTP...');
 
     isResourceLoading = true;
@@ -255,7 +307,7 @@ class CourseProvider with ChangeNotifier {
       notifyListeners();
       ShowDialogs.showToast("Please check internet connection");
     }
-  }
+  }*/
 
    List<InstituteData> _instituteDetail=[];
 
