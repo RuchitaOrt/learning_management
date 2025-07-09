@@ -8,6 +8,7 @@ import 'package:learning_mgt/Utils/SPManager.dart';
 import 'package:learning_mgt/Utils/internetConnection.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/model/GetCourseCategory.dart';
+import 'package:learning_mgt/model/GetGeneralDetails.dart';
 import 'package:learning_mgt/model/LogoutResponse.dart';
 import 'package:learning_mgt/screens/signIn_screen.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
@@ -197,6 +198,9 @@ isLoading = false;
     }
   }
 
+
+
+  
  /*Future<void> logoutAPI(String token) async {
     var status1 = await ConnectionDetector.checkInternetConnection();
 

@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
@@ -31,6 +34,15 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider =
+          Provider.of<PersonalAccountProvider>(context, listen: false);
+
+      if (!provider.isGeneralLoading) {
+        provider.getGeneralList();
+      }
+    });
   }
 
   @override
@@ -145,64 +157,8 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
               SizedBox(
                 height: SizeConfig.blockSizeVertical * 1,
               ),
-              Center(
-                child: Card(
-                  elevation: 1.0,
-                  color: LearningColors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16.0),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Column(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape
-                                    .circle, 
-                                border: Border.all(
-                                  color:
-                                      Colors.blue,
-                                  width: 2.0, 
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                radius: 40,
-                                backgroundColor: Colors.grey.shade800,
-                                backgroundImage:
-                                    AssetImage(LMSImagePath.whiteCamera),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          width: 16,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Vedant Amal',
-                              style: LMSStyles.tsblackTileBold
-                                  .copyWith(fontSize: 18),
-                              textAlign: TextAlign.center,
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text('@amalvedant@gmail.com'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
+              buildprofile(personalprovider)
+,
               SizedBox(
                 height: SizeConfig.blockSizeVertical * 2,
               ),
@@ -316,4 +272,122 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
       );
     });
   }
+
+   File? _profileImage;
+    Future<void> _pickProfileImage() async {
+  final result = await FilePicker.platform.pickFiles(
+    type: FileType.image,
+  );
+  if (result != null && result.files.isNotEmpty) {
+    setState(() {
+       final provider =
+          Provider.of<PersonalAccountProvider>(context, listen: false);
+      _profileImage = File(result.files.first.path!);
+      provider.uploadProfileDocuments(routeGlobalKey.currentContext!,_profileImage!.path);
+    });
+  }
+}
+Widget buildprofile(PersonalAccountProvider personalprovider)
+{
+   if (personalprovider.isGeneralLoading) {
+        return Center(
+            child: CircularProgressIndicator(
+          color: LearningColors.darkBlue,
+        ));
+      }
+  return Center(
+                child: Card(
+                  elevation: 1.0,
+                  color: LearningColors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                      
+                        _buildProfileImage(),
+                        SizedBox(
+                          width: 16,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                           "${personalprovider.generalList.firstName!} ${personalprovider.generalList.middleName} ${personalprovider.generalList.lastName}",
+                              style: LMSStyles.tsblackTileBold
+                                  .copyWith(fontSize: 18),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Text("${personalprovider.generalList.email}"),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+}
+Widget _buildProfileImage() {
+  
+ return Consumer<PersonalAccountProvider>(
+    builder: (context, provider, _) {
+      print("profileImageUrl");
+      print(provider.generalList.profilePic);
+       ImageProvider? imageProvider;
+
+      if (_profileImage != null) {
+         print("profileImageUrl1");
+        imageProvider = FileImage(_profileImage!);
+      } else if (provider.generalList.profilePic!.isNotEmpty) {
+         print("profileImageUrl2");
+        imageProvider = NetworkImage(provider.generalList.profilePic!);
+      }
+  return  GestureDetector(
+    onTap: _pickProfileImage,
+    child: Center(
+      child: Stack(
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundColor: Colors.grey.shade800,
+            backgroundImage:
+                _profileImage != null ? FileImage(_profileImage!) :provider.generalList.profilePic!=""?  NetworkImage(provider.generalList.profilePic!)
+                :AssetImage(LMSImagePath.whiteCamera),
+            // child: imageProvider == null
+            //     ? Icon(
+            //         Icons.person,
+            //         size: 50,
+            //         color: Colors.white70,
+            //       )
+            //     : Image.network(provider.profileImageUrl),
+          ),
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.blue,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.edit,
+                size: 18,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
+    });
+}
 }

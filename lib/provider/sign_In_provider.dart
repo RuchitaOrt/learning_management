@@ -6,7 +6,9 @@ import 'package:learning_mgt/Utils/internetConnection.dart';
 import 'package:learning_mgt/Utils/regex_helper.dart';
 import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
+import 'package:learning_mgt/model/OtpVerificationResponse.dart';
 import 'package:learning_mgt/screens/TabScreen.dart';
+import 'package:learning_mgt/screens/forgotPassword_screen.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
 import '../Utils/SPManager.dart';
@@ -71,12 +73,12 @@ class SignInProvider with ChangeNotifier {
     }
     return null;
   }
-setIDandpassword()
-{
-    emailController.text="kattalemahesh@gmail.com";
-          passwordController.text="Mahesh@8548";
-          notifyListeners();
-}
+
+  setIDandpassword() {
+    emailController.text = "kattalemahesh@gmail.com";
+    passwordController.text = "Mahesh@8548";
+    notifyListeners();
+  }
   /*String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
       return 'Password cannot be empty';
@@ -159,7 +161,7 @@ setIDandpassword()
       await APIManager().apiRequest(
         routeGlobalKey.currentContext!,
         API.login,
-            (response) async {
+        (response) async {
           _isLoading = false;
           notifyListeners();
 
@@ -174,7 +176,8 @@ setIDandpassword()
               // Print and store the ID
               if (response.userData != null) {
                 print('User ID: ${response.userData!.id}');
-                await SPManager().setUserId(response.userData!.id); // Assuming you have this method
+                await SPManager().setUserId(
+                    response.userData!.id); // Assuming you have this method
               }
 
               ShowDialogs.showToast(response.msg);
@@ -191,7 +194,7 @@ setIDandpassword()
             }
           }
         },
-            (error) {
+        (error) {
           _isLoading = false;
           notifyListeners();
           print('Login error: $error');
@@ -199,40 +202,6 @@ setIDandpassword()
         },
         jsonval: json.encode(requestBody),
       );
-      /*await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
-        API.login,
-            (response) async {
-          _isLoading = false;
-          notifyListeners();
-
-          if (response is LoginResponse) {
-            if (response.n == 1) {
-              await SPManager().setAuthToken(response.token);
-              await SPManager().setUserData(json.encode(response.userData));
-
-              ShowDialogs.showToast(response.msg);
-
-              Navigator.of(routeGlobalKey.currentContext!).pushNamed(
-                TabScreen.route,
-                arguments: {
-                  'selectedPos': -1,
-                  'isSignUp': false,
-                },
-              );
-            } else {
-              ShowDialogs.showToast(response.msg);
-            }
-          }
-        },
-            (error) {
-          _isLoading = false;
-          notifyListeners();
-          print('Login error: $error');
-          ShowDialogs.showToast("Login failed. Please try again.");
-        },
-        jsonval: json.encode(requestBody),
-      );*/
     } catch (e) {
       _isLoading = false;
       notifyListeners();
@@ -241,4 +210,62 @@ setIDandpassword()
     }
   }
 
+  Map<String, dynamic> createsendOTPRequestBody() {
+    return {
+      "email": emailController.text,
+    };
+  }
+
+  bool _isSendOTPLoading = false;
+  bool get isSendOTPLoading => _isSendOTPLoading;
+  set isSendOTPLoading(bool value) {
+    _isSendOTPLoading = value;
+    notifyListeners();
+  }
+
+  forgetPasswordSendOTP() async {
+    isSendOTPLoading = true;
+    var status1 = await ConnectionDetector.checkInternetConnection();
+
+    if (status1) {
+      dynamic jsonbody = createsendOTPRequestBody();
+      print(jsonbody);
+
+      APIManager().apiRequest(
+        routeGlobalKey.currentContext!,
+        API.sendpasswordverificationotp,
+        (response) async {
+          OtpVerificationResponse resp = response;
+
+          if (resp.n == 1) {
+            ShowDialogs.showToast(resp.msg);
+            Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+                ResetLinkSentScreen.route,
+                arguments: emailController.text);
+
+            isSendOTPLoading = false;
+            notifyListeners();
+          } else {
+            ShowDialogs.showToast(resp.msg);
+            isSendOTPLoading = false;
+            notifyListeners();
+          }
+        },
+        (error) {
+          print('ERR msg is $error');
+          isSendOTPLoading = false;
+          notifyListeners();
+
+          ShowDialogs.showToast("Server Not Responding");
+        },
+        jsonval: json.encode(jsonbody),
+      );
+    } else {
+      isSendOTPLoading = false;
+      notifyListeners();
+
+      /// Navigator.of(_keyLoader.currentContext).pop();
+      ShowDialogs.showToast("Please check internet connection");
+    }
+  }
 }

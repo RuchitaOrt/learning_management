@@ -49,7 +49,10 @@ class LMSStrings {
   static const String strPassportNoHint = "Enter Passport No";
   static const String strDepartment = "Department";
   static const String strSelectDepartment = "Select Department";
-
+  static const String strLanguage = "Language";
+  static const String strSelectLanguage = "Select Language";
+    static const String strTimeZone = "Time Zone";
+  static const String strSelectTimezone = "Select Time Zone";
   static const String strRank = "Rank";
   static const String strRankHint = "Select Rank";
 

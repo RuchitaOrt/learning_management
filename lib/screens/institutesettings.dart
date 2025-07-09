@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:learning_mgt/Utils/learning_colors.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
+import 'package:learning_mgt/model/CandidateInstituteResponse.dart';
 import 'package:learning_mgt/provider/instituteprovider.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
@@ -18,7 +19,22 @@ class InstituteScreen extends StatefulWidget {
 class _InstituteScreenState extends State<InstituteScreen> {
   int? expandedIndex;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+ @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider =
+          Provider.of<InstituteProvider>(context, listen: false);
+
+       if (!provider.isInstitueLoading) {
+      provider.getInstituteAPI();
+
+      
+       }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,19 +88,20 @@ class _InstituteScreenState extends State<InstituteScreen> {
                         style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 16),
                       ),
                     ),
-                    ...List.generate(
-                      instituteProvider.institutesData.length,
-                      (index) => InstituteExpansionTile(
-                        key: ValueKey(index), // Important for proper state management
-                        instituteData: instituteProvider.institutesData[index],
-                        isExpanded: expandedIndex == index,
-                        onExpansionChanged: (bool expanded) {
-                          setState(() {
-                            expandedIndex = expanded ? index : null;
-                          });
-                        },
-                      ),
-                    ),
+                    listing()
+                    // ...List.generate(
+                    //   instituteProvider.institutcourseList.length,
+                    //   (index) => InstituteExpansionTile(
+                    //     key: ValueKey(index), // Important for proper state management
+                    //     instituteData: instituteProvider.institutcourseList[index],
+                    //     isExpanded: expandedIndex == index,
+                    //     onExpansionChanged: (bool expanded) {
+                    //       setState(() {
+                    //         expandedIndex = expanded ? index : null;
+                    //       });
+                    //     },
+                    //   ),
+                    // ),
                   ],
                 );
               },
@@ -94,10 +111,48 @@ class _InstituteScreenState extends State<InstituteScreen> {
       ),
     );
   }
+
+  Widget listing()
+  {
+
+
+ return   Consumer<InstituteProvider>(
+  builder: (context, instituteProvider, child) {
+      if (instituteProvider.isInstitueLoading) {
+      return Center(
+          child: CircularProgressIndicator(
+        color: LearningColors.darkBlue,
+      ));
+    }
+    return Column(
+      children: [
+        ..._buildInstituteExpansionTiles(instituteProvider),
+      ],
+    );
+  },
+);
+
+  }
+  List<Widget> _buildInstituteExpansionTiles(InstituteProvider instituteProvider) {
+  return List.generate(
+    instituteProvider.institutcourseList.length,
+    (index) => InstituteExpansionTile(
+      key: ValueKey(index),
+      instituteData: instituteProvider.institutcourseList[index],
+      isExpanded: expandedIndex == index,
+      onExpansionChanged: (bool expanded) {
+        setState(() {
+          expandedIndex = expanded ? index : null;
+        });
+      },
+    ),
+  );
+}
+
 }
 
 class InstituteExpansionTile extends StatefulWidget {
-  final Map<String, dynamic> instituteData;
+  final Institute instituteData;
   final bool isExpanded;
   final ValueChanged<bool> onExpansionChanged;
 
@@ -148,10 +203,10 @@ class _InstituteExpansionTileState extends State<InstituteExpansionTile>
 
   @override
   Widget build(BuildContext context) {
-    final String name = widget.instituteData['name'] as String;
-    final String iconPath = widget.instituteData['iconPath'] as String;
-    final List<Map<String, dynamic>> courses =
-        widget.instituteData['courses'] as List<Map<String, dynamic>>;
+    final String name = widget.instituteData.name;
+    // final String iconPath = widget.instituteData['iconPath'] as String;
+    final List<Course> courses =
+        widget.instituteData.courses;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
@@ -181,14 +236,14 @@ class _InstituteExpansionTileState extends State<InstituteExpansionTile>
                 padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
                 child: Row(
                   children: [
-                    Image.asset(
-                      iconPath,
-                      width: 48,
-                      height: 48,
-                      fit: BoxFit.contain,
-                      alignment: Alignment.topCenter,
-                    ),
-                    SizedBox(width: 16),
+                    // Image.asset(
+                    //   iconPath,
+                    //   width: 48,
+                    //   height: 48,
+                    //   fit: BoxFit.contain,
+                    //   alignment: Alignment.topCenter,
+                    // ),
+                    //SizedBox(width: 16),
                     Expanded(
                       child: Text(
                         name,
@@ -209,14 +264,14 @@ class _InstituteExpansionTileState extends State<InstituteExpansionTile>
               sizeFactor: _expandAnimation,
               child: Column(
                 children: courses.map((course) {
-                  final String title = course['title'] as String;
-                  final String description = course['description'] as String;
-                  final String enrollmentNo = course['enrollmentNo'] as String;
-                  final String date = course['date'] as String;
-                  final String time = course['time'] as String;
-                  final String duration = course['duration'] as String;
-                  final String mode = course['mode'] as String;
-                  final double price = course['price'] as double;
+                  final String title = course.courseName;
+                  final String description = course.description;
+                  final String enrollmentNo = course.ogCode;
+                  final String date = course.createdAt;
+                  final String time = course.expiry;
+                  final String duration = "${course.duration} days";
+                  final String mode = course.trainingMode;
+                  final String price = course.pricing;
 
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 16.0),
@@ -255,7 +310,7 @@ class _InstituteExpansionTileState extends State<InstituteExpansionTile>
                             ),
                             SizedBox(height: 12),
                             Text(
-                              '\$${price.toStringAsFixed(2)}',
+                              '\$${price}',
                               style: LMSStyles.tsblueW900.copyWith(fontSize: 16),
                             ),
                           ],
@@ -290,7 +345,7 @@ class _InstituteExpansionTileState extends State<InstituteExpansionTile>
               style: TextStyle(fontWeight: FontWeight.bold)),
           TextSpan(text: '\nDate: '),
           TextSpan(text: date, style: TextStyle(fontWeight: FontWeight.bold)),
-          TextSpan(text: '\nTime: '),
+          TextSpan(text: '\nExpiry Date: '),
           TextSpan(text: time, style: TextStyle(fontWeight: FontWeight.bold)),
           TextSpan(text: '\nDuration: '),
           TextSpan(

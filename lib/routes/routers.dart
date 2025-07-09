@@ -42,12 +42,15 @@ class Routers {
           builder: (_) => ForgotPasswordScreen(),
         );
       case ResetLinkSentScreen.route:
+        final args = settings.arguments as String;
         return MaterialPageRoute(
-          builder: (_) => ResetLinkSentScreen(),
+          builder: (_) => ResetLinkSentScreen(email: args,),
         );
       case ChangePasswordScreen.route:
+       final args = settings.arguments as   Map<String, dynamic>?;
         return MaterialPageRoute(
-          builder: (_) => ChangePasswordScreen(),
+          builder: (_) => ChangePasswordScreen(email: args?['email'] ?? "" ,
+          comingFrom: args?['comingFrom'] ?? "" ,),
         );
       case PasswordResetSuccessScreen.route:
         return MaterialPageRoute(

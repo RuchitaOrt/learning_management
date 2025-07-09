@@ -4,12 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
+import 'package:learning_mgt/model/CandidateInstituteResponse.dart';
 import 'package:learning_mgt/model/GetCourseCategory.dart';
 import 'package:learning_mgt/model/GetCourseDetailListResponse.dart';
 import 'package:learning_mgt/model/GetCourseInstitueResponse.dart';
 import 'package:learning_mgt/model/GetCourseListResponse.dart';
+import 'package:learning_mgt/model/GetGeneralDetails.dart';
 import 'package:learning_mgt/model/GetResourceResponse.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
+import 'package:learning_mgt/model/OtpVerificationResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 
 import '../model/GetCertificateResponse.dart';
@@ -40,7 +43,15 @@ enum API {
   savePayment,
   recommendationlist,
   getcertificates,
-  getresults
+  getresults,
+  sendpasswordverificationotp,
+  verifyotp,
+  setpassword,
+  getcandidateinstitutescoursedetails,
+  getgeneraldetails,
+  updatecandidatepassword,
+  updategeneraldetails,
+  updatecandidateprofilepicture
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -152,6 +163,31 @@ class APIManager {
       case API.getresults:
         apiPathString = "/api/candidate/getresults";
         break;
+      case API.sendpasswordverificationotp:
+        apiPathString = "/api/candidate/send-password-verification-otp";
+        break;
+      case API.verifyotp:
+        apiPathString = "/api/candidate/verify-otp";
+        break;
+      case API.setpassword:
+        apiPathString = "/api/candidate/set-password";
+        break;
+      case API.getcandidateinstitutescoursedetails:
+        apiPathString =
+            "/api/candidate/get-candidate-institutes-course-details";
+        break;
+      case API.getgeneraldetails:
+        apiPathString = "/api/candidate/get-general-details";
+        break;
+      case API.updatecandidatepassword:
+        apiPathString = "/api/candidate/update-candidate-password";
+        break;
+      case API.updategeneraldetails:
+        apiPathString = "/api/candidate/update-general-details";
+        break;
+      case API.updatecandidateprofilepicture:
+        apiPathString = "/api/candidate/update-candidate-profile-picture";
+        break;
 
       default:
         apiPathString = "/Login";
@@ -169,6 +205,8 @@ class APIManager {
       case API.getqualifications:
       case API.getcoursecategorylist:
       case API.getcertificates:
+      case API.getcandidateinstitutescoursedetails:
+      case API.getgeneraldetails:
         method = HTTPMethod.GET;
         break;
 
@@ -241,6 +279,21 @@ class APIManager {
       case API.savePayment:
         className = "PaymentResponse";
         break;
+      case API.sendpasswordverificationotp:
+      case API.verifyotp:
+      case API.setpassword:
+      case API.updatecandidatepassword:
+      case API.updategeneraldetails:
+      case API.updatecandidateprofilepicture:
+        className = "OtpVerificationResponse";
+        break;
+      case API.getcandidateinstitutescoursedetails:
+        className = "CandidateInstitutesResponse";
+        break;
+      case API.getgeneraldetails:
+        className = "GeneralCandidateData";
+        break;
+
       default:
         className = 'CommonResponse';
     }
@@ -286,6 +339,12 @@ class APIManager {
       responseObj = PaymentResponse.fromJson(json);
     } else if (className == 'StateResponse') {
       responseObj = StateResponse.fromJson(json);
+    } else if (className == 'OtpVerificationResponse') {
+      responseObj = OtpVerificationResponse.fromJson(json);
+    } else if (className == 'CandidateInstitutesResponse') {
+      responseObj = CandidateInstitutesResponse.fromJson(json);
+    } else if (className == 'GeneralCandidateData') {
+      responseObj = GetGeneralDetails.fromJson(json);
     }
 
     return responseObj;

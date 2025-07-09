@@ -7,6 +7,7 @@ import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/provider/personal_account_provider.dart';
 import 'package:learning_mgt/provider/sign_In_provider.dart';
 import 'package:learning_mgt/provider/sign_up_provider.dart';
 import 'package:learning_mgt/screens/TabScreen.dart';
@@ -29,259 +30,141 @@ class ForgotPasswordScreen extends StatelessWidget {
     width: 1.0,
   );
 
-  // Widget buildForgotPasswordCard({
-  //   required String title,
-  //   required String subtitle,
-  //   required Color color,
-  //   required TextStyle titleStyle,
-  //   required TextStyle subtitleStyle,
-  // }) {
-  //   return Container(
-  //     width: SizeConfig.blockSizeHorizontal * 100,
-  //     // height: SizeConfig.blockSizeVertical * 100,
-  //     decoration: AppDecorations.gradientBackground,
-  //     child: SafeArea(
-  //       child: Padding(
-  //         padding: const EdgeInsets.all(16.0),
-  //         child: Column(
-  //           crossAxisAlignment: CrossAxisAlignment.start,
-  //           children: [
-  //             SizedBox(height: 20),
-  //             Row(
-  //               mainAxisAlignment: MainAxisAlignment.start,
-  //               children: [
-  //                 SvgPicture.asset(
-  //                   LMSImagePath.splashLogo,
-  //                   height: 40,
-  //                   width: 40,
-  //                 ),
-  //               ],
-  //             ),
-  //             SizedBox(height: 30),
-  //             Column(
-  //               mainAxisAlignment: MainAxisAlignment.center,
-  //               crossAxisAlignment: CrossAxisAlignment.start,
-  //               children: [
-  //                 Text(
-  //                   title,
-  //                   style: titleStyle,
-  //                 ),
-  //                 SizedBox(height: 12),
-  //                 Text(
-  //                   subtitle,
-  //                   style: subtitleStyle,
-  //                 ),
-  //                 SizedBox(height: 30),
-  //                 Consumer<SignInProvider>(
-  //                   builder: (context, signInProvider, _) {
-  //                     return Form(
-  //                       key: signInProvider.formKey,
-  //                       child: Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           CustomTextFieldWidget(
-  //                             title: LMSStrings.strEmail,
-  //                             hintText: LMSStrings.strEnterEmail,
-  //                             onChange: (val) {},
-  //                             textEditingController:
-  //                                 signInProvider.emailController,
-  //                             autovalidateMode: AutovalidateMode.disabled,
-  //                             validator: signInProvider.validateEmailField,
-  //                           ),
-  //                           // Add more form fields here if needed
-  //                         ],
-  //                       ),
-  //                     );
-  //                   },
-  //                 ),
-  //               ],
-  //             ),
-  //             Spacer(),
-  //             Consumer<SignInProvider>(
-  //               builder: (context, signInProvider, _) {
-  //                 return SizedBox(
-  //                   width: double.infinity,
-  //                   child: ElevatedButton(
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor: LearningColors.darkBlue,
-  //                       foregroundColor: Colors.white,
-  //                       padding: EdgeInsets.symmetric(vertical: 16),
-  //                       shape: RoundedRectangleBorder(
-  //                         borderRadius: BorderRadius.circular(12),
-  //                       ),
-  //                       elevation: 5,
-  //                     ),
-  //                     onPressed: () {
-  //                       if (signInProvider.formKey.currentState?.validate() ??
-  //                           false) {
-  //                         Navigator.of(routeGlobalKey.currentContext!)
-  //                             .pushNamed(
-  //                           ResetLinkSentScreen.route,
-  //                           arguments: {
-  //                             'selectedPos': -1,
-  //                             'isSignUp': false,
-  //                           },
-  //                         );
-  //                       }
-  //                     },
-  //                     child: Text(
-  //                       LMSStrings.strResetLink,
-  //                       style: LMSStyles.tsWhiteNeutral50W600162,
-  //                     ),
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //             SizedBox(height: 16),
-  //             Center(
-  //               child: GestureDetector(
-  //                 onTap: () {
-  //                   Navigator.of(routeGlobalKey.currentContext!).pop();
-  //                 },
-  //                 child: Text(
-  //                   'Go Back',
-  //                   style: TextStyle(
-  //                     fontSize: 16,
-  //                     color: LearningColors.black,
-  //                     decoration: TextDecoration.underline,
-  //                     decorationColor: LearningColors.black,
-  //                     fontWeight: FontWeight.w500,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //             SizedBox(height: 16), // Bottom padding
-  //           ],
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-Widget buildForgotPasswordCard({
-  required BuildContext context,
-  required String title,
-  required String subtitle,
-  required Color color,
-  required TextStyle titleStyle,
-  required TextStyle subtitleStyle,
-}) {
-  return Container(
-    width: double.infinity,
-    height: double.infinity,
-    decoration: AppDecorations.gradientBackground,
-    child: SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              physics: ClampingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SvgPicture.asset(
-                          LMSImagePath.splashLogo,
-                          height: 40,
-                          width: 40,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    Text(title, style: titleStyle),
-                    SizedBox(height: 12),
-                    Text(subtitle, style: subtitleStyle),
-                    SizedBox(height: 30),
-                    Consumer<SignInProvider>(
-                      builder: (context, signInProvider, _) {
-                        return Form(
-                          key: signInProvider.formKey,
-                          child: CustomTextFieldWidget(
-                            title: LMSStrings.strEmail,
-                            hintText: LMSStrings.strEnterEmail,
-                            onChange: (val) {},
-                            textEditingController: signInProvider.emailController,
-                            autovalidateMode: AutovalidateMode.disabled,
-                            validator: signInProvider.validateEmailField,
+  Widget buildForgotPasswordCard({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required TextStyle titleStyle,
+    required TextStyle subtitleStyle,
+  }) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: AppDecorations.gradientBackground,
+      child: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                physics: ClampingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SvgPicture.asset(
+                            LMSImagePath.splashLogo,
+                            height: 40,
+                            width: 40,
                           ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 40), // Fixed spacing instead of Spacer
-                  ],
+                        ],
+                      ),
+                      SizedBox(height: 30),
+                      Text(title, style: titleStyle),
+                      SizedBox(height: 12),
+                      Text(subtitle, style: subtitleStyle),
+                      SizedBox(height: 30),
+                      Consumer<SignInProvider>(
+                        builder: (context, signInProvider, _) {
+                          return Form(
+                            key: signInProvider.formKey,
+                            child: CustomTextFieldWidget(
+                              title: LMSStrings.strEmail,
+                              hintText: LMSStrings.strEnterEmail,
+                              onChange: (val) {},
+                              textEditingController:
+                                  signInProvider.emailController,
+                              autovalidateMode: AutovalidateMode.disabled,
+                              validator: signInProvider.validateEmailField,
+                            ),
+                          );
+                        },
+                      ),
+                      SizedBox(height: 40), // Fixed spacing instead of Spacer
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Consumer<SignInProvider>(
-                  builder: (context, signInProvider, _) {
-                    return SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: LearningColors.darkBlue,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Consumer<SignInProvider>(
+                    builder: (context, signInProvider, _) {
+                      return SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: LearningColors.darkBlue,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 5,
                           ),
-                          elevation: 5,
+                          onPressed: () {
+                            if (signInProvider.formKey.currentState
+                                    ?.validate() ??
+                                false) {
+                              FocusScope.of(context).unfocus();
+
+                              signInProvider.forgetPasswordSendOTP();
+                              // Navigator.of(routeGlobalKey.currentContext!)
+                              //     .pushNamed(
+                              //   ResetLinkSentScreen.route,
+                              //   arguments: {
+                              //     'selectedPos': -1,
+                              //     'isSignUp': false,
+                              //   },
+                              // );
+                            }
+                          },
+                          child: signInProvider.isSendOTPLoading
+                              ? CircularProgressIndicator(
+                                  color: LearningColors.neutral100,
+                                )
+                              : Text(
+                                  LMSStrings.strResetLink,
+                                  style: LMSStyles.tsWhiteNeutral50W600162,
+                                ),
                         ),
-                        onPressed: () {
-                          if (signInProvider.formKey.currentState?.validate() ?? false) {
-                            Navigator.of(routeGlobalKey.currentContext!)
-                                .pushNamed(
-                              ResetLinkSentScreen.route,
-                              arguments: {
-                                'selectedPos': -1,
-                                'isSignUp': false,
-                              },
-                            );
-                          }
-                        },
-                        child: Text(
-                          LMSStrings.strResetLink,
-                          style: LMSStyles.tsWhiteNeutral50W600162,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                SizedBox(height: 16),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(routeGlobalKey.currentContext!).pop();
+                      );
                     },
-                    child: Text(
-                      'Go Back',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: LearningColors.black,
-                        decoration: TextDecoration.underline,
-                        decorationColor: LearningColors.black,
-                        fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: 16),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(routeGlobalKey.currentContext!).pop();
+                      },
+                      child: Text(
+                        'Go Back',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: LearningColors.black,
+                          decoration: TextDecoration.underline,
+                          decorationColor: LearningColors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -304,11 +187,17 @@ Widget buildForgotPasswordCard({
   }
 }
 
-class ResetLinkSentScreen extends StatelessWidget {
+class ResetLinkSentScreen extends StatefulWidget {
+  final String email;
   static const String route = "/resetLinkSent";
 
-  const ResetLinkSentScreen({super.key});
+  const ResetLinkSentScreen({super.key, required this.email});
 
+  @override
+  State<ResetLinkSentScreen> createState() => _ResetLinkSentScreenState();
+}
+
+class _ResetLinkSentScreenState extends State<ResetLinkSentScreen> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
@@ -317,23 +206,23 @@ class ResetLinkSentScreen extends StatelessWidget {
       body: ChangeNotifierProvider(
         create: (_) => SignUpProvider(),
         child: buildResetLinkSent(
-          title: LMSStrings.strResetLinkSent,
-          subtitle: LMSStrings.strResetLinkDetail,
-          color: LearningColors.white,
-          titleStyle: LMSStyles.tsblackTileBold,
-          subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
-        ),
+            title: LMSStrings.strResetLinkSent,
+            subtitle: LMSStrings.strResetLinkDetail,
+            color: LearningColors.white,
+            titleStyle: LMSStyles.tsblackTileBold,
+            subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
+            email: widget.email),
       ),
     );
   }
 
-  Widget buildResetLinkSent({
-    required String title,
-    required String subtitle,
-    required Color color,
-    required TextStyle titleStyle,
-    required TextStyle subtitleStyle,
-  }) {
+  Widget buildResetLinkSent(
+      {required String title,
+      required String subtitle,
+      required Color color,
+      required TextStyle titleStyle,
+      required TextStyle subtitleStyle,
+      required String email}) {
     return Container(
       width: SizeConfig.blockSizeHorizontal * 100,
       height: SizeConfig.blockSizeVertical * 100,
@@ -372,7 +261,7 @@ class ResetLinkSentScreen extends StatelessWidget {
                     key: signUpProvider.formKeyOTP,
                     child: CustomTextFieldWidget(
                       title: 'Enter OTP',
-                      hintText: 'Enter 6-digit OTP',
+                      hintText: 'Enter OTP',
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(6),
                         FilteringTextInputFormatter.digitsOnly,
@@ -405,20 +294,27 @@ class ResetLinkSentScreen extends StatelessWidget {
                         if (signUpProvider.formKeyOTP.currentState
                                 ?.validate() ??
                             false) {
-                          Navigator.of(routeGlobalKey.currentContext!)
-                              .pushNamed(
-                            ChangePasswordScreen.route,
-                            arguments: {
-                              'selectedPos': -1,
-                              'isSignUp': false,
-                            },
-                          );
+                          FocusScope.of(context).unfocus();
+
+                          signUpProvider.forgetPasswordOTPVerification(email);
+                          // Navigator.of(routeGlobalKey.currentContext!)
+                          //     .pushNamed(
+                          //   ChangePasswordScreen.route,
+                          //   arguments: {
+                          //     'selectedPos': -1,
+                          //     'isSignUp': false,
+                          //   },
+                          // );
                         }
                       },
-                      child: Text(
-                        LMSStrings.strEnterChangeassword,
-                        style: LMSStyles.tsWhiteNeutral50W600162,
-                      ),
+                      child: signUpProvider.isSendOTPLoading
+                          ? CircularProgressIndicator(
+                              color: LearningColors.neutral100,
+                            )
+                          : Text(
+                              LMSStrings.strEnterChangeassword,
+                              style: LMSStyles.tsWhiteNeutral50W600162,
+                            ),
                     ),
                   );
                 },
@@ -450,226 +346,266 @@ class ResetLinkSentScreen extends StatelessWidget {
   }
 }
 
-class ChangePasswordScreen extends StatelessWidget {
+class ChangePasswordScreen extends StatefulWidget {
+  final String email;
+  final String comingFrom; //1 for forgetpassword ,2 for chnagepassword
   static const String route = "/changePassword";
-  ChangePasswordScreen({super.key});
+  ChangePasswordScreen(
+      {super.key, required this.email, required this.comingFrom});
+
+  @override
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
+}
+
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   final BorderRadius borderRadius = const BorderRadius.all(
     Radius.circular(8),
   );
+
   final BorderSide focusedBorder = const BorderSide(
     width: 1.0,
   );
+
   final BorderSide enableBorder = BorderSide(
     color: LearningColors.neutral300,
     width: 1.0,
   );
 
-  Widget buildChangePasswordCard({
-  required BuildContext context,
-  required String title,
-  required String subtitle,
-  required Color color,
-  required TextStyle titleStyle,
-  required TextStyle subtitleStyle,
-}) {
-  return Container(
-    width: double.infinity,
-    height: double.infinity,
-    decoration: AppDecorations.gradientBackground,
-    child: SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              physics: ClampingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        SvgPicture.asset(
-                          LMSImagePath.splashLogo,
-                          height: 40,
-                          width: 40,
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 30),
-                    Text(title, style: titleStyle),
-                    SizedBox(height: 12),
-                    Text(subtitle, style: subtitleStyle),
-                    SizedBox(height: 30),
-                    Consumer<SignUpProvider>(
-                      builder: (context, signUpProvider, _) {
-                        return Form(
-                          key: signUpProvider.formKeyBasic,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Theme(
-                                 data: Theme.of(context).copyWith(
-              textSelectionTheme: TextSelectionThemeData(
-                cursorColor: LearningColors.darkBlue, // blinking cursor
-                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
-                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
-              ),
-            ),
-                                child: TextFormField(
-                                  cursorColor: LearningColors.darkBlue,
-                                  style: LMSStyles.tsWhiteNeutral300W50012,
-                                  obscureText: signUpProvider.isPasswordObscured,
-                                  controller: signUpProvider.passwordController,
-                                  validator: signUpProvider.validatePassword,
-                                  decoration: CommonInputDecoration(
-                                    hint: LMSStrings.strEnterpassword,
-                                    label: LMSStrings.strpassword,
-                                    isObscured: signUpProvider.isPasswordObscured,
-                                    toggle: signUpProvider.togglePasswordVisibility,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 16),
-                              Theme(
-                                 data: Theme.of(context).copyWith(
-              textSelectionTheme: TextSelectionThemeData(
-                cursorColor: LearningColors.darkBlue, // blinking cursor
-                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
-                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
-              ),
-            ),
-                                child: TextFormField(
-                                  cursorColor: LearningColors.darkBlue,
-                                  style: LMSStyles.tsWhiteNeutral300W50012,
-                                  obscureText: signUpProvider.isconfirmPasswordObscured,
-                                  controller: signUpProvider.confirmpasswordController,
-                                  validator: signUpProvider.validateConfirmPassword,
-                                  decoration: CommonInputDecoration(
-                                    hint: LMSStrings.strEnterConfirmpassword,
-                                    label: LMSStrings.strConfirmpassword,
-                                    isObscured: signUpProvider.isconfirmPasswordObscured,
-                                    toggle: signUpProvider.toggleConfirmPasswordVisibility,
-                                  ),
-                                ),
-                              ),
-                            ],
+  Widget buildChangePasswordCard(
+      {required BuildContext context,
+      required String title,
+      required String subtitle,
+      required Color color,
+      required TextStyle titleStyle,
+      required TextStyle subtitleStyle,
+      required String email}) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: AppDecorations.gradientBackground,
+      child: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                physics: ClampingScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: 20),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SvgPicture.asset(
+                            LMSImagePath.splashLogo,
+                            height: 40,
+                            width: 40,
                           ),
-                        );
-                      },
-                    ),
-                    SizedBox(height: 40),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Consumer<SignUpProvider>(
-                  builder: (context, signUpProvider, _) {
-                    return SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: LearningColors.darkBlue,
-                          foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 5,
-                        ),
-                        onPressed: () {
-                          if (signUpProvider.formKeyBasic.currentState?.validate() ?? false) {
-                            Navigator.of(routeGlobalKey.currentContext!)
-                                .pushNamed(
-                              PasswordResetSuccessScreen.route,
-                              arguments: {
-                                'selectedPos': -1,
-                                'isSignUp': false,
-                              },
-                            );
-                          }
-                        },
-                        child: Text(
-                          LMSStrings.strResetPassword,
-                          style: LMSStyles.tsWhiteNeutral50W600162,
-                        ),
+                        ],
                       ),
-                    );
-                  },
-                ),
-                SizedBox(height: 16),
-                Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.of(routeGlobalKey.currentContext!).pushNamed(
-                        SignInScreen.route,
-                        arguments: {
-                          'SelectedPos': -1,
-                          'isSignUp': false,
+                      SizedBox(height: 30),
+                      Text(title, style: titleStyle),
+                      SizedBox(height: 12),
+                      Text(subtitle, style: subtitleStyle),
+                      SizedBox(height: 30),
+                      Consumer<SignUpProvider>(
+                        builder: (context, signUpProvider, _) {
+                          return Form(
+                            key: signUpProvider.formKeyBasic,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Theme(
+                                  data: Theme.of(context).copyWith(
+                                    textSelectionTheme: TextSelectionThemeData(
+                                      cursorColor: LearningColors
+                                          .darkBlue, // blinking cursor
+                                      selectionColor: Colors.blue
+                                          .withOpacity(0.3), // text highlight
+                                      selectionHandleColor: LearningColors
+                                          .darkBlue, // balloon/handle color
+                                    ),
+                                  ),
+                                  child: TextFormField(
+                                    cursorColor: LearningColors.darkBlue,
+                                    style: LMSStyles.tsWhiteNeutral300W50012,
+                                    obscureText:
+                                        signUpProvider.isPasswordObscured,
+                                    controller:
+                                        signUpProvider.passwordController,
+                                    validator: signUpProvider.validatePassword,
+                                    decoration: CommonInputDecoration(
+                                      hint: LMSStrings.strEnterpassword,
+                                      label: LMSStrings.strpassword,
+                                      isObscured:
+                                          signUpProvider.isPasswordObscured,
+                                      toggle: signUpProvider
+                                          .togglePasswordVisibility,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 16),
+                                Theme(
+                                  data: Theme.of(context).copyWith(
+                                    textSelectionTheme: TextSelectionThemeData(
+                                      cursorColor: LearningColors
+                                          .darkBlue, // blinking cursor
+                                      selectionColor: Colors.blue
+                                          .withOpacity(0.3), // text highlight
+                                      selectionHandleColor: LearningColors
+                                          .darkBlue, // balloon/handle color
+                                    ),
+                                  ),
+                                  child: TextFormField(
+                                    cursorColor: LearningColors.darkBlue,
+                                    style: LMSStyles.tsWhiteNeutral300W50012,
+                                    obscureText: signUpProvider
+                                        .isconfirmPasswordObscured,
+                                    controller: signUpProvider
+                                        .confirmpasswordController,
+                                    validator:
+                                        signUpProvider.validateConfirmPassword,
+                                    decoration: CommonInputDecoration(
+                                      hint: LMSStrings.strEnterConfirmpassword,
+                                      label: LMSStrings.strConfirmpassword,
+                                      isObscured: signUpProvider
+                                          .isconfirmPasswordObscured,
+                                      toggle: signUpProvider
+                                          .toggleConfirmPasswordVisibility,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
                         },
+                      ),
+                      SizedBox(height: 40),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Consumer<SignUpProvider>(
+                    builder: (context, signUpProvider, _) {
+                      return SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: LearningColors.darkBlue,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 5,
+                          ),
+                          onPressed: () {
+                            if (widget.comingFrom == "1") {
+                              if (signUpProvider.formKeyBasic.currentState
+                                      ?.validate() ??
+                                  false) {
+                                FocusScope.of(context).unfocus();
+
+                                signUpProvider.changepassword(widget.email);
+                              }
+                            } else {
+                              if (signUpProvider.formKeyBasic.currentState
+                                      ?.validate() ??
+                                  false) {
+                                FocusScope.of(context).unfocus();
+                                final personalprovider =
+                                    Provider.of<PersonalAccountProvider>(
+                                        context,
+                                        listen: false);
+                                personalprovider.chnagePasswordAPI(
+                                    personalprovider.emailController.text);
+                              }
+                            }
+                          },
+                          child: signUpProvider.ischangepasswordLoading
+                              ? CircularProgressIndicator(
+                                  color: LearningColors.neutral100,
+                                )
+                              : Text(
+                                  LMSStrings.strResetPassword,
+                                  style: LMSStyles.tsWhiteNeutral50W600162,
+                                ),
+                        ),
                       );
                     },
-                    child: Text(
-                      'Sign In',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: LearningColors.black,
-                        decoration: TextDecoration.underline,
-                        decorationColor: LearningColors.black,
-                        fontWeight: FontWeight.w500,
+                  ),
+                  SizedBox(height: 16),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+                          SignInScreen.route,
+                          arguments: {
+                            'SelectedPos': -1,
+                            'isSignUp': false,
+                          },
+                        );
+                      },
+                      child: Text(
+                        'Sign In',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: LearningColors.black,
+                          decoration: TextDecoration.underline,
+                          decorationColor: LearningColors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
-@override
-Widget build(BuildContext context) {
-  SizeConfig().init(context);
-
-  return WillPopScope(
-    onWillPop: () async {
-      Navigator.of(context).pushReplacementNamed(
-        ForgotPasswordScreen.route,
-        arguments: {
-          'selectedPos': -1,
-          'isSignUp': false,
-        },
-      );
-      return false; // Prevent default back behavior
-    },
-    child: Scaffold(
-      resizeToAvoidBottomInset: true,
-      body: ChangeNotifierProvider(
-        create: (_) => SignUpProvider(),
-        child: buildChangePasswordCard(
-          context: context, // Pass context here
-          title: LMSStrings.strCreateANewPassword,
-          subtitle: LMSStrings.strCreateNewPasswordDetail,
-          color: LearningColors.white,
-          titleStyle: LMSStyles.tsblackTileBold,
-          subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
+          ],
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 
+  @override
+  Widget build(BuildContext context) {
+    SizeConfig().init(context);
+
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.of(context).pushReplacementNamed(
+          ForgotPasswordScreen.route,
+          arguments: {
+            'selectedPos': -1,
+            'isSignUp': false,
+          },
+        );
+        return false; // Prevent default back behavior
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        body: ChangeNotifierProvider(
+          create: (_) => SignUpProvider(),
+          child: buildChangePasswordCard(
+              context: context, // Pass context here
+              title: LMSStrings.strCreateANewPassword,
+              subtitle: LMSStrings.strCreateNewPasswordDetail,
+              color: LearningColors.white,
+              titleStyle: LMSStyles.tsblackTileBold,
+              subtitleStyle: LMSStyles.tsWhiteNeutral300W5002,
+              email: widget.email),
+        ),
+      ),
+    );
+  }
 }
 
 class PasswordResetSuccessScreen extends StatelessWidget {

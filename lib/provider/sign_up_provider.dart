@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:learning_mgt/Utils/internetConnection.dart';
 import 'package:learning_mgt/Utils/regex_helper.dart';
 import 'package:learning_mgt/dto/DocumentField.dart';
 import 'package:learning_mgt/main.dart';
+import 'package:learning_mgt/model/OtpVerificationResponse.dart';
+import 'package:learning_mgt/screens/forgotPassword_screen.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
 import 'package:provider/provider.dart';
 
@@ -544,8 +547,8 @@ class SignUpProvider with ChangeNotifier {
   String? validateOTP(String? value) {
     if (value == null || value.isEmpty) {
       return 'OTP cannot be empty';
-    } else if (value.length != 6) {
-      return 'OTP should be 6 digits';
+    } else if (value.length != 4) {
+      return 'OTP should be 4 digits';
     }
     return null;
   }
@@ -1479,91 +1482,116 @@ Future<void> pickFile(String docName) async {
       print('\nUpload process completed');
     }
   }
-  /*Future<void> uploadDocuments(BuildContext context) async {
-    try {
-      _isSavingDetails = true;
-      notifyListeners();
+ Map<String, dynamic> createOTPVerificationRequestBody(String email) {
+    return {
+      "email": email,
+       "otp":otpController.text
+    };
+  }
+  //otp verification
+ bool _isSendOTPLoading = false;
+  bool get isSendOTPLoading => _isSendOTPLoading;
+  set isSendOTPLoading(bool value) {
+    _isSendOTPLoading = value;
+    notifyListeners();
+  }
 
-      // Prepare the multipart request
-      var request = http.MultipartRequest(
-        'POST',
-        Uri.parse(await APIManager().apiEndPoint(API.documentsUpload))
-      );
+   forgetPasswordOTPVerification(String email) async {
+    isSendOTPLoading=true;
+    var status1 = await ConnectionDetector.checkInternetConnection();
 
-      // Add user ID and certificate name
-      request.fields['user_id'] = "['${_registeredCandidate!.id}']";
-      request.fields['certificate_name'] = 'PHD'; // Or dynamic from input
+    if (status1) {
+      dynamic jsonbody = createOTPVerificationRequestBody(email);
+      print(jsonbody);
 
-      // Prepare doc_id and doc_name lists
-      List<String> docIds = [];
-      List<String> docNames = [];
+      APIManager().apiRequest(routeGlobalKey.currentContext!, API.sendpasswordverificationotp,
+          (response) async {
+        OtpVerificationResponse resp = response;
 
-      for (var doc in documents) {
-        final filePath = selectedFilePaths[doc.documentName];
-        if (filePath != null && filePath.isNotEmpty) {
-          if (doc.isEducationDocument) {
-            request.files.add(await http.MultipartFile.fromPath(
-              'educational_certificate_upload',
-              filePath,
-            ));
-          } else {
-            request.fields['doc_id'] = '[\'${doc.id}\']';
-            request.fields['doc_name'] = '[\'${doc.documentName}\']';
-
-            request.files.add(await http.MultipartFile.fromPath(
-              'document_file_upload',
-              filePath,
-            ));
-          }
-        } else {
-          print('⚠️ No file selected for ${doc.documentName}');
+        if(resp.n==1)
+        {
+        ShowDialogs.showToast(resp.msg);
+        Navigator.of(routeGlobalKey.currentContext!)
+                              .pushNamed(
+                            ChangePasswordScreen.route,
+                          arguments:{
+                            'email':email,
+                            'comingFrom':"1"
+                          }
+                          );
+                           isSendOTPLoading=false;
+                           notifyListeners();
+        }else{
+ ShowDialogs.showToast(resp.msg);
+ isSendOTPLoading=false;
+                           notifyListeners();
         }
-
-      }
-
-      // Add the collected doc_id and doc_name arrays
-      if (docIds.isNotEmpty && docNames.isNotEmpty) {
-        request.fields['doc_id'] = "['${docIds.join("','")}']";
-        request.fields['doc_name'] = "['${docNames.join("','")}']";
-      }
-
-      // Add auth token if needed
-      final token = await SPManager().getAuthToken();
-      if (token != null) {
-        request.headers['Authorization'] = 'Bearer $token';
-      }
-
-      print('Multipart Request Fields:');
-      request.fields.forEach((key, value) {
-        print('$key: $value');
-      });
-
-      // Debug print the uploaded file names
-      print('Multipart Files:');
-      for (var file in request.files) {
-        print('${file.field}: ${file.filename}');
-      }
-
-      // Send request and handle response
-      final response = await request.send();
-      final responseBody = await response.stream.bytesToString();
-
-      if (response.statusCode == 200) {
-        final jsonResponse = json.decode(responseBody);
-        if (jsonResponse['n'] == 1) {
-          ShowDialogs.showToast(jsonResponse['msg']);
-        } else {
-          throw Exception(jsonResponse['msg'] ?? 'Failed to upload documents');
-        }
-      } else {
-        throw Exception('Upload failed: ${response.reasonPhrase}');
-      }
-    } catch (e) {
-      ShowDialogs.showToast('Error uploading documents: $e');
-      rethrow;
-    } finally {
-      _isSavingDetails = false;
-      notifyListeners();
+      }, (error) {
+        print('ERR msg is $error');
+isSendOTPLoading=false;
+                           notifyListeners();
+        ShowDialogs.showToast("Server Not Responding");
+      }, jsonval:  json.encode(jsonbody),);
+    } else {
+      /// Navigator.of(_keyLoader.currentContext).pop();
+       isSendOTPLoading=false;
+                           notifyListeners();
+      ShowDialogs.showToast("Please check internet connection");
     }
-  }*/
+  }
+//channge password
+ bool _ischangepasswordLoading = false;
+  bool get ischangepasswordLoading => _ischangepasswordLoading;
+  set ischangepasswordLoading(bool value) {
+    _ischangepasswordLoading = value;
+    notifyListeners();
+  }
+ Map<String, dynamic> createChangePasswordRequestBody(String email) {
+    return {
+      "email": email,
+       "password":passwordController.text
+    };
+  }
+   changepassword(String email) async {
+    var status1 = await ConnectionDetector.checkInternetConnection();
+ischangepasswordLoading=true;
+    if (status1) {
+      dynamic jsonbody = createChangePasswordRequestBody(email);
+      print(jsonbody);
+
+      APIManager().apiRequest(routeGlobalKey.currentContext!, API.setpassword,
+          (response) async {
+        OtpVerificationResponse resp = response;
+
+        if(resp.n==1)
+        {
+        ShowDialogs.showToast(resp.msg);
+        Navigator.of(routeGlobalKey.currentContext!)
+                                  .pushNamed(
+                                PasswordResetSuccessScreen.route,
+                                arguments: {
+                                  'selectedPos': -1,
+                                  'isSignUp': false,
+                                },
+                              );
+                              ischangepasswordLoading=false;
+                              notifyListeners();
+        }else{
+ ShowDialogs.showToast(resp.msg);
+  ischangepasswordLoading=false;
+                              notifyListeners();
+        }
+      }, (error) {
+        print('ERR msg is $error');
+ ischangepasswordLoading=false;
+                              notifyListeners();
+        ShowDialogs.showToast("Server Not Responding");
+      }, jsonval:  json.encode(jsonbody),);
+    } else {
+       ischangepasswordLoading=false;
+                              notifyListeners();
+      /// Navigator.of(_keyLoader.currentContext).pop();
+      ShowDialogs.showToast("Please check internet connection");
+    }
+  }
 }
