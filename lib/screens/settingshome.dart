@@ -161,11 +161,9 @@ final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
                           children: [
                             Container(
                               decoration: BoxDecoration(
-                                shape: BoxShape
-                                    .circle, 
+                                shape: BoxShape.circle,
                                 border: Border.all(
-                                  color:
-                                      Colors.blue,
+                                  color: Colors.blue,
                                   width: 2.0, 
                                 ),
                               ),

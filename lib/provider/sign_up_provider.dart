@@ -353,9 +353,11 @@ class SignUpProvider with ChangeNotifier {
 
   String? validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password cannot be empty';
+      return 'Please confirm your password';
     } else if (value != passwordController.text) {
-      return 'Confirm Password should match your new password';
+      return 'Passwords do not match';
+      // return 'Passwords do not match';
+      // return 'Confirm Password should match your new password';
     }
     return null;
   }
@@ -572,7 +574,7 @@ class SignUpProvider with ChangeNotifier {
   //   }
   //   return null;
   // }
-  String? validatePassword(String? value) {
+  /*String? validatePassword(String? value) {
     // Check if the value is null or empty
     if (value == null || value.isEmpty) {
       return 'Password cannot be empty';
@@ -591,6 +593,17 @@ class SignUpProvider with ChangeNotifier {
     }
 
     return null; // Return null if the password passes all checks
+  }*/
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Password is required';
+    if (value.length < 8) return 'Minimum 8 characters required';
+    if (!RegExp(r'[A-Z]').hasMatch(value)) return 'Need at least 1 uppercase letter';
+    if (!RegExp(r'[a-z]').hasMatch(value)) return 'Need at least 1 lowercase letter';
+    if (!RegExp(r'[0-9]').hasMatch(value)) return 'Need at least 1 number';
+    if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
+      return 'Need at least 1 special character';
+    }
+    return null;
   }
  List<DocumentField> documentFields = [];
   Map<String, TextEditingController> controllers = {};
