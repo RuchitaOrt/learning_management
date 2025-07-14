@@ -507,7 +507,10 @@ Widget mainBody(CourseProvider courseProvider)
     // Use the course description from the API response
     final provider = Provider.of<CourseProvider>(context, listen: false);
     final courseDetail = provider.courseDetail;
-    String aboutText = courseDetail.description ?? "No description available";
+    // String aboutText = courseDetail.description ?? "No description available";
+    String aboutText = (courseDetail.description?.trim().isEmpty ?? true)
+        ? "-"
+        : courseDetail.description!;
 
     bool isExpanded = false; // declare outside
 
@@ -622,8 +625,8 @@ Widget mainBody(CourseProvider courseProvider)
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-          child: Column(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+          child: Row(
             children: [
               // Country Button
               ElevatedButton(
@@ -631,20 +634,35 @@ Widget mainBody(CourseProvider courseProvider)
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
-                  side: BorderSide(color: Colors.grey.shade400),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  // side: BorderSide(color: Colors.grey.shade400),
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(signUpProvider.selectedCountry?.name ?? "Select Country"),
-                    const Icon(Icons.arrow_drop_down),
+                    Text(signUpProvider.selectedCountry?.name ?? "Select Country",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: LearningColors.red
+                      ),
+                    ),
+                    // const Icon(Icons.arrow_drop_down, color: LearningColors.red),
+                    Text(
+                      ":",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: LearningColors.red
+                      ),
+                    ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(width: 6),
 
               // State Button or Loader
               if (signUpProvider.isLoadingStates)
@@ -658,15 +676,22 @@ Widget mainBody(CourseProvider courseProvider)
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
-                    side: BorderSide(color: Colors.grey.shade400),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    // side: BorderSide(color: Colors.grey.shade400),
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(signUpProvider.selectedState?.name ?? "Select State"),
-                      const Icon(Icons.arrow_drop_down),
+                      Text(signUpProvider.selectedState?.name ?? "Select State",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w400,
+                          color: LearningColors.red
+                        ),
+                      ),
+                      const Icon(Icons.arrow_drop_down, color: LearningColors.red),
                     ],
                   ),
                 )

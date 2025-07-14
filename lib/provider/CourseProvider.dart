@@ -124,7 +124,8 @@ class CourseProvider with ChangeNotifier {
         isLoading = false;
         notifyListeners();
         Navigator.pop(routeGlobalKey.currentContext!);
-        ShowDialogs.showToast('Unexpected error: $e');
+        // ShowDialogs.showToast('Unexpected error: $e');
+        print('Unexpected error: $e');
       }
     } else {
       isLoading = false;
@@ -234,7 +235,7 @@ class CourseProvider with ChangeNotifier {
             } else {
               // Handle case when n = 0 (no materials found)
               _resourceDetail = [];
-              ShowDialogs.showToast(resp.msg ?? "No materials found");
+              // ShowDialogs.showToast(resp.msg ?? "No materials found");
             }
             isResourceLoading = false;
             notifyListeners();
@@ -249,7 +250,8 @@ class CourseProvider with ChangeNotifier {
       } catch (e) {
         isResourceLoading = false;
         notifyListeners();
-        ShowDialogs.showToast('Unexpected error: $e');
+        // ShowDialogs.showToast('Unexpected error: $e');
+        print('Unexpected error: $e');
       }
     } else {
       isResourceLoading = false;

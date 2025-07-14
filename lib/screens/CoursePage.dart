@@ -334,9 +334,9 @@ class _CoursePageState extends State<CoursePage> {
   @override
   Widget build(BuildContext context) {
     // final courseProvider = Provider.of<CourseProvider>(context);
-    // return Consumer<CourseProvider>(builder: (context, courseProvider, _) {
+    return Consumer<CourseProvider>(builder: (context, courseProvider, _) {
       // Show loading spinner while fetching data
-    return Consumer2<CourseProvider, LandingScreenProvider>(
+    /*return Consumer2<CourseProvider, LandingScreenProvider>(
         builder: (context, courseProvider, landingProvider, _) {
           // Show loading spinner while fetching data for either provider
           if (landingProvider.isLoading || courseProvider.isLoading) {
@@ -345,7 +345,7 @@ class _CoursePageState extends State<CoursePage> {
                 color: LearningColors.darkBlue,
               ),
             );
-          }
+          }*/
 
       return WillPopScope(
         onWillPop: () async {
@@ -417,11 +417,28 @@ class _CoursePageState extends State<CoursePage> {
                     ),
                   
 
-                    courseChips(),
+                    /*courseChips(),
                     SizedBox(height: 8),
 
-                     listing(courseProvider)
-                      
+                     listing(courseProvider)*/
+
+                    courseProvider.isLoading
+                        ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32.0),
+                        child: CircularProgressIndicator(color: LearningColors.darkBlue,),
+                      ),
+                    )
+                        : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        courseChips(),
+                        SizedBox(height: 8),
+                        listing(courseProvider),
+                      ],
+                    ),
+
+
                     // ]
                   ],
                 ),

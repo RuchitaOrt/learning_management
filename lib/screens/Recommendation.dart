@@ -791,10 +791,31 @@ Widget listing(RecommendedCourseProvider courseProvider)
    
     if (courseProvider.isLoading) {
       return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 300),
           child: CircularProgressIndicator(
-        color: LearningColors.darkBlue,
-      ));
+            color: LearningColors.darkBlue,
+          ),
+        )
+      );
     }
+
+      if (courseProvider.recommendedcourseList.isEmpty) {
+        return Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 300),
+            child: Text(
+              "No recommendations available",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        );
+      }
+
    return Column(
       children: courseProvider.recommendedcourseList
           .map((course) => _buildVerticalCard(course))

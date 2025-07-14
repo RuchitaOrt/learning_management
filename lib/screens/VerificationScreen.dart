@@ -541,7 +541,7 @@ class BasicFormWidget extends StatelessWidget {
           SizedBox(height: 0), // Add vertical spacing
 
           // Email (full width)
-          CustomTextFieldWidget(
+          /*CustomTextFieldWidget(
             title: LMSStrings.strEmail,
             hintText: LMSStrings.strEnterEmail,
             onChange: (val) {},
@@ -600,60 +600,67 @@ class BasicFormWidget extends StatelessWidget {
                 );
               },
             ),
-          ),
-          /*CustomTextFieldWidget(
-            title: LMSStrings.strEmail,
-            hintText: LMSStrings.strEnterEmail,
-            onChange: (val) {},
-            textEditingController: signUpProvider.emailController,
-            autovalidateMode: AutovalidateMode.disabled,
-            validator: signUpProvider.validateEmailField,
-            suffixIcon: Consumer<SignUpProvider>(
-              builder: (context, provider, _) {
-                if (provider.isSendingOtp) {
-                  return Padding(
+          ),*/
+          Consumer<SignUpProvider>(
+            builder: (context, provider, _) {
+              return AbsorbPointer(
+                absorbing: provider.isEmailVerified,
+                child: CustomTextFieldWidget(
+                  title: LMSStrings.strEmail,
+                  hintText: LMSStrings.strEnterEmail,
+                  onChange: (val) {},
+                  textEditingController: signUpProvider.emailController,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  validator: signUpProvider.validateEmailField,
+                  readOnly: !provider.isEmailVerified, // Disable when verified
+                  suffixIcon: provider.isEmailVerified
+                      ? Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Icon(Icons.verified, color: Colors.green),
+                  )
+                      : provider.isSendingOtp
+                      ? Padding(
                     padding: const EdgeInsets.only(right: 8.0),
                     child: Container(
-                      width: 80, // Give enough space for the loader
+                      width: 80,
                       alignment: Alignment.centerRight,
                       child: SizedBox(
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
                           strokeWidth: 2.5,
-                          valueColor: AlwaysStoppedAnimation<Color>(LearningColors.darkBlue),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                              LearningColors.darkBlue),
                         ),
                       ),
                     ),
-                  );
-                }
-
-                return TextButton(
-                  onPressed: provider.isOtpCooldownActive
-                      ? null
-                      : () {
-                    final email = provider.emailController.text.trim();
-                    if (email.isNotEmpty) {
-                      provider.sendEmailOtp(context, email);
-                    }
-                  },
-                  child: Text(
-                    provider.isOtpCooldownActive
-                        // ? 'Resend OTP (${provider.otpCountdown})'
-                        ? 'Resend OTP'
-                        : 'Send OTP',
-                    style: TextStyle(
-                      color: provider.isOtpCooldownActive
-                          ? Colors.grey
-                          : LearningColors.darkBlue,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
+                  )
+                      : TextButton(
+                    onPressed: provider.isOtpCooldownActive
+                        ? null
+                        : () {
+                      final email = provider.emailController.text.trim();
+                      if (email.isNotEmpty) {
+                        provider.sendEmailOtp(context, email);
+                      }
+                    },
+                    child: Text(
+                      provider.isOtpCooldownActive
+                          ? 'Resend OTP'
+                          : 'Send OTP',
+                      style: TextStyle(
+                        color: provider.isOtpCooldownActive
+                            ? Colors.grey
+                            : LearningColors.darkBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
-                );
-              },
-            ),
-          ),*/
+                ),
+              );
+            },
+          ),
 
           SizedBox(height: 0),
           // otp verification field
