@@ -123,7 +123,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                   hintText: LMSStrings.strEnterEmail,
                                   onChange: (val) {},
                                   textEditingController:
-                                      signInProvider.emailController,
+                                  signInProvider.emailController,
                                   autovalidateMode: AutovalidateMode.disabled,
                                   validator: signInProvider.validateEmailField,
                                 ),
@@ -131,27 +131,27 @@ class _SignInScreenState extends State<SignInScreen> {
                                     height: SizeConfig.blockSizeVertical * 1),
                                 // Password Field with Validation
                                 Theme(
-                                   data: Theme.of(context).copyWith(
-              textSelectionTheme: TextSelectionThemeData(
-                cursorColor: LearningColors.darkBlue, // blinking cursor
-                selectionColor: Colors.blue.withOpacity(0.3), // text highlight
-                selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
-              ),
-            ),
+                                  data: Theme.of(context).copyWith(
+                                    textSelectionTheme: TextSelectionThemeData(
+                                      cursorColor: LearningColors.darkBlue, // blinking cursor
+                                      selectionColor: Colors.blue.withOpacity(0.3), // text highlight
+                                      selectionHandleColor: LearningColors.darkBlue, // balloon/handle color
+                                    ),
+                                  ),
                                   child: TextFormField(
                                     cursorColor: LearningColors.darkBlue,
                                     style: LMSStyles.tsWhiteNeutral300W50012,
                                     obscureText:
-                                        signInProvider.isPasswordObscured,
+                                    signInProvider.isPasswordObscured,
                                     controller: signInProvider.passwordController,
                                     // validator: signInProvider.validatePassword,
                                     decoration: CommonInputDecoration(
                                       hint: LMSStrings.strEnterpassword,
                                       label: LMSStrings.strpassword,
                                       isObscured:
-                                          signInProvider.isPasswordObscured,
+                                      signInProvider.isPasswordObscured,
                                       toggle:
-                                          signInProvider.togglePasswordVisibility,
+                                      signInProvider.togglePasswordVisibility,
                                     ),
                                   ),
                                 ),
@@ -163,7 +163,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     onTap: () {
                                       FocusManager.instance.primaryFocus?.unfocus();
                                       Navigator.of(
-                                              routeGlobalKey.currentContext!)
+                                          routeGlobalKey.currentContext!)
                                           .pushNamed(ForgotPasswordScreen.route)
                                           .then((value) {});
                                     },
@@ -203,7 +203,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                         signInProvider.toggleTermsCheckbox(val);
                                       },
                                       materialTapTargetSize:
-                                          MaterialTapTargetSize.shrinkWrap,
+                                      MaterialTapTargetSize.shrinkWrap,
                                       visualDensity: VisualDensity(
                                           horizontal: -4, vertical: -4),
                                     ),
@@ -211,7 +211,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                       child: RichText(
                                         text: TextSpan(
                                           text:
-                                              ' I accept the terms and privacy policy',
+                                          ' I accept the terms and privacy policy',
                                           style: TextStyle(
                                             color: Colors.black,
                                             fontSize: 14,
@@ -226,7 +226,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 if (signInProvider.showTermsError)
                                   Padding(
                                     padding:
-                                        const EdgeInsets.only(left: 26, top: 0),
+                                    const EdgeInsets.only(left: 26, top: 0),
                                     child: Text(
                                       'Please accept the terms and privacy policy',
                                       style: TextStyle(
@@ -291,7 +291,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           onPressed: signInProvider.areRequiredFieldsFilled
                               ? () {
                             FocusManager.instance.primaryFocus?.unfocus();
-                            Provider.of<SignInProvider>(context, listen: false).createSignIn();
+                            Provider.of<SignInProvider>(context, listen: false).createSignIn(context);
                           }
                               : null, // Disables button when conditions aren't met
                           style: ElevatedButton.styleFrom(

@@ -122,6 +122,21 @@ Widget listing(CourseProvider courseProvider)
         color: LearningColors.darkBlue,
       ));
     }
+    if (courseProvider.certificatecourseList.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 250),
+          child: Text(
+            "No certifications found",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade600,
+            ),
+          ),
+        ),
+      );
+    }
    return Column(
       children: courseProvider.certificatecourseList
           .map((course) => _buildCertificateCard(course))

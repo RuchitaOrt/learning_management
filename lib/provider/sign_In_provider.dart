@@ -131,16 +131,30 @@ class SignInProvider with ChangeNotifier {
     };
   }
 
-  Future<void> createSignIn() async {
+  Future<void> createSignIn(BuildContext context) async {
     _isLoading = true;
     notifyListeners(); // optional if using Provider
 
-    if (!validateForm()) {
+    final isFormValid = _formKey.currentState?.validate() ?? false;
+    final termsAccepted = _isCheckedTerms;
+
+    if (!isFormValid || !termsAccepted) {
+      _isLoading = false;
+      notifyListeners();
+
+      if (!termsAccepted) {
+        ShowDialogs.showToast("Please accept the terms and privacy policy");
+      }
+
+      return;
+    }
+
+    /*if (!validateForm()) {
       _isLoading = false;
       notifyListeners();
       ShowDialogs.showToast("Please fill all fields correctly");
       return;
-    }
+    }*/
 
     var status1 = await ConnectionDetector.checkInternetConnection();
     if (!status1) {
@@ -159,7 +173,8 @@ class SignInProvider with ChangeNotifier {
       print('Login request body: $requestBody');
 
       await APIManager().apiRequest(
-        routeGlobalKey.currentContext!,
+        // routeGlobalKey.currentContext!,
+        context,
         API.login,
         (response) async {
           _isLoading = false;
@@ -182,7 +197,7 @@ class SignInProvider with ChangeNotifier {
 
               ShowDialogs.showToast(response.msg);
 
-              Navigator.of(routeGlobalKey.currentContext!).pushNamed(
+              Navigator.of(context).pushNamed(
                 TabScreen.route,
                 arguments: {
                   'selectedPos': -1,

@@ -565,6 +565,25 @@ Expanded(
         color: LearningColors.darkBlue,
       ));
     }
+
+    if (provider.courseResultList.isEmpty) {
+      return Expanded(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24),
+            child: Text(
+              "No results found",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Expanded(
       child: ListView.builder(
         padding: EdgeInsets.symmetric(horizontal: 16),
