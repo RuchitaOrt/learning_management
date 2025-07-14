@@ -316,16 +316,27 @@ Widget buildprofile(PersonalAccountProvider personalprovider)
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                           "${personalprovider.generalList.firstName!} ${personalprovider.generalList.middleName} ${personalprovider.generalList.lastName}",
-                              style: LMSStyles.tsblackTileBold
-                                  .copyWith(fontSize: 18),
-                              textAlign: TextAlign.center,
+                            SizedBox(
+                              width: SizeConfig.blockSizeHorizontal*48,
+                              child: Text(
+                                                         "${personalprovider.generalList.firstName!} ${personalprovider.generalList.middleName} ${personalprovider.generalList.lastName}",
+                                                         maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                                style: LMSStyles.tsblackTileBold
+                                    .copyWith(fontSize: 18),
+                                textAlign: TextAlign.start,
+                              ),
                             ),
                             SizedBox(
                               height: 8,
                             ),
-                            Text("${personalprovider.generalList.email}"),
+                            SizedBox(
+                              width: SizeConfig.blockSizeHorizontal*48,
+                              
+                              child: Text("${personalprovider.generalList.email}"
+                              ,maxLines: 2,
+                              overflow: TextOverflow.ellipsis,),
+                            ),
                           ],
                         ),
                       ],
@@ -345,7 +356,7 @@ Widget _buildProfileImage() {
       if (_profileImage != null) {
          print("profileImageUrl1");
         imageProvider = FileImage(_profileImage!);
-      } else if (provider.generalList.profilePic!.isNotEmpty) {
+      } else if (provider.generalList.profilePic!=null ) {
          print("profileImageUrl2");
         imageProvider = NetworkImage(provider.generalList.profilePic!);
       }
@@ -358,7 +369,7 @@ Widget _buildProfileImage() {
             radius: 50,
             backgroundColor: Colors.grey.shade800,
             backgroundImage:
-                _profileImage != null ? FileImage(_profileImage!) :provider.generalList.profilePic!=""?  NetworkImage(provider.generalList.profilePic!)
+                _profileImage != null ? FileImage(_profileImage!) :(provider.generalList.profilePic!=null)?  NetworkImage(provider.generalList.profilePic!)
                 :AssetImage(LMSImagePath.whiteCamera),
             // child: imageProvider == null
             //     ? Icon(

@@ -876,9 +876,10 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
     /*fetchDepartments();
     fetchCountries();*/
     final signUpProvider = Provider.of<SignUpProvider>(context, listen: false);
-    signUpProvider.fetchDepartments(context);
+    /*signUpProvider.fetchDepartments(context);
     signUpProvider.fetchCountries(context);
-    signUpProvider.fetchQualifications(context);
+    signUpProvider.fetchQualifications(context);*/
+    signUpProvider.fetchAllFormData(context);
   }
 
   /*Future<void> fetchDepartments() async {
@@ -1129,7 +1130,142 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
   Widget build(BuildContext context) {
     final signUpProvider = Provider.of<SignUpProvider>(context);
 
-    return Form(
+    return Stack(
+      children: [
+        // Only show the form when initial load is complete
+        if (signUpProvider.isInitialLoadComplete)
+          Form(
+            key: signUpProvider.formKeyDetail,
+            child: ListView(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: ClampingScrollPhysics(),
+              children: [
+                SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: CustomTextFieldWidget(
+                        title: LMSStrings.strSeafarerNo,
+                        hintText: LMSStrings.strSeafarerNoHint,
+                        onChange: (val) {},
+                        textEditingController: signUpProvider.seafarerController,
+                        autovalidateMode: AutovalidateMode.disabled,
+                        validator: signUpProvider.validateSeafaer,
+                      ),
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: CustomTextFieldWidget(
+                        title: LMSStrings.strPassportNo,
+                        hintText: LMSStrings.strPassportNoHint,
+                        onChange: (val) {},
+                        textEditingController: signUpProvider.passportController,
+                        autovalidateMode: AutovalidateMode.disabled,
+                        validator: signUpProvider.validatePassport,
+                      ),
+                    ),
+                  ],
+                ),
+                _buildDepartmentField(signUpProvider),
+                _buildRankField(signUpProvider),
+                _buildCountryField(signUpProvider),
+                _buildQualificationField(signUpProvider),
+                CustomTextFieldWidget(
+                  title: LMSStrings.strDOB,
+                  hintText: LMSStrings.strDOBHint,
+                  textEditingController: signUpProvider.dobController,
+                  isFieldReadOnly: true,
+                  autovalidateMode: AutovalidateMode.disabled,
+                  validator: signUpProvider.validateDOB,
+                  onTap: () async {
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                      builder: (BuildContext context, Widget? child) {
+                        return Theme(
+                          data: ThemeData.light().copyWith(
+                            colorScheme: ColorScheme.light(
+                              primary: LearningColors.darkBlue,
+                              onPrimary: Colors.white,
+                              onSurface: Colors.black,
+                              surface: Colors.white,
+                            ),
+                            textButtonTheme: TextButtonThemeData(
+                              style: TextButton.styleFrom(
+                                foregroundColor: LearningColors.darkBlue,
+                                textStyle: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            dialogBackgroundColor: Colors.white,
+                          ),
+                          child: child!,
+                        );
+                      },
+                    );
+
+                    if (pickedDate != null) {
+                      String formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+                      signUpProvider.dobController.text = formattedDate;
+                    }
+                  },
+                  onChange: (val) {},
+                ),
+                CustomTextFieldWidget(
+                  title: LMSStrings.strPincode,
+                  hintText: LMSStrings.strPincodeHint,
+                  onChange: (val) {},
+                  textEditingController: signUpProvider.pincodeController,
+                  suffixIcon: TextButton(
+                    onPressed: () {
+                      // Add logic to send OTP to email
+                    },
+                    child: Text(
+                      "Locate Me",
+                      style: TextStyle(
+                          color: LearningColors.darkBlue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+        // Show loader while loading
+        if (signUpProvider.isOverallLoading)
+          Center(
+            child: CircularProgressIndicator(color: LearningColors.darkBlue),
+          ),
+
+        // Show error message if initial load failed
+        if (!signUpProvider.isOverallLoading && !signUpProvider.isInitialLoadComplete)
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Failed to load form data'),
+                SizedBox(height: 16),
+                ElevatedButton(
+                  onPressed: () {
+                    signUpProvider.fetchAllFormData(context);
+                  },
+                  child: Text('Retry'),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+    /*return Form(
       key: signUpProvider.formKeyDetail,
       child: Stack(
         children: [
@@ -1237,18 +1373,47 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
           ),
           if (signUpProvider.isOverallLoading)
             Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(color: LearningColors.darkBlue),
             ),
         ],
       ),
-    );
+    );*/
   }
 
-  Widget _buildDepartmentField(SignUpProvider signUpProvider) {
+  /*Widget _buildDepartmentField(SignUpProvider signUpProvider) {
     if (signUpProvider.isLoadingDepartments) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(color: LearningColors.darkBlue));
     }
 
+    if (signUpProvider.departmentError != null) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          signUpProvider.departmentError!,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+
+    if (signUpProvider.departments.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text('No departments available'),
+      );
+    }
+
+    return CustomTextFieldWidget(
+      textEditingController: signUpProvider.departmentController,
+      title: LMSStrings.strDepartment,
+      hintText: LMSStrings.strSelectDepartment,
+      autovalidateMode: AutovalidateMode.disabled,
+      isFieldReadOnly: true,
+      onTap: () => _showDepartmentDialog(signUpProvider),
+      validator: signUpProvider.validateDepartment,
+    );
+  }*/
+
+  Widget _buildDepartmentField(SignUpProvider signUpProvider) {
     if (signUpProvider.departmentError != null) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
@@ -1279,7 +1444,7 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
 
   Widget _buildCountryField(SignUpProvider signUpProvider) {
     if (signUpProvider.isLoadingCountries) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(color: LearningColors.darkBlue));
     }
 
     if (signUpProvider.countryError != null) {
@@ -1317,7 +1482,7 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
     }
 
     if (signUpProvider.isLoadingRanks) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(color: LearningColors.darkBlue));
     }
 
     if (signUpProvider.rankError != null) {
@@ -1348,7 +1513,7 @@ class _DetailFormWidgetState extends State<DetailFormWidget> {
 
   Widget _buildQualificationField(SignUpProvider signUpProvider) {
     if (signUpProvider.isLoadingQualifications) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: CircularProgressIndicator(color: LearningColors.darkBlue));
     }
 
     if (signUpProvider.qualificationError != null) {
@@ -1519,7 +1684,7 @@ class UploadFormWidget extends StatelessWidget {
     return Form(
       key: provider.formKeyUpload,
       child: provider.isLoadingDocuments
-          ? Center(child: CircularProgressIndicator())
+          ? Center(child: CircularProgressIndicator(color: LearningColors.darkBlue))
           : provider.documents.isEmpty
           ? Center(child: Text('No documents required'))
           : Column(

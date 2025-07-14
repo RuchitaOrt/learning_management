@@ -5,12 +5,14 @@ import 'package:http/http.dart' as http;
 import 'package:learning_mgt/Utils/AppEror.dart';
 import 'package:learning_mgt/Utils/SPManager.dart';
 import 'package:learning_mgt/model/CandidateInstituteResponse.dart';
+import 'package:learning_mgt/model/GetCandidateDocuments.dart';
 import 'package:learning_mgt/model/GetCourseCategory.dart';
 import 'package:learning_mgt/model/GetCourseDetailListResponse.dart';
 import 'package:learning_mgt/model/GetCourseInstitueResponse.dart';
 import 'package:learning_mgt/model/GetCourseListResponse.dart';
 import 'package:learning_mgt/model/GetGeneralDetails.dart';
 import 'package:learning_mgt/model/GetResourceResponse.dart';
+import 'package:learning_mgt/model/GetSeafarer.dart';
 import 'package:learning_mgt/model/LoginResponse.dart';
 import 'package:learning_mgt/model/OtpVerificationResponse.dart';
 import 'package:learning_mgt/widgets/ShowDialog.dart';
@@ -51,7 +53,11 @@ enum API {
   getgeneraldetails,
   updatecandidatepassword,
   updategeneraldetails,
-  updatecandidateprofilepicture
+  updatecandidateprofilepicture,
+  updateSeafarerDetails,
+  getcandidatemandatorydocument,
+  uploadcandidatedocuments,
+  getseafarersdetails
 }
 
 enum HTTPMethod { GET, POST, PUT, DELETE }
@@ -187,6 +193,17 @@ class APIManager {
         break;
       case API.updatecandidateprofilepicture:
         apiPathString = "/api/candidate/update-candidate-profile-picture";
+      case API.updateSeafarerDetails:
+        apiPathString = "/api/candidate/update-seafarers-details";
+        break;
+      case API.getcandidatemandatorydocument:
+        apiPathString = "/api/candidate/get-candidate-mandatory-document";
+        break;
+      case API.uploadcandidatedocuments:
+        apiPathString = "/api/candidate/upload-candidate-documents";
+        break;
+      case API.getseafarersdetails:
+        apiPathString = "/api/candidate/get-seafarers-details";
         break;
 
       default:
@@ -207,6 +224,8 @@ class APIManager {
       case API.getcertificates:
       case API.getcandidateinstitutescoursedetails:
       case API.getgeneraldetails:
+      case API.getcandidatemandatorydocument:
+      case API.getseafarersdetails:
         method = HTTPMethod.GET;
         break;
 
@@ -294,6 +313,12 @@ class APIManager {
         className = "GeneralCandidateData";
         break;
 
+      case API.getcandidatemandatorydocument:
+        className = "GetCandidateDocuments";
+        break;
+ case API.getseafarersdetails:
+  className = "GetSeafarer";
+        break;
       default:
         className = 'CommonResponse';
     }
@@ -345,8 +370,12 @@ class APIManager {
       responseObj = CandidateInstitutesResponse.fromJson(json);
     } else if (className == 'GeneralCandidateData') {
       responseObj = GetGeneralDetails.fromJson(json);
+    } else if (className == 'GetCandidateDocuments') {
+      responseObj = GetCandidateDocuments.fromJson(json);
+    } else if (className == 'GetSeafarer') {
+      responseObj = GetSeafarer.fromJson(json);
     }
-
+    
     return responseObj;
   }
 

@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:learning_mgt/Utils/learning_colors.dart';
+import 'package:learning_mgt/Utils/lms_strings.dart';
 import 'package:learning_mgt/Utils/lms_styles.dart';
 import 'package:learning_mgt/Utils/sizeConfig.dart';
+import 'package:learning_mgt/main.dart';
 import 'package:learning_mgt/provider/LandingScreenProvider.dart';
 import 'package:learning_mgt/provider/personal_account_provider.dart';
+import 'package:learning_mgt/screens/VerificationScreen.dart';
 import 'package:learning_mgt/widgets/CustomAppBar.dart';
 import 'package:learning_mgt/widgets/CustomDrawer.dart';
 import 'package:provider/provider.dart';
@@ -26,42 +32,69 @@ class _DocumentSettingState extends State<DocumentSetting> {
   @override
   void initState() {
     super.initState();
+         final documentProvider =
+      Provider.of<PersonalAccountProvider>(context, listen: false);
+       if (!documentProvider.isLoadingDocuments) {
+    documentProvider.fetchDocuments();
+       }
+    print("object ${documentProvider.documents.length}");
   }
+Future<void> _pickFile(String docName) async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
 
-  // Function to handle file picking
-  Future<void> _pickFile(String documentType) async {
-    try {
-      FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom, // Allow custom file types
+    type: FileType.custom, // Allow custom file types
         allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'], // Specify allowed extensions
         allowMultiple: false, // Set to true if you want to allow multiple file selection
-      );
+  );
 
-      if (result != null) {
-        PlatformFile file = result.files.first;
-        setState(() {
-          _selectedFiles[documentType] = file;
-        });
-        // You can now access file.path, file.name, file.size, file.bytes (for web/desktop)
-        print('Selected file for $documentType: ${file.name}');
-        print('File path: ${file.path}');
-        // Further logic to upload the file to a server or process it
-      } else {
-        // User canceled the picker
-        print('File selection canceled for $documentType');
-      }
-    } catch (e) {
-      print('Error picking file for $documentType: $e');
-      // Show an error message to the user
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error picking file: $e')),
-      );
-    }
+  if (result != null && result.files.isNotEmpty) {
+    final file = result.files.first;
+    setState(() {
+      _selectedFiles[docName] = file;
+      final documentProvider =
+      Provider.of<PersonalAccountProvider>(context, listen: false);
+      documentProvider.selectedFiles[docName] = file;
+    });
+  } else {
+    // User canceled
   }
+}
+
+  // Function to handle file picking
+  // Future<void> _pickFile(String documentType) async {
+  //   try {
+  //     FilePickerResult? result = await FilePicker.platform.pickFiles(
+  //       type: FileType.custom, // Allow custom file types
+  //       allowedExtensions: ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'], // Specify allowed extensions
+  //       allowMultiple: false, // Set to true if you want to allow multiple file selection
+  //     );
+
+  //     if (result != null) {
+  //       PlatformFile file = result.files.first;
+  //       setState(() {
+  //         _selectedFiles[documentType] = file;
+  //       });
+  //       // You can now access file.path, file.name, file.size, file.bytes (for web/desktop)
+  //       print('Selected file for $documentType: ${file.name}');
+  //       print('File path: ${file.path}');
+  //       // Further logic to upload the file to a server or process it
+  //     } else {
+  //       // User canceled the picker
+  //       print('File selection canceled for $documentType');
+  //     }
+  //   } catch (e) {
+  //     print('Error picking file for $documentType: $e');
+  //     // Show an error message to the user
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Error picking file: $e')),
+  //     );
+  //   }
+  // }
 
   // --- DocumentUploadBox Widget (Copied for completeness, but you can keep it separate) ---
   Widget _buildDocumentUploadBox({
     required String documentName,
+    required String documentlink,
     VoidCallback? onViewTap,
     required VoidCallback onUploadTap, // Made required
     PlatformFile? selectedFile, // To show which file is selected
@@ -98,9 +131,17 @@ class _DocumentSettingState extends State<DocumentSetting> {
                     color: Colors.black87,
                   ),
                 ),
-                if (selectedFile != null) // Show selected file name
+               
+                 (selectedFile != null) ?
                   Text(
                     selectedFile.name,
+                    style: const TextStyle(
+                      fontSize: 12.0,
+                      color: Colors.grey,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ): Text(
+                   documentlink!=""?  documentlink:"",
                     style: const TextStyle(
                       fontSize: 12.0,
                       color: Colors.grey,
@@ -209,128 +250,221 @@ class _DocumentSettingState extends State<DocumentSetting> {
               ),
 
               // Document Upload Section
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
-                      child: Text(
-                        "Upload Documents",
-                        style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 16),
-                      ),
-                    ),
-                    _buildDocumentUploadBox(
-                      documentName: "Birth certificate",
-                      selectedFile: _selectedFiles['Birth certificate'], // Pass selected file to update UI
-                      onViewTap: () {
-                        // Implement logic to view the birth certificate
-                        // You'll need to check if _selectedFiles['Birth certificate'] is not null
-                        PlatformFile? file = _selectedFiles['Birth certificate'];
-                        if (file != null && file.path != null) {
-                          // For example, open the file using url_launcher or another package
-                          print('Viewing Birth certificate at: ${file.path}');
-                        } else {
-                          print('No Birth certificate selected to view.');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('No file selected to view.')),
-                          );
-                        }
-                      },
-                      onUploadTap: () => _pickFile('Birth certificate'), // Call _pickFile with document type
-                    ),
-                    _buildDocumentUploadBox(
-                      documentName: "Passport",
-                      selectedFile: _selectedFiles['Passport'],
-                      onViewTap: () {
-                        PlatformFile? file = _selectedFiles['Passport'];
-                        if (file != null && file.path != null) {
-                          print('Viewing Passport at: ${file.path}');
-                        } else {
-                          print('No Passport selected to view.');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('No file selected to view.')),
-                          );
-                        }
-                      },
-                      onUploadTap: () => _pickFile('Passport'),
-                    ),
-                    _buildDocumentUploadBox(
-                      documentName: "Service Book",
-                      selectedFile: _selectedFiles['Service Book'],
-                      onViewTap: () {
-                        PlatformFile? file = _selectedFiles['Service Book'];
-                        if (file != null && file.path != null) {
-                          print('Viewing Service Book at: ${file.path}');
-                        } else {
-                          print('No Service Book selected to view.');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('No file selected to view.')),
-                          );
-                        }
-                      },
-                      onUploadTap: () => _pickFile('Service Book'),
-                    ),
-                    _buildDocumentUploadBox(
-                      documentName: "Upload your CDC",
-                      selectedFile: _selectedFiles['CDC'],
-                      onViewTap: () {
-                        PlatformFile? file = _selectedFiles['CDC'];
-                        if (file != null && file.path != null) {
-                          print('Viewing CDC at: ${file.path}');
-                        } else {
-                          print('No CDC selected to view.');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('No file selected to view.')),
-                          );
-                        }
-                      },
-                      onUploadTap: () => _pickFile('CDC'),
-                    ),
-                    _buildDocumentUploadBox(
-                      documentName: "COC",
-                      selectedFile: _selectedFiles['COC'],
-                      onViewTap: () {
-                        PlatformFile? file = _selectedFiles['COC'];
-                        if (file != null && file.path != null) {
-                          print('Viewing COC at: ${file.path}');
-                        } else {
-                          print('No COC selected to view.');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('No file selected to view.')),
-                          );
-                        }
-                      },
-                      onUploadTap: () => _pickFile('COC'),
-                    ),
-                    _buildDocumentUploadBox(
-                      documentName: "Log Book",
-                      selectedFile: _selectedFiles['Log Book'],
-                      onViewTap: () {
-                        PlatformFile? file = _selectedFiles['Log Book'];
-                        if (file != null && file.path != null) {
-                          print('Viewing Log Book at: ${file.path}');
-                        } else {
-                          print('No Log Book selected to view.');
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('No file selected to view.')),
-                          );
-                        }
-                      },
-                      onUploadTap: () => _pickFile('Log Book'),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Padding(
+              //         padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
+              //         child: Text(
+              //           "Upload Documents",
+              //           style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 16),
+              //         ),
+              //       ),
+              //       _buildDocumentUploadBox(
+              //         documentName: "Birth certificate",
+              //         selectedFile: _selectedFiles['Birth certificate'], // Pass selected file to update UI
+              //         onViewTap: () {
+              //           // Implement logic to view the birth certificate
+              //           // You'll need to check if _selectedFiles['Birth certificate'] is not null
+              //           PlatformFile? file = _selectedFiles['Birth certificate'];
+              //           if (file != null && file.path != null) {
+              //             // For example, open the file using url_launcher or another package
+              //             print('Viewing Birth certificate at: ${file.path}');
+              //           } else {
+              //             print('No Birth certificate selected to view.');
+              //             ScaffoldMessenger.of(context).showSnackBar(
+              //               SnackBar(content: Text('No file selected to view.')),
+              //             );
+              //           }
+              //         },
+              //         onUploadTap: () => _pickFile('Birth certificate'), // Call _pickFile with document type
+              //       ),
+              //       _buildDocumentUploadBox(
+              //         documentName: "Passport",
+              //         selectedFile: _selectedFiles['Passport'],
+              //         onViewTap: () {
+              //           PlatformFile? file = _selectedFiles['Passport'];
+              //           if (file != null && file.path != null) {
+              //             print('Viewing Passport at: ${file.path}');
+              //           } else {
+              //             print('No Passport selected to view.');
+              //             ScaffoldMessenger.of(context).showSnackBar(
+              //               SnackBar(content: Text('No file selected to view.')),
+              //             );
+              //           }
+              //         },
+              //         onUploadTap: () => _pickFile('Passport'),
+              //       ),
+              //       _buildDocumentUploadBox(
+              //         documentName: "Service Book",
+              //         selectedFile: _selectedFiles['Service Book'],
+              //         onViewTap: () {
+              //           PlatformFile? file = _selectedFiles['Service Book'];
+              //           if (file != null && file.path != null) {
+              //             print('Viewing Service Book at: ${file.path}');
+              //           } else {
+              //             print('No Service Book selected to view.');
+              //             ScaffoldMessenger.of(context).showSnackBar(
+              //               SnackBar(content: Text('No file selected to view.')),
+              //             );
+              //           }
+              //         },
+              //         onUploadTap: () => _pickFile('Service Book'),
+              //       ),
+              //       _buildDocumentUploadBox(
+              //         documentName: "Upload your CDC",
+              //         selectedFile: _selectedFiles['CDC'],
+              //         onViewTap: () {
+              //           PlatformFile? file = _selectedFiles['CDC'];
+              //           if (file != null && file.path != null) {
+              //             print('Viewing CDC at: ${file.path}');
+              //           } else {
+              //             print('No CDC selected to view.');
+              //             ScaffoldMessenger.of(context).showSnackBar(
+              //               SnackBar(content: Text('No file selected to view.')),
+              //             );
+              //           }
+              //         },
+              //         onUploadTap: () => _pickFile('CDC'),
+              //       ),
+              //       _buildDocumentUploadBox(
+              //         documentName: "COC",
+              //         selectedFile: _selectedFiles['COC'],
+              //         onViewTap: () {
+              //           PlatformFile? file = _selectedFiles['COC'];
+              //           if (file != null && file.path != null) {
+              //             print('Viewing COC at: ${file.path}');
+              //           } else {
+              //             print('No COC selected to view.');
+              //             ScaffoldMessenger.of(context).showSnackBar(
+              //               SnackBar(content: Text('No file selected to view.')),
+              //             );
+              //           }
+              //         },
+              //         onUploadTap: () => _pickFile('COC'),
+              //       ),
+              //       _buildDocumentUploadBox(
+              //         documentName: "Log Book",
+              //         selectedFile: _selectedFiles['Log Book'],
+              //         onViewTap: () {
+              //           PlatformFile? file = _selectedFiles['Log Book'];
+              //           if (file != null && file.path != null) {
+              //             print('Viewing Log Book at: ${file.path}');
+              //           } else {
+              //             print('No Log Book selected to view.');
+              //             ScaffoldMessenger.of(context).showSnackBar(
+              //               SnackBar(content: Text('No file selected to view.')),
+              //             );
+              //           }
+              //         },
+              //         onUploadTap: () => _pickFile('Log Book'),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+Padding(
+  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 4.0, bottom: 8.0),
+        child: Text(
+          "Upload Documents",
+          style: LMSStyles.tsblackNeutralbold.copyWith(fontSize: 16),
+        ),
+      ),
 
+      ...personalprovider.documents.map((doc) => _buildDocumentUploadBox(
+            documentName: doc.documentName,
+            documentlink: doc.uploadedProof!,
+            selectedFile: _selectedFiles[doc.documentName],
+            onViewTap: () {
+           if (_selectedFiles[doc.documentName] != null) {
+final file = _selectedFiles[doc.documentName];
+              if (file != null && file.path != null) {
+                print('Viewing ${doc.documentName} at: ${file.path}');
+                 showImageDialog(
+            
+            file.path
+              ,true
+            );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('No file selected to view.')),
+                );
+              }
+          }    else if (doc.uploadedProof != "" ) {
+            showImageDialog(
+            
+             doc.uploadedProof
+              ,false
+            );
+          }  else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('No file selected to view.')),
+                );
+              }
+              
+            },
+            onUploadTap: () => _pickFile(doc.documentName),
+          )),
+    ],
+  ),
+)
+,
               SizedBox(
                 height: SizeConfig.blockSizeVertical * 1,
               ),
+                ElevatedButton(
+                            onPressed: () {
+                            personalprovider.uplodDocumentsAPI(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: LearningColors.darkBlue,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 40, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              elevation: 0,
+                              shadowColor: Colors.transparent,
+                            ),
+                            child: Text(
+                              LMSStrings.strUpload,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
             ],
           ),
         ),
       );
     });
   }
+
+
+
+
+  void showImageDialog(String? selectedPath,bool isFile ){
+  if (selectedPath == null) return;
+
+  showDialog(
+    context: routeGlobalKey.currentContext!,
+    builder: (_) => AlertDialog(
+      title: Text("Selected Image"),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+       isFile?   Image.file(File(selectedPath)):Image.network(selectedPath),
+         
+        ],
+      ),
+    ),
+  );
+}
 }

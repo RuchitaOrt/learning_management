@@ -116,7 +116,7 @@ Widget _buildProfileImage() {
       if (_profileImage != null) {
          print("profileImageUrl1");
         imageProvider = FileImage(_profileImage!);
-      } else if (provider.generalList.profilePic!.isNotEmpty) {
+      } else if (provider.generalList.profilePic!=null) {
          print("profileImageUrl2");
         imageProvider = NetworkImage(provider.generalList.profilePic!);
       }
@@ -129,7 +129,7 @@ Widget _buildProfileImage() {
             radius: 50,
             backgroundColor: Colors.grey.shade800,
             backgroundImage:
-                _profileImage != null ? FileImage(_profileImage!) :provider.generalList.profilePic!=""?  NetworkImage(provider.generalList.profilePic!)
+                _profileImage != null ? FileImage(_profileImage!) :provider.generalList.profilePic!=null?  NetworkImage(provider.generalList.profilePic!)
                 :AssetImage(LMSImagePath.whiteCamera),
             // child: imageProvider == null
             //     ? Icon(

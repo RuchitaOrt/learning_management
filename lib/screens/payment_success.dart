@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:learning_mgt/screens/HomePage.dart';
 
 import '../Utils/lms_styles.dart';
+import '../main.dart';
+import 'TabScreen.dart';
 
 class PaymentSuccessScreen extends StatelessWidget {
   final String message;
@@ -27,10 +29,19 @@ class PaymentSuccessScreen extends StatelessWidget {
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.pushAndRemoveUntil(
+                  /*Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (_) => HomePage()), // Replace with your actual landing screen widget
                         (route) => false,
+                  );*/
+                  Navigator.of(
+                    routeGlobalKey.currentContext!,
+                  ).pushNamed(
+                    TabScreen.route,
+                    arguments: {
+                      'selectedPos': -1,
+                      'isSignUp': false,
+                    },
                   );
                 },
                 style: ElevatedButton.styleFrom(

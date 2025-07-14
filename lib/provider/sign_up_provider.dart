@@ -110,6 +110,8 @@ class SignUpProvider with ChangeNotifier {
   bool get isVerifyingOtp => _isVerifyingOtp;
   bool _isOverallLoading = false;
   bool get isOverallLoading => _isOverallLoading;
+  bool _isInitialLoadComplete = false;
+  bool get isInitialLoadComplete => _isInitialLoadComplete;
   bool _isLoadingDetails = false;
   bool get isLoadingDetails => _isLoadingDetails;
   List<StateModel> _states = [];
@@ -1151,7 +1153,142 @@ Future<void> pickFile(String docName) async {
     }
   }
 
+  /*Future<void> fetchAllFormData(BuildContext context) async {
+    try {
+      _isOverallLoading = true;
+      notifyListeners();
+
+      // Fetch all data in parallel
+      await Future.wait([
+        fetchDepartments(context),
+        fetchCountries(context),
+        fetchQualifications(context),
+      ]);
+    } finally {
+      _isOverallLoading = false;
+      notifyListeners();
+    }
+  }*/
+  Future<void> fetchAllFormData(BuildContext context) async {
+    try {
+      _isOverallLoading = true;
+      _isInitialLoadComplete = false;
+      notifyListeners();
+
+      // Reset errors
+      _departmentError = null;
+      _countryError = null;
+      _rankError = null;
+      qualificationError = null;
+
+      // Fetch all data in parallel
+      await Future.wait([
+        fetchDepartments(context),
+        fetchCountries(context),
+        fetchQualifications(context),
+      ]);
+
+      _isInitialLoadComplete = true;
+    } catch (e) {
+      // Handle any unexpected errors
+      debugPrint('Error loading form data: $e');
+    } finally {
+      _isOverallLoading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> fetchDepartments(BuildContext context) async {
+    try {
+      _departmentError = null;
+      await APIManager().apiRequest(
+        context,
+        API.departmentlist,
+            (response) {
+          if (response is DepartmentListResponse) {
+            _departments = response.data;
+          } else {
+            _departmentError = 'Unexpected response format';
+          }
+        },
+            (error) {
+          _departmentError = 'Failed to load departments: ${error.toString()}';
+        },
+      );
+    } catch (e) {
+      _departmentError = 'Failed to load departments ${e.toString()}';
+    }
+  }
+
+  Future<void> fetchCountries(BuildContext context) async {
+    try {
+      _countryError = null;
+      await APIManager().apiRequest(
+        context,
+        API.countrylist,
+            (response) {
+          if (response is CountryListResponse) {
+            _countries = response.data.where((c) => c.isActive).toList();
+          } else {
+            _countryError = 'Unexpected response format';
+          }
+        },
+            (error) {
+          _countryError = 'Failed to load countries: ${error.toString()}';
+        },
+      );
+    } catch (e) {
+      _countryError = 'Failed to load countries ${e.toString()}';
+    }
+  }
+
+  Future<void> fetchRanks(BuildContext context, int departmentId) async {
+    try {
+      _rankError = null;
+      _ranks.clear();
+      final requestBody = json.encode({"departmentid": departmentId.toString()});
+
+      await APIManager().apiRequest(
+        context,
+        API.getdeptwiseranklist,
+            (response) {
+          if (response is RankListResponse) {
+            _ranks = response.data.where((r) => r.isActive).toList();
+          }
+        },
+            (error) {
+          _rankError = 'Failed to load ranks: ${error.toString()}';
+        },
+        jsonval: requestBody,
+      );
+    } catch (e) {
+      _rankError = 'Failed to load ranks';
+    }
+  }
+
+  Future<void> fetchQualifications(BuildContext context) async {
+    try {
+      qualificationError = null;
+      await APIManager().apiRequest(
+        context,
+        API.getqualifications,
+            (response) {
+          if (response is QualificationListResponse) {
+            qualifications = response.data;
+          } else {
+            qualificationError = 'Unexpected response type: ${response.runtimeType}';
+          }
+        },
+            (error) {
+          qualificationError = 'Failed to load qualifications: ${error.toString()}';
+        },
+      );
+    } catch (e) {
+      qualificationError = 'Failed to load qualifications: $e';
+    }
+  }
+
+  /*Future<void> fetchDepartments(BuildContext context) async {
     try {
       _isLoadingDepartments = true;
       _departmentError = null;
@@ -1281,7 +1418,7 @@ Future<void> pickFile(String docName) async {
       isLoadingQualifications = false;
       notifyListeners();
     }
-  }
+  }*/
 
   Future<void> fetchDocuments() async {
     try {

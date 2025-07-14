@@ -54,6 +54,7 @@ class LMSStrings {
     static const String strTimeZone = "Time Zone";
   static const String strSelectTimezone = "Select Time Zone";
   static const String strRank = "Rank";
+    static const String strUpload = "Upload";
   static const String strRankHint = "Select Rank";
 
   static const String strCountry = "Country";
@@ -98,4 +99,5 @@ class LMSStrings {
 
 
   static const String strNoInstituteFound = "No institutions found";
+  static const String strNoLearningMaterialFound = "No learning materials available";
 }
