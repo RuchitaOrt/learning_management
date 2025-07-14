@@ -265,7 +265,7 @@ class APIManager {
     } else if (className == 'QualificationListResponse') {
       responseObj = QualificationListResponse.fromJson(json);
     } else if (className == 'OtpResponse') {
-      responseObj = CommonResponse.fromJson(json);
+      responseObj = CommonResponse2.fromJson(json);
     } else if (className == 'CategoryResponse') {
       responseObj = CategoryResponse.fromJson(json);
     } else if (className == 'GetCourseListResponse') {
@@ -273,7 +273,7 @@ class APIManager {
     } else if (className == 'GetCourseDetailListResponse') {
       responseObj = GetCourseDetailListResponse.fromJson(json);
     } else if (className == 'CommonResponse') {
-      responseObj = CommonResponse.fromJson(json);
+      responseObj = CommonResponse2.fromJson(json);
     } else if (className == 'DocumentListResponse') {
       responseObj = DocumentListResponse.fromJson(json);
     } else if (className == 'GetResourceResponse') {

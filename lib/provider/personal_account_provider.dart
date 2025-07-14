@@ -158,13 +158,13 @@ bool _isLoading = false;
         API.updateSeafarerDetails,
             (response) {
           try {
-            if (response is CommonResponse) {
+            if (response is CommonResponse2) {
               _handleCommonResponse(response, context);
             } else if (response is Map<String, dynamic>) {
-              _handleCommonResponse(CommonResponse.fromJson(response), context);
+              _handleCommonResponse(CommonResponse2.fromJson(response), context);
             } else if (response is String) {
               final parsed = json.decode(response);
-              _handleCommonResponse(CommonResponse.fromJson(parsed), context);
+              _handleCommonResponse(CommonResponse2.fromJson(parsed), context);
             } else {
               ShowDialogs.showToast('Unexpected response type: ${response.runtimeType}');
             }
@@ -186,7 +186,7 @@ bool _isLoading = false;
   }
 
 
-  void _handleCommonResponse(CommonResponse response, BuildContext context) {
+  void _handleCommonResponse(CommonResponse2 response, BuildContext context) {
     if (response.status) {
       ShowDialogs.showToast('Details updated successfully');
     } else {

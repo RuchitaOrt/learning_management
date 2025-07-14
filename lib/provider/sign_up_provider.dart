@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -799,7 +800,7 @@ Future<void> pickFile(String docName) async {
         API.emailOTP,
             (response) {
           setSendingOtp(false); // Stop loading
-          if (response is CommonResponse && response.n == 1) {
+          if (response is CommonResponse2 && response.n == 1) {
             markOtpSent(true);
             startOtpTimer();
             ShowDialogs.showToast(response.message);
@@ -832,7 +833,7 @@ Future<void> pickFile(String docName) async {
         API.verifyEmailOTP,
             (response) {
           setVerifyingOtp(false);
-          if (response is CommonResponse) {
+          if (response is CommonResponse2) {
             if (response.n == 1) {
               ShowDialogs.showToast(response.msg);
               isEmailVerified = true;
@@ -889,7 +890,7 @@ Future<void> pickFile(String docName) async {
     }
   }*/
 
-  void handleVerificationResponse(CommonResponse response) {
+  void handleVerificationResponse(CommonResponse2 response) {
     if (response.status) {  // Success case
       ShowDialogs.showToast(response.message);
       isEmailVerified = true;
@@ -917,14 +918,21 @@ Future<void> pickFile(String docName) async {
 
       await APIManager().apiRequest(
         context,
-        API.registerCandidate, // Make sure this is defined in your API class
+        API.registerCandidate,
             (response) {
-          if (response is CommonResponse) {
+          if (response is CommonResponse2) {
             if (response.n == 1) {
+              // Success case - new registration
               ShowDialogs.showToast(response.msg);
               _registeredCandidate = Candidate.fromJson(response.data);
+            } else if (response.msg.toLowerCase().contains('email already exists') ?? false) {
+              // Email exists but we'll proceed since it's verified
+              if (isEmailVerified) {
+                //ShowDialogs.showToast('Using existing verified email');
+              } else {
+                throw Exception(response.msg);
+              }
             } else {
-              ShowDialogs.showToast(response.msg);
               throw Exception(response.msg);
             }
           } else {
@@ -937,8 +945,9 @@ Future<void> pickFile(String docName) async {
         jsonval: json.encode(requestBody),
       );
     } catch (e) {
+      print(e.toString());
       ShowDialogs.showToast(e.toString());
-      rethrow; // Re-throw to handle in the calling function
+      rethrow;
     } finally {
       _isRegistering = false;
       notifyListeners();
@@ -964,20 +973,13 @@ Future<void> pickFile(String docName) async {
         context,
         API.registerCandidate,
             (response) {
-          if (response is CommonResponse) {
+          if (response is CommonResponse2) {
             if (response.n == 1) {
-              // Success case - new registration
               ShowDialogs.showToast(response.msg);
               _registeredCandidate = Candidate.fromJson(response.data);
             } else if (response.msg.toLowerCase().contains('email already exists') ?? false) {
-              // Email exists but we'll proceed since it's verified
               if (isEmailVerified) {
-                // Create a dummy candidate with just the email to proceed
-                /*_registeredCandidate = Candidate(
-                  id: 0.toString(),
-                  email: emailController.text.trim(),
-                );*/
-                //ShowDialogs.showToast('Using existing verified email');
+                // use existing verified email
               } else {
                 throw Exception(response.msg);
               }
@@ -989,11 +991,20 @@ Future<void> pickFile(String docName) async {
           }
         },
             (error) {
-          throw Exception('Registration failed: ${error.toString()}');
-        },
-        jsonval: json.encode(requestBody),
+        try {
+          final errorMessage = error.toString(); // get string from AppError
+          final decoded = json.decode(errorMessage);
+          final msg = decoded['msg'] ?? 'Registration failed';
+          ShowDialogs.showToast(msg);
+        } catch (_) {
+          print(error.toString());
+          // ShowDialogs.showToast(error.toString());
+        }
+      },
+          jsonval: json.encode(requestBody),
       );
     } catch (e) {
+      print(e.toString());
       ShowDialogs.showToast(e.toString());
       rethrow;
     } finally {
@@ -1041,7 +1052,7 @@ Future<void> pickFile(String docName) async {
         context,
         API.candidateDetails,
             (response) {
-          if (response is CommonResponse) {
+          if (response is CommonResponse2) {
             if (response.n == 1) {
               ShowDialogs.showToast(response.msg);
               // Update candidate data with new details if needed

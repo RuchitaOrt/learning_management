@@ -198,19 +198,19 @@ class Rank {
   String toString() => tags;
 }
 
-class CommonResponse {
+class CommonResponse2 {
   final int n;
   final String msg;
   final dynamic data;
 
-  CommonResponse({
+  CommonResponse2({
     required this.n,
     required this.msg,
     required this.data,
   });
 
-  factory CommonResponse.fromJson(Map<String, dynamic> json) {
-    return CommonResponse(
+  factory CommonResponse2.fromJson(Map<String, dynamic> json) {
+    return CommonResponse2(
       n: json['n'] ?? 0,
       msg: json['msg'] ?? '',
       data: json['data'],
