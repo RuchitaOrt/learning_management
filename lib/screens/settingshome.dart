@@ -351,15 +351,22 @@ Widget _buildProfileImage() {
     builder: (context, provider, _) {
       print("profileImageUrl");
       print(provider.generalList.profilePic);
-       ImageProvider? imageProvider;
+      //  ImageProvider? imageProvider;
 
-      if (_profileImage != null) {
-         print("profileImageUrl1");
-        imageProvider = FileImage(_profileImage!);
-      } else if (provider.generalList.profilePic!=null ) {
-         print("profileImageUrl2");
-        imageProvider = NetworkImage(provider.generalList.profilePic!);
-      }
+      // if (_profileImage != null) {
+      //    print("profileImageUrl1");
+      //   imageProvider = FileImage(_profileImage!);
+      // } else if (provider.generalList.profilePic!=null ) {
+      //    print("profileImageUrl2");
+      //   imageProvider = NetworkImage(provider.generalList.profilePic!);
+      // }
+      ImageProvider<Object> imageProvider = 
+  _profileImage != null
+    ? FileImage(_profileImage!)
+    : (provider.generalList.profilePic != null
+        ? NetworkImage(provider.generalList.profilePic!)
+        : AssetImage(LMSImagePath.whiteCamera) as ImageProvider<Object>);
+
   return  GestureDetector(
     onTap: _pickProfileImage,
     child: Center(
@@ -369,8 +376,7 @@ Widget _buildProfileImage() {
             radius: 50,
             backgroundColor: Colors.grey.shade800,
             backgroundImage:
-                _profileImage != null ? FileImage(_profileImage!) :(provider.generalList.profilePic!=null)?  NetworkImage(provider.generalList.profilePic!)
-                :AssetImage(LMSImagePath.whiteCamera),
+               imageProvider,
             // child: imageProvider == null
             //     ? Icon(
             //         Icons.person,

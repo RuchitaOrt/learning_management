@@ -314,10 +314,83 @@ class _VerificationScreenState extends State<VerificationScreen> {
                               ),
                               elevation: 5,
                             ),
+                            /*onPressed: () async {
+                              if (!signUpProvider.isEmailVerified) {
+                                ShowDialogs.showToast('Please verify your email first');
+                                return;
+                              }
+
+                              final formKey = current == 0
+                                  ? signUpProvider.formKeyBasic
+                                  : current == 1
+                                  ? signUpProvider.formKeyDetail
+                                  : signUpProvider.formKeyUpload;
+
+                              // Manually validate each field and show specific messages
+                              if (!(formKey.currentState?.validate() ?? false)) {
+                                // Check which fields have errors
+                                if (current == 0) {
+                                  // Basic form validation
+                                  if (signUpProvider.firstNameController.text.isEmpty) {
+                                    ShowDialogs.showToast('Please enter your first name');
+                                  } else if (signUpProvider.lastNameController.text.isEmpty) {
+                                    ShowDialogs.showToast('Please enter your last name');
+                                  } else if (signUpProvider.emailController.text.isEmpty) {
+                                    ShowDialogs.showToast('Please enter your email');
+                                  }*//* else if (!EmailValidator.validate(signUpProvider.emailController.text)) {
+                                    ShowDialogs.showToast('Please enter a valid email');
+                                  }*//* else if (!signUpProvider.isEmailVerified) {
+                                    ShowDialogs.showToast('Please verify your email');
+                                  } else if (signUpProvider.phoneNumberController.text.isEmpty) {
+                                    ShowDialogs.showToast('Please enter your phone number');
+                                  } else if (signUpProvider.phoneNumberController.text.length != 10) {
+                                    ShowDialogs.showToast('Phone number must be 10 digits');
+                                  } else if (signUpProvider.passwordController.text.isEmpty) {
+                                    ShowDialogs.showToast('Please enter a password');
+                                  } else if (signUpProvider.passwordController.text.length < 8) {
+                                    ShowDialogs.showToast('Password must include At least 8 characters long, uppercase, lowercase, a digit, and a special character');
+                                  } else if (signUpProvider.confirmpasswordController.text.isEmpty) {
+                                    ShowDialogs.showToast('Please confirm your password');
+                                  } else if (signUpProvider.passwordController.text !=
+                                      signUpProvider.confirmpasswordController.text) {
+                                    ShowDialogs.showToast('Passwords do not match');
+                                  }
+                                } else if (current == 1) {
+                                  // Details form validation
+                                  // Add similar specific checks for your detail fields
+                                  ShowDialogs.showToast('Please fill all required details');
+                                } else if (current == 2) {
+                                  // Upload form validation
+                                  ShowDialogs.showToast('Please upload all required documents');
+                                }
+                                return;
+                              }
+
+                              try {
+                                if (current == 0) {
+                                  await signUpProvider.registerCandidate(context);
+                                  if (signUpProvider.isEmailVerified) {
+                                    Provider.of<StepProvider>(context, listen: false).nextStep();
+                                  }
+                                } else if (current == 1) {
+                                  await signUpProvider.saveCandidateDetails(context);
+                                  await signUpProvider.fetchDocuments();
+                                  Provider.of<StepProvider>(context, listen: false).nextStep();
+                                } else if (current == 2) {
+                                  await signUpProvider.uploadDocuments(context);
+                                }
+                              } catch (e) {
+                                if (e.toString().toLowerCase().contains('email already exists') &&
+                                    signUpProvider.isEmailVerified) {
+                                  Provider.of<StepProvider>(context, listen: false).nextStep();
+                                } else {
+                                  ShowDialogs.showToast(e.toString());
+                                }
+                              }
+                            },*/
                             onPressed: () async {
                               if (!signUpProvider.isEmailVerified) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Please verify your email first')));
+                                ShowDialogs.showToast('Please verify your email first');
                                 return;
                               }
 
@@ -348,13 +421,11 @@ class _VerificationScreenState extends State<VerificationScreen> {
                                       signUpProvider.isEmailVerified) {
                                     Provider.of<StepProvider>(context, listen: false).nextStep();
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text(e.toString())));
+                                    ShowDialogs.showToast(e.toString());
                                   }
                                 }
                               } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Please fix errors before proceeding')));
+                                ShowDialogs.showToast('Please fix errors before proceeding');
                               }
                             },
                             child: signUpProvider.isRegistering || signUpProvider.isSavingDetails
